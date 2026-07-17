@@ -1,5 +1,6 @@
 package com.axsos.project.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.mindrot.jbcrypt.BCrypt;
@@ -46,6 +47,11 @@ public class StoreService {
         }
 
         return Optional.empty();
+    }
+
+    // all stores, used to fill the "Store" filter on the Products page
+    public List<Store> getAllStores() {
+        return storeRepository.findAll();
     }
 
 }

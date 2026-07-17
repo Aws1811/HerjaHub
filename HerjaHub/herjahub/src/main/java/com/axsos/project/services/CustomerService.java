@@ -6,6 +6,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.axsos.project.dto.EditProfileForm;
 import com.axsos.project.dto.RegistrationForm;
 import com.axsos.project.models.Customer;
 import com.axsos.project.repositores.CustomerRepository;
@@ -41,5 +42,19 @@ public class CustomerService {
         }
 
         return Optional.empty();
+    }
+
+    // Updates an existing customer's info from the Edit Profile form.
+    // If newPassword is left blank, the current password is kept as-is.
+    public Customer updateProfile(Customer customer, EditProfileForm form) {
+        customer.setFirstName(form.getFirstName());
+        customer.setLastName(form.getLastName());
+        customer.setEmail(form.getEmail());
+
+        if (form.getNewPassword() != null && !form.getNewPassword().isBlank()) {
+            customer.setPassword(BCrypt.hashpw(form.getNewPassword(), BCrypt.gensalt()));
+        }
+
+        return customerRepository.save(customer);
     }
 }
