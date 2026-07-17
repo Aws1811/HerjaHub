@@ -22,7 +22,7 @@ import jakarta.validation.Valid;
 
 @Controller
 public class AuthController {
-	@Autowired
+    @Autowired
     private CustomerService customerService;
 
     @Autowired
@@ -40,9 +40,9 @@ public class AuthController {
     // Handles the login form submit
     @PostMapping("/login")
     public String login(@Valid @ModelAttribute("loginForm") LoginForm loginForm,
-                         BindingResult bindingResult,
-                         HttpSession session,
-                         Model model) {
+                        BindingResult bindingResult,
+                        HttpSession session,
+                        Model model) {
 
         // if the basic fields (email/password not blank) already failed, just show the page again
         if (bindingResult.hasErrors()) {
@@ -84,9 +84,9 @@ public class AuthController {
     // Handles the register form submit
     @PostMapping("/register")
     public String register(@Valid @ModelAttribute("registrationForm") RegistrationForm form,
-                            BindingResult bindingResult,
-                            HttpSession session,
-                            Model model) {
+                           BindingResult bindingResult,
+                           HttpSession session,
+                           Model model) {
 
         boolean isStoreOwner = form.getAccountType().equals("store");
 
