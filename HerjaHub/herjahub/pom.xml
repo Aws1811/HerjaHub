@@ -69,6 +69,12 @@
             <artifactId>jakarta.servlet.jsp.jstl</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.openai</groupId>
+            <artifactId>openai-java-spring-boot-starter</artifactId>
+            <version>4.43.0</version>
+        </dependency>
+
         <!-- BCrypt -->
         <dependency>
             <groupId>org.mindrot</groupId>
