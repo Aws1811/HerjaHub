@@ -25,31 +25,49 @@
 
 <h1>Edit Profile</h1>
 
-<div class="form-box">
+<div class="page-columns">
 
-    <%-- Note: Customer has no "image" field yet, so this is just a placeholder for now --%>
-    <p class="photo-placeholder">(profile photo placeholder)</p>
+    <div class="form-box">
 
-    <form:form cssClass="profile-form" action="/customer/profile/edit" method="post" modelAttribute="editProfileForm">
+        <%-- Note: Customer has no "image" field yet, so this is just a placeholder for now --%>
+        <p class="photo-placeholder">(profile photo placeholder)</p>
 
-        <form:label path="firstName">First Name</form:label>
-        <form:input path="firstName" />
-        <form:errors path="firstName" cssClass="error-text" />
+        <form:form cssClass="profile-form" action="/customer/profile/edit" method="post" modelAttribute="editProfileForm">
 
-        <form:label path="lastName">Last Name</form:label>
-        <form:input path="lastName" />
-        <form:errors path="lastName" cssClass="error-text" />
+            <form:label path="firstName">First Name</form:label>
+            <form:input path="firstName" />
+            <form:errors path="firstName" cssClass="error-text" />
 
-        <form:label path="email">Email</form:label>
-        <form:input path="email" />
-        <form:errors path="email" cssClass="error-text" />
+            <form:label path="lastName">Last Name</form:label>
+            <form:input path="lastName" />
+            <form:errors path="lastName" cssClass="error-text" />
 
-        <form:label path="newPassword">New Password</form:label>
-        <form:password path="newPassword" />
-        <form:errors path="newPassword" cssClass="error-text" />
+            <form:label path="email">Email</form:label>
+            <form:input path="email" />
+            <form:errors path="email" cssClass="error-text" />
 
-        <input type="submit" value="Save Changes" />
-    </form:form>
+            <form:label path="newPassword">New Password</form:label>
+            <form:password path="newPassword" />
+            <form:errors path="newPassword" cssClass="error-text" />
+
+            <input type="submit" value="Save Changes" />
+        </form:form>
+
+    </div>
+
+    <%-- purely decorative panel - no data, just fills the empty space and
+         gives the page a "welcome" feeling instead of a lonely floating card --%>
+    <div class="side-panel">
+        <div class="tatreez-pattern"></div>
+        <h2>Your Profile, Your Identity</h2>
+        <p>Keeping your details up to date helps store owners and the AI
+           assistant give you better, more personal recommendations.</p>
+        <ul class="side-tips">
+            <li>Use a real email so order updates reach you</li>
+            <li>Leave the password field blank to keep your current one</li>
+            <li>Your name is shown on comments you leave on products</li>
+        </ul>
+    </div>
 
 </div>
 
