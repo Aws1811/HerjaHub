@@ -34,4 +34,15 @@ public class ProductService {
 		return productRepository.findByStore(store);
 	}
 
+	// copies the edited fields onto the real, already-saved product and
+	// saves it - same "fetch, copy fields, save" pattern as CustomerService.updateProfile
+	public Product updateProduct(Product existingProduct, Product formValues) {
+		existingProduct.setProductName(formValues.getProductName());
+		existingProduct.setDescription(formValues.getDescription());
+		existingProduct.setPrice(formValues.getPrice());
+		existingProduct.setImage(formValues.getImage());
+		existingProduct.setQuantity(formValues.getQuantity());
+		return productRepository.save(existingProduct);
+	}
+
 }
