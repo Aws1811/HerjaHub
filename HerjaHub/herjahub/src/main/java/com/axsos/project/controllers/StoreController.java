@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import com.axsos.project.dto.EditStoreForm;
 import com.axsos.project.models.Product;
 import com.axsos.project.models.Store;
 import com.axsos.project.services.ProductService;
+import com.axsos.project.services.StoreService;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -24,6 +26,9 @@ public class StoreController {
 
 	@Autowired
 	private ProductService productService;
+
+	@Autowired
+	private StoreService storeService;
 
 	@GetMapping("/store/dashboard")
 	public String dashboard(HttpSession session, Model model) {
@@ -147,6 +152,55 @@ public class StoreController {
 		// (see ProductService.updateProduct) instead of saving formValues
 		// directly - that keeps the product's store/id/comments untouched
 		productService.updateProduct(existingOpt.get(), formValues);
+
+		return "redirect:/store/dashboard";
+	}
+
+	// shows the Edit Store form, pre-filled with the store's current info
+	@GetMapping("/store/profile/edit")
+	public String editStorePage(HttpSession session, Model model) {
+
+		Store store = (Store) session.getAttribute("loggedInStore");
+		if (store == null) {
+			return "redirect:/auth";
+		}
+
+		EditStoreForm form = new EditStoreForm();
+		form.setStoreName(store.getStoreName());
+		form.setDescription(store.getDescription());
+		form.setPhone(store.getPhone());
+		form.setAddress(store.getAddress());
+
+		model.addAttribute("editStoreForm", form);
+
+		// needed so the JSP can loop through this store's products and show
+		// each product's comments - see Product.comments in the model
+		model.addAttribute("store", store);
+
+		return "store/edit-store";
+	}
+
+	// handles the Edit Store form submit
+	@PostMapping("/store/profile/edit")
+	public String editStore(@Valid @ModelAttribute("editStoreForm") EditStoreForm form,
+	                        BindingResult bindingResult,
+	                        HttpSession session,
+	                        Model model) {
+
+		Store store = (Store) session.getAttribute("loggedInStore");
+		if (store == null) {
+			return "redirect:/auth";
+		}
+
+		if (bindingResult.hasErrors()) {
+			model.addAttribute("store", store);
+			return "store/edit-store";
+		}
+
+		Store updated = storeService.updateStoreProfile(store, form);
+
+		// keep the session copy in sync with the freshly saved info
+		session.setAttribute("loggedInStore", updated);
 
 		return "redirect:/store/dashboard";
 	}
