@@ -6,11 +6,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Edit Profile</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/edit_profile_style.css">
 </head>
 <body>
 
 <%-- ===== Testing nav: quick links to every customer page ===== --%>
-<div>
+<div class="test-nav">
     <a href="${pageContext.request.contextPath}/customer/dashboard">Dashboard</a> |
     <a href="${pageContext.request.contextPath}/customer/products">Products</a> |
     <a href="${pageContext.request.contextPath}/customer/products/1">Product Details</a> |
@@ -24,29 +25,33 @@
 
 <h1>Edit Profile</h1>
 
-<%-- Note: Customer has no "image" field yet, so this is just a placeholder for now --%>
-<p>(profile photo placeholder)</p>
+<div class="form-box">
 
-<form:form action="/customer/profile/edit" method="post" modelAttribute="editProfileForm">
+    <%-- Note: Customer has no "image" field yet, so this is just a placeholder for now --%>
+    <p class="photo-placeholder">(profile photo placeholder)</p>
 
-    <form:label path="firstName">First Name</form:label>
-    <form:input path="firstName" />
-    <form:errors path="firstName" />
+    <form:form cssClass="profile-form" action="/customer/profile/edit" method="post" modelAttribute="editProfileForm">
 
-    <form:label path="lastName">Last Name</form:label>
-    <form:input path="lastName" />
-    <form:errors path="lastName" />
+        <form:label path="firstName">First Name</form:label>
+        <form:input path="firstName" />
+        <form:errors path="firstName" cssClass="error-text" />
 
-    <form:label path="email">Email</form:label>
-    <form:input path="email" />
-    <form:errors path="email" />
+        <form:label path="lastName">Last Name</form:label>
+        <form:input path="lastName" />
+        <form:errors path="lastName" cssClass="error-text" />
 
-    <form:label path="newPassword">New Password</form:label>
-    <form:password path="newPassword" />
-    <form:errors path="newPassword" />
+        <form:label path="email">Email</form:label>
+        <form:input path="email" />
+        <form:errors path="email" cssClass="error-text" />
 
-    <input type="submit" value="Save Changes" />
-</form:form>
+        <form:label path="newPassword">New Password</form:label>
+        <form:password path="newPassword" />
+        <form:errors path="newPassword" cssClass="error-text" />
+
+        <input type="submit" value="Save Changes" />
+    </form:form>
+
+</div>
 
 </body>
 </html>

@@ -1,0 +1,153 @@
+/* ============================================
+   HerjaHub - Edit Profile page (customer)
+   Same warm, natural vibe as the other pages:
+   olive green + brick red + golden accent.
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+    --color-bg: #f7f5ef;
+    --color-card: #ffffff;
+    --color-text: #2b2b28;
+    --color-muted: #857f6d;
+    --color-border: #e4ddc9;
+
+    --color-primary: #3a5a40;        /* olive green */
+    --color-primary-dark: #23361f;
+    --color-accent: #b5533c;         /* brick red */
+    --color-gold: #c98a3e;           /* warm gold, like olive oil */
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0 0 30px;
+    font-family: 'Inter', Arial, sans-serif;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    line-height: 1.6;
+}
+
+/* same decorative stripe as every other page */
+body::before {
+    content: "";
+    display: block;
+    height: 12px;
+    background: linear-gradient(90deg, #e62d36 0 25%, black 25% 50%, white 50% 75%, #0d6b33 75% 100%);
+}
+
+h1 {
+    font-family: 'Poppins', 'Inter', sans-serif;
+    color: var(--color-primary-dark);
+    text-align: center;
+    font-size: 26px;
+    margin: 22px 30px 20px;
+}
+
+a {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+hr {
+    display: none;
+}
+
+/* ===== Testing nav - small and out of the way ===== */
+.test-nav {
+    background: none;
+    border: none;
+    padding: 14px 30px 0;
+    font-size: 12px;
+    color: var(--color-muted);
+}
+
+.test-nav a {
+    color: var(--color-muted);
+}
+
+.test-nav a:hover {
+    color: var(--color-primary);
+}
+
+/* ===== Form card, centered ===== */
+.form-box {
+    max-width: 360px;
+    margin: 0 auto;
+    background-color: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: 18px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 14px 28px -18px rgba(41, 66, 49, 0.35);
+}
+
+.photo-placeholder {
+    width: 90px;
+    height: 90px;
+    line-height: 90px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    background-color: #eef2ea;
+    color: var(--color-muted);
+    font-size: 11px;
+    padding: 0 8px;
+}
+
+/* ===== Form fields ===== */
+.profile-form {
+    text-align: left;
+}
+
+.profile-form label {
+    display: block;
+    margin-top: 14px;
+    margin-bottom: 4px;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--color-primary-dark);
+}
+
+.profile-form input[type="text"],
+.profile-form input[type="email"],
+.profile-form input[type="password"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    font-family: inherit;
+}
+
+.profile-form input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+
+.error-text {
+    display: block;
+    color: var(--color-accent);
+    font-size: 12px;
+    margin-top: 3px;
+}
+
+/* ===== Save button, same pill style as the rest of the site ===== */
+.profile-form input[type="submit"] {
+    display: block;
+    width: 100%;
+    margin-top: 22px;
+    padding: 12px;
+    background-color: var(--color-primary);
+    color: #ffffff;
+    border: none;
+    border-radius: 999px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.profile-form input[type="submit"]:hover {
+    background-color: var(--color-primary-dark);
+}
