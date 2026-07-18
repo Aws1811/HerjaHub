@@ -58,12 +58,14 @@
                     <th>Name</th>
                     <th>Price</th>
                     <th>Quantity in Stock</th>
+                    <th></th>
                 </tr>
                 <c:forEach var="product" items="${products}">
                     <tr>
                         <td><c:out value="${product.productName}" /></td>
                         <td>$<c:out value="${product.price}" /></td>
                         <td><c:out value="${product.quantity}" /></td>
+                        <td><a href="${pageContext.request.contextPath}/store/products/${product.id}">View / Edit</a></td>
                     </tr>
                 </c:forEach>
             </table>
