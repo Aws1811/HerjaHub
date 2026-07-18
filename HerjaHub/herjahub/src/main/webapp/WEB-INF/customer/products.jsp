@@ -5,11 +5,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Products</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/products_style.css">
 </head>
 <body>
 
 <%-- ===== Testing nav: quick links to every customer page ===== --%>
-<div>
+<div class="test-nav">
     <a href="${pageContext.request.contextPath}/customer/dashboard">Dashboard</a> |
     <a href="${pageContext.request.contextPath}/customer/products">Products</a> |
     <a href="${pageContext.request.contextPath}/customer/products/1">Product Details</a> |
@@ -22,7 +23,7 @@
 
 
 <%-- ===== Nav bar ===== --%>
-<div>
+<div class="navbar">
     <a href="/customer/dashboard">HerjaHub</a>
     <a href="/customer/dashboard">Home</a>
     <a href="/customer/products">Products</a>
@@ -35,18 +36,18 @@
 <hr>
 
 <%-- ===== Filter sidebar ===== --%>
-<div>
+<div class="sidebar">
     <h3>Filter</h3>
 
     <%-- Store filter: loop over stores passed from the controller --%>
     <p>Store</p>
     <c:choose>
         <c:when test="${empty stores}">
-            <p>(no stores to filter by yet)</p>
+            <p class="muted">(no stores to filter by yet)</p>
         </c:when>
         <c:otherwise>
             <c:forEach var="store" items="${stores}">
-                <div>
+                <div class="filter-option">
                     <input type="checkbox" name="storeId" value="${store.id}" />
                     <c:out value="${store.storeName}" />
                 </div>
@@ -56,7 +57,7 @@
 
     <%-- Category filter: placeholder, since there is no Category model yet --%>
     <p>Category</p>
-    <p>(category filter placeholder - no Category model yet)</p>
+    <p class="muted">(category filter placeholder - no Category model yet)</p>
 </div>
 
 <hr>
@@ -70,20 +71,20 @@
     </c:when>
     <c:otherwise>
         <c:forEach var="product" items="${products}">
-            <div style="display:inline-block;">
+            <div class="product-card" style="display:inline-block;">
                 <a href="/customer/products/${product.id}">
                     <%-- placeholder for product image --%>
                     <c:choose>
                         <c:when test="${empty product.image}">
-                            <p>(image placeholder)</p>
+                            <p class="image-placeholder">(image placeholder)</p>
                         </c:when>
                         <c:otherwise>
                             <img src="${product.image}" alt="${product.productName}" width="150" />
                         </c:otherwise>
                     </c:choose>
 
-                    <p><c:out value="${product.productName}" /></p>
-                    <p>$<c:out value="${product.price}" /></p>
+                    <p class="product-name"><c:out value="${product.productName}" /></p>
+                    <p class="product-price">$<c:out value="${product.price}" /></p>
                 </a>
             </div>
         </c:forEach>

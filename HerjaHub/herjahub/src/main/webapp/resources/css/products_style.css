@@ -1,0 +1,182 @@
+/* ============================================
+   HerjaHub - Products page (customer)
+   Redesigned to feel warmer and more polished:
+   soft shadows, dashed accent borders, hover lift.
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+    --color-bg: #f7f5ef;
+    --color-card: #ffffff;
+    --color-text: #2b2b28;
+    --color-muted: #857f6d;
+    --color-border: #e4ddc9;
+    --color-primary: #3a5a40;
+    --color-primary-dark: #294231;
+    --color-primary-light: #eef2ea;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 30px;
+    font-family: 'Inter', Arial, sans-serif;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    line-height: 1.6;
+}
+
+h1, h3 {
+    font-family: 'Poppins', 'Inter', sans-serif;
+    color: var(--color-primary-dark);
+}
+
+a {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+hr {
+    display: none; /* the card shadows already separate sections, so the old lines aren't needed */
+}
+
+/* ===== Testing nav - kept small and out of the way ===== */
+.test-nav {
+    background-color: transparent;
+    border: none;
+    padding: 0 4px 14px;
+    font-size: 12px;
+    color: var(--color-muted);
+}
+
+.test-nav a {
+    color: var(--color-muted);
+}
+
+.test-nav a:hover {
+    color: var(--color-primary);
+}
+
+/* ===== Real site nav bar ===== */
+.navbar {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    background-color: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    padding: 16px 26px;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 20px -14px rgba(41, 66, 49, 0.25);
+}
+
+.navbar a {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--color-text);
+    padding: 6px 4px;
+    border-bottom: 2px solid transparent;
+}
+
+.navbar a:first-child {
+    font-family: 'Poppins', sans-serif;
+    color: var(--color-primary-dark);
+    font-size: 18px;
+    margin-right: auto;
+}
+
+.navbar a:hover {
+    color: var(--color-primary);
+    border-bottom: 2px solid var(--color-primary);
+}
+
+/* ===== Layout: sidebar + product grid side by side ===== */
+.sidebar {
+    float: left;
+    width: 220px;
+    background-color: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    padding: 22px;
+    margin-right: 24px;
+    box-shadow: 0 10px 24px -18px rgba(41, 66, 49, 0.3);
+}
+
+.sidebar h3 {
+    margin-top: 0;
+    font-size: 16px;
+    padding-bottom: 10px;
+    border-bottom: 2px dashed var(--color-border);
+}
+
+.sidebar p {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--color-primary-dark);
+    margin-bottom: 6px;
+}
+
+.filter-option {
+    font-size: 14px;
+    margin: 4px 0;
+}
+
+.muted {
+    color: var(--color-muted);
+    font-size: 12px;
+    font-weight: 400 !important;
+}
+
+h1 {
+    font-size: 26px;
+    margin: 4px 0 20px;
+}
+
+/* ===== Product grid ===== */
+.product-card {
+    width: 200px;
+    background-color: var(--color-card);
+    border: 2px dashed var(--color-border);
+    border-radius: 16px;
+    padding: 16px;
+    margin: 0 18px 18px 0;
+    text-align: center;
+    transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.product-card:hover {
+    border: 2px dashed var(--color-primary);
+    transform: translateY(-4px);
+    box-shadow: 0 14px 26px -16px rgba(41, 66, 49, 0.4);
+}
+
+.product-card a {
+    color: var(--color-text);
+    display: block;
+}
+
+.image-placeholder {
+    background-color: var(--color-primary-light);
+    color: var(--color-muted);
+    font-size: 12px;
+    padding: 34px 0;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.product-name {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    margin: 6px 0 2px;
+}
+
+.product-price {
+    color: var(--color-primary);
+    font-weight: 600;
+    margin: 0;
+}
