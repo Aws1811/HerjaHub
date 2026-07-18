@@ -3,11 +3,11 @@ package com.axsos.project.services;
 import java.util.List;
 import java.util.Optional;
 
-import com.axsos.project.dto.EditStoreForm;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.axsos.project.dto.EditStoreForm;
 import com.axsos.project.dto.RegistrationForm;
 import com.axsos.project.models.Store;
 import com.axsos.project.repositores.StoreRepository;
@@ -15,7 +15,7 @@ import com.axsos.project.repositores.StoreRepository;
 
 @Service
 public class StoreService {
-	@Autowired
+    @Autowired
     private StoreRepository storeRepository;
 
     public boolean emailExists(String email) {
@@ -54,6 +54,17 @@ public class StoreService {
     public List<Store> getAllStores() {
         return storeRepository.findAll();
     }
+
+    // one store by id, freshly loaded from the database. Used whenever a page
+    // needs a store's lazy collections (like its products) - the Store object
+    // cached in the session was loaded during an earlier request, and its
+    // Hibernate session is already closed, so lazy fields on it can't be
+    // read anymore (see LazyInitializationException). Re-fetching here gets
+    // a copy tied to the current request's Hibernate session instead.
+    public Optional<Store> getStoreById(Long id) {
+        return storeRepository.findById(id);
+    }
+
     // Updates the store's public info (name, description, phone, address)
     // from the Edit Store form - same "copy fields onto the real entity,
     // then save" pattern as CustomerService.updateProfile.
@@ -64,4 +75,5 @@ public class StoreService {
         store.setAddress(form.getAddress());
         return storeRepository.save(store);
     }
+
 }

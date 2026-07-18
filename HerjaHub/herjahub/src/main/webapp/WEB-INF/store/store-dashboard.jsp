@@ -41,8 +41,8 @@
         <a href="${pageContext.request.contextPath}/store/products/add">Add Product</a>
         &nbsp;|&nbsp;
 
-        <%-- Note: editing the store profile isn't built yet - placeholder link --%>
-        <a href="#">Store Profile</a>
+        <%-- Editing the store profile now goes to the real Edit Store page --%>
+        <a href="${pageContext.request.contextPath}/store/profile/edit">Store Profile</a>
     </div>
 
     <%-- ===== My Products ===== --%>

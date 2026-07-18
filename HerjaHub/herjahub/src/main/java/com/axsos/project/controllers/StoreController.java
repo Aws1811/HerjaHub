@@ -160,10 +160,19 @@ public class StoreController {
 	@GetMapping("/store/profile/edit")
 	public String editStorePage(HttpSession session, Model model) {
 
-		Store store = (Store) session.getAttribute("loggedInStore");
-		if (store == null) {
+		Store sessionStore = (Store) session.getAttribute("loggedInStore");
+		if (sessionStore == null) {
 			return "redirect:/auth";
 		}
+
+		// re-fetch a fresh copy so the "products" collection can be lazily
+		// loaded in the JSP - the copy in the session is from an earlier
+		// request whose Hibernate session is already closed
+		Optional<Store> storeOpt = storeService.getStoreById(sessionStore.getId());
+		if (storeOpt.isEmpty()) {
+			return "redirect:/auth";
+		}
+		Store store = storeOpt.get();
 
 		EditStoreForm form = new EditStoreForm();
 		form.setStoreName(store.getStoreName());
