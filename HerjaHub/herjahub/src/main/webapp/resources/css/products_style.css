@@ -38,7 +38,7 @@ body::before {
     content: "";
     display: block;
     height: 6px;
-    background: linear-gradient(90deg, var(--color-primary) 0 33%, var(--color-gold) 33% 66%, var(--color-accent) 66% 100%);
+    background: linear-gradient(90deg, #e62d36 0 25%, black 25% 50%,white 50% 75%, #0d6b33 75% 100%);
 }
 
 h1, h3 {
