@@ -49,7 +49,7 @@ public class StoreController {
 		return "store/add-product";
 	}
 
-	// handles the Add Product form submit
+	// handles the Add Product form submits
 	@PostMapping("/store/products/add")
 	public String addProduct(@Valid @ModelAttribute("product") Product product,
 							  BindingResult bindingResult,
