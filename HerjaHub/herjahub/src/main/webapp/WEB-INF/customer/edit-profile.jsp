@@ -33,7 +33,14 @@
     </div>
 
     <%-- ===== Cover banner - decorative pattern instead of a real cover photo ===== --%>
-    <div class="cover-banner"></div>
+    <div class="cover-banner">
+        <svg viewBox="0 0 1000 500" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" y="0" width="1000" height="166.67" fill="#000000"/>
+            <rect x="0" y="166.67" width="1000" height="166.67" fill="#ffffff"/>
+            <rect x="0" y="333.33" width="1000" height="166.67" fill="#007a3d"/>
+            <polygon points="0,0 0,500 250,250" fill="#ce1126"/>
+        </svg>
+    </div>
 
     <%-- ===== Avatar + name row, overlapping the banner ===== --%>
     <div class="identity-row">
