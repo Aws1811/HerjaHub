@@ -20,54 +20,71 @@
     <a href="${pageContext.request.contextPath}/customer/orders/1/confirmation">Order Confirmation</a> |
     <a href="${pageContext.request.contextPath}/customer/profile/edit">Edit Profile</a>
 </div>
-<hr>
 
+<div class="profile-card">
 
-<h1>Edit Profile</h1>
-
-<div class="page-columns">
-
-    <div class="form-box">
-
-        <%-- Note: Customer has no "image" field yet, so this is just a placeholder for now --%>
-        <p class="photo-placeholder">(profile photo placeholder)</p>
-
-        <form:form cssClass="profile-form" action="/customer/profile/edit" method="post" modelAttribute="editProfileForm">
-
-            <form:label path="firstName">First Name</form:label>
-            <form:input path="firstName" />
-            <form:errors path="firstName" cssClass="error-text" />
-
-            <form:label path="lastName">Last Name</form:label>
-            <form:input path="lastName" />
-            <form:errors path="lastName" cssClass="error-text" />
-
-            <form:label path="email">Email</form:label>
-            <form:input path="email" />
-            <form:errors path="email" cssClass="error-text" />
-
-            <form:label path="newPassword">New Password</form:label>
-            <form:password path="newPassword" />
-            <form:errors path="newPassword" cssClass="error-text" />
-
-            <input type="submit" value="Save Changes" />
-        </form:form>
-
+    <%-- ===== Top brand bar, like the reference's dark header ===== --%>
+    <div class="brand-bar">
+        <span class="brand-name">HerjaHub</span>
+        <span class="breadcrumb">Profile Overview</span>
+        <span class="brand-bar-right">
+            <c:out value="${editProfileForm.firstName} ${editProfileForm.lastName}" />
+        </span>
     </div>
 
-    <%-- purely decorative panel - no data, just fills the empty space and
-         gives the page a "welcome" feeling instead of a lonely floating card --%>
-    <div class="side-panel">
-        <div class="tatreez-pattern"></div>
-        <h2>Your Profile, Your Identity</h2>
-        <p>Keeping your details up to date helps store owners and the AI
-           assistant give you better, more personal recommendations.</p>
-        <ul class="side-tips">
-            <li>Use a real email so order updates reach you</li>
-            <li>Leave the password field blank to keep your current one</li>
-            <li>Your name is shown on comments you leave on products</li>
-        </ul>
+    <%-- ===== Cover banner - decorative pattern instead of a real cover photo ===== --%>
+    <div class="cover-banner"></div>
+
+    <%-- ===== Avatar + name row, overlapping the banner ===== --%>
+    <div class="identity-row">
+        <%-- Note: Customer has no "image" field yet, so this is a placeholder avatar for now --%>
+        <div class="avatar-placeholder">
+            <c:out value="${editProfileForm.firstName.substring(0,1)}" />
+        </div>
+
+        <div class="identity-text">
+            <h1><c:out value="${editProfileForm.firstName} ${editProfileForm.lastName}" /></h1>
+            <p class="identity-email"><c:out value="${editProfileForm.email}" /></p>
+        </div>
+
+        <%-- This button lives outside the <form> tag, but the "form" attribute
+             ties it to the form below by id, so clicking it still submits those
+             fields - that's how it can visually sit up here next to the name. --%>
+        <input class="save-btn" type="submit" value="Save changes" form="editProfileForm" />
     </div>
+
+    <%-- ===== Personal details form ===== --%>
+    <form:form id="editProfileForm" cssClass="profile-form" action="/customer/profile/edit" method="post" modelAttribute="editProfileForm">
+
+        <h2 class="section-title">Personal details</h2>
+
+        <div class="field-grid">
+            <div class="field">
+                <form:label path="firstName">First name</form:label>
+                <form:input path="firstName" />
+                <form:errors path="firstName" cssClass="error-text" />
+            </div>
+
+            <div class="field">
+                <form:label path="lastName">Last name</form:label>
+                <form:input path="lastName" />
+                <form:errors path="lastName" cssClass="error-text" />
+            </div>
+
+            <div class="field">
+                <form:label path="email">Email</form:label>
+                <form:input path="email" />
+                <form:errors path="email" cssClass="error-text" />
+            </div>
+
+            <div class="field">
+                <form:label path="newPassword">New password</form:label>
+                <form:password path="newPassword" />
+                <form:errors path="newPassword" cssClass="error-text" />
+            </div>
+        </div>
+
+    </form:form>
 
 </div>
 

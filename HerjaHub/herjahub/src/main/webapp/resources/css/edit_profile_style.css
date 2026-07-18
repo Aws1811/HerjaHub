@@ -1,7 +1,8 @@
 /* ============================================
    HerjaHub - Edit Profile page (customer)
-   Same warm, natural vibe as the other pages:
-   olive green + brick red + golden accent.
+   Layout inspired by a "profile overview" reference:
+   dark brand bar, cover banner, overlapping avatar,
+   two-column personal details form.
    ============================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
@@ -13,10 +14,10 @@
     --color-muted: #857f6d;
     --color-border: #e4ddc9;
 
-    --color-primary: #3a5a40;        /* olive green */
+    --color-primary: #3a5a40;
     --color-primary-dark: #23361f;
-    --color-accent: #b5533c;         /* brick red */
-    --color-gold: #c98a3e;           /* warm gold, like olive oil */
+    --color-accent: #b5533c;
+    --color-gold: #c98a3e;
 }
 
 * {
@@ -25,202 +26,187 @@
 
 body {
     margin: 0;
-    padding: 0 0 30px;
+    padding: 30px 0 60px;
     font-family: 'Inter', Arial, sans-serif;
-    background-color: var(--color-bg);
+    background-color: #6d7a6e;
     color: var(--color-text);
     line-height: 1.6;
-}
 
-/* same decorative stripe as every other page */
-body::before {
-    content: "";
-    display: block;
-    height: 12px;
-    background: linear-gradient(90deg, #e62d36 0 25%, black 25% 50%, white 50% 75%, #0d6b33 75% 100%);
-}
-
-h1 {
-    font-family: 'Poppins', 'Inter', sans-serif;
-    color: var(--color-primary-dark);
-    text-align: center;
-    font-size: 26px;
-    margin: 22px 30px 20px;
+    /* diagonal accent stripes across the page, standing in for the
+       reference design's teal/yellow shapes, using our own palette */
+    background-image:
+        repeating-linear-gradient(135deg, rgba(201, 138, 62, 0.35) 0 26px, transparent 26px 140px),
+        repeating-linear-gradient(135deg, rgba(181, 83, 60, 0.3) 0 20px, transparent 20px 170px);
+    background-repeat: no-repeat, no-repeat;
+    background-position: -100px -60px, 60% -40px;
+    background-size: 340px 340px, 300px 300px;
 }
 
 a {
-    color: var(--color-primary);
+    color: #e4ddc9;
     text-decoration: none;
 }
 
-hr {
-    display: none;
-}
-
-/* ===== Testing nav - small and out of the way ===== */
+/* ===== Testing nav - small strip above the card ===== */
 .test-nav {
-    background: none;
-    border: none;
-    padding: 14px 30px 0;
+    max-width: 760px;
+    margin: 0 auto 16px;
+    padding: 0 10px;
     font-size: 12px;
-    color: var(--color-muted);
-}
-
-.test-nav a {
-    color: var(--color-muted);
+    color: #f0ede2;
 }
 
 .test-nav a:hover {
-    color: var(--color-primary);
+    text-decoration: underline;
 }
 
-/* ===== Two-column layout: form on the left, decorative panel on the right ===== */
-.page-columns {
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    gap: 30px;
-    max-width: 900px;
+/* ===== The whole profile page is one floating white card ===== */
+.profile-card {
+    max-width: 760px;
     margin: 0 auto;
-    padding: 0 30px;
-}
-
-/* ===== Form card ===== */
-.form-box {
-    flex: 1;
-    max-width: 360px;
     background-color: var(--color-card);
-    border: 1px solid var(--color-border);
-    border-radius: 18px;
-    padding: 30px;
-    text-align: center;
-    box-shadow: 0 14px 28px -18px rgba(41, 66, 49, 0.35);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 24px 50px -20px rgba(0, 0, 0, 0.45);
 }
 
-.photo-placeholder {
-    width: 100px;
-    height: 100px;
-    margin: 0 auto 20px;
-    border-radius: 50%;
-    background-color: #eef2ea;
-    color: var(--color-muted);
-    font-size: 11px;
+/* ===== Dark brand bar ===== */
+.brand-bar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background-color: #202520;
+    color: #f0ede2;
+    padding: 14px 24px;
+    font-size: 13px;
+}
 
-    /* flex centering instead of a fixed line-height keeps the wrapped
-       text contained inside the circle instead of overflowing below it */
+.brand-name {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.breadcrumb {
+    color: #b9b3a0;
+}
+
+.brand-bar-right {
+    margin-left: auto;
+    font-weight: 500;
+    color: #e4ddc9;
+}
+
+/* ===== Cover banner - decorative pattern instead of a real cover photo ===== */
+.cover-banner {
+    height: 130px;
+    background:
+        repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0 10px, transparent 10px 20px),
+        linear-gradient(120deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+}
+
+/* ===== Avatar + name, overlapping the banner ===== */
+.identity-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 18px;
+    padding: 0 28px;
+    margin-top: -46px;
+}
+
+.avatar-placeholder {
+    width: 92px;
+    height: 92px;
+    border-radius: 50%;
+    background-color: var(--color-gold);
+    color: #ffffff;
+    font-family: 'Poppins', sans-serif;
+    font-size: 32px;
+    font-weight: 600;
     display: flex;
     align-items: center;
     justify-content: center;
-    text-align: center;
-    padding: 12px;
+    border: 4px solid #ffffff;
+    box-shadow: 0 6px 16px -6px rgba(0, 0, 0, 0.4);
 }
 
-/* ===== Decorative side panel - fills the empty space next to the form ===== */
-.side-panel {
-    flex: 1;
-    max-width: 360px;
-    background: linear-gradient(160deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
-    color: #f2efe3;
-    border-radius: 18px;
-    padding: 34px 30px;
-    box-shadow: 0 14px 28px -18px rgba(41, 66, 49, 0.45);
-    position: relative;
-    overflow: hidden;
+.identity-text {
+    padding-bottom: 6px;
 }
 
-.side-panel h2 {
+.identity-text h1 {
     font-family: 'Poppins', sans-serif;
-    color: #ffffff;
-    font-size: 19px;
-    margin: 0 0 10px;
-}
-
-.side-panel p {
-    font-size: 14px;
-    color: #e4ddc9;
-    margin: 0 0 18px;
-}
-
-.side-tips {
-    list-style: none;
+    font-size: 20px;
+    color: var(--color-primary-dark);
     margin: 0;
-    padding: 0;
 }
 
-.side-tips li {
+.identity-email {
     font-size: 13px;
-    padding: 10px 0 10px 22px;
-    border-top: 1px dashed rgba(242, 239, 227, 0.25);
-    position: relative;
+    color: var(--color-muted);
+    margin: 2px 0 0;
 }
 
-.side-tips li:first-child {
-    border-top: none;
-}
-
-.side-tips li::before {
-    content: "\2022";
-    color: var(--color-gold);
-    position: absolute;
-    left: 0;
-    font-size: 18px;
-    line-height: 1;
-}
-
-/* small tatreez-inspired diamond pattern in the corner, built with pure CSS
-   (no image assets available yet) as a nod to Palestinian embroidery motifs */
-.tatreez-pattern {
-    position: absolute;
-    top: -30px;
-    right: -30px;
-    width: 140px;
-    height: 140px;
-    background-image:
-        linear-gradient(45deg, var(--color-gold) 25%, transparent 25%, transparent 75%, var(--color-gold) 75%),
-        linear-gradient(45deg, var(--color-gold) 25%, transparent 25%, transparent 75%, var(--color-gold) 75%);
-    background-position: 0 0, 20px 20px;
-    background-size: 40px 40px;
-    opacity: 0.12;
-    transform: rotate(15deg);
-}
-
-@media (max-width: 760px) {
-    .page-columns {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .form-box,
-    .side-panel {
-        max-width: none;
-    }
-}
-
-/* ===== Form fields ===== */
-.profile-form {
-    text-align: left;
-}
-
-.profile-form label {
-    display: block;
-    margin-top: 14px;
-    margin-bottom: 4px;
+.save-btn {
+    margin-left: auto;
+    margin-bottom: 8px;
+    background-color: #ffffff;
+    color: var(--color-primary-dark);
+    border: 1.5px solid var(--color-primary);
+    border-radius: 999px;
+    padding: 9px 22px;
     font-weight: 600;
     font-size: 13px;
-    color: var(--color-primary-dark);
+    cursor: pointer;
 }
 
-.profile-form input[type="text"],
-.profile-form input[type="email"],
-.profile-form input[type="password"] {
+.save-btn:hover {
+    background-color: var(--color-primary);
+    color: #ffffff;
+}
+
+/* ===== Personal details section ===== */
+.profile-form {
+    padding: 30px 28px 36px;
+}
+
+.section-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    color: var(--color-muted);
+    font-weight: 600;
+    margin: 0 0 6px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.field-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 24px;
+    margin-top: 20px;
+}
+
+.field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-muted);
+    margin-bottom: 6px;
+}
+
+.field input[type="text"],
+.field input[type="email"],
+.field input[type="password"] {
     width: 100%;
     padding: 10px 12px;
     border: 1px solid var(--color-border);
-    border-radius: 10px;
+    border-radius: 8px;
     font-family: inherit;
+    font-size: 14px;
 }
 
-.profile-form input:focus {
+.field input:focus {
     outline: none;
     border-color: var(--color-primary);
 }
@@ -229,23 +215,21 @@ hr {
     display: block;
     color: var(--color-accent);
     font-size: 12px;
-    margin-top: 3px;
+    margin-top: 4px;
 }
 
-/* ===== Save button, same pill style as the rest of the site ===== */
-.profile-form input[type="submit"] {
-    display: block;
-    width: 100%;
-    margin-top: 22px;
-    padding: 12px;
-    background-color: var(--color-primary);
-    color: #ffffff;
-    border: none;
-    border-radius: 999px;
-    font-weight: 600;
-    cursor: pointer;
-}
+@media (max-width: 600px) {
+    .field-grid {
+        grid-template-columns: 1fr;
+    }
 
-.profile-form input[type="submit"]:hover {
-    background-color: var(--color-primary-dark);
+    .identity-row {
+        flex-wrap: wrap;
+    }
+
+    .save-btn {
+        margin-left: 0;
+        width: 100%;
+        margin-top: 12px;
+    }
 }
