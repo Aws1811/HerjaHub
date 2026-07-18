@@ -33,7 +33,10 @@ public class StoreController {
         }
 
         model.addAttribute("store", store);
-        return "store/dashboard";
+
+		// this store's own products, shown on the dashboard
+		model.addAttribute("products", productService.getProductsByStore(store));
+        return "store/store-dashboard";
     }
 
 	// shows the empty Add Product form

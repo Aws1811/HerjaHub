@@ -3,6 +3,7 @@ package com.axsos.project.services;
 import java.util.List;
 import java.util.Optional;
 
+import com.axsos.project.models.Store;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,4 +29,9 @@ public class ProductService {
 	public Product createProduct(Product product) {
 		return productRepository.save(product);
 	}
+	// all products belonging to one store, used on the Store Owner Dashboard
+	public List<Product> getProductsByStore(Store store) {
+		return productRepository.findByStore(store);
+	}
+
 }
