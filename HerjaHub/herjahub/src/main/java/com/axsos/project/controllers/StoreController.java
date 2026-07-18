@@ -21,7 +21,7 @@ public class StoreController {
 
 	@Autowired
 	private ProductService productService;
-
+// route for render the dashboard page
 	@GetMapping("/store/dashboard")
     public String dashboard(HttpSession session, Model model) {
 
