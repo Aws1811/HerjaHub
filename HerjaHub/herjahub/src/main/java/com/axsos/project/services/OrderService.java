@@ -17,7 +17,7 @@ public class OrderService {
 	@Autowired
 	private OrderRepository orderRepository;
 
-	// all past orders for this customer, used on the "My Orders" page
+	// all past orders for this customer, used on the "Orders page" page
 	public List<Order> getOrdersForCustomer(Customer customer) {
 		return orderRepository.findByCustomerOrderByCreatedAtDesc(customer);
 	}

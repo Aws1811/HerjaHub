@@ -21,7 +21,7 @@ public class StoreController {
 
 	@Autowired
 	private ProductService productService;
-
+// route for render the dashboard page
 	@GetMapping("/store/dashboard")
     public String dashboard(HttpSession session, Model model) {
 
@@ -49,7 +49,7 @@ public class StoreController {
 		return "store/add-product";
 	}
 
-	// handles the Add Product form submit
+	// handles the Add Product form submits
 	@PostMapping("/store/products/add")
 	public String addProduct(@Valid @ModelAttribute("product") Product product,
 							  BindingResult bindingResult,
