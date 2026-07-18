@@ -3,6 +3,7 @@ package com.axsos.project.services;
 import java.util.List;
 import java.util.Optional;
 
+import com.axsos.project.dto.EditStoreForm;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,5 +54,14 @@ public class StoreService {
     public List<Store> getAllStores() {
         return storeRepository.findAll();
     }
-
+    // Updates the store's public info (name, description, phone, address)
+    // from the Edit Store form - same "copy fields onto the real entity,
+    // then save" pattern as CustomerService.updateProfile.
+    public Store updateStoreProfile(Store store, EditStoreForm form) {
+        store.setStoreName(form.getStoreName());
+        store.setDescription(form.getDescription());
+        store.setPhone(form.getPhone());
+        store.setAddress(form.getAddress());
+        return storeRepository.save(store);
+    }
 }
