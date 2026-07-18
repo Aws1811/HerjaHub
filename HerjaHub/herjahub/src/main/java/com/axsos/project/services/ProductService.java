@@ -14,7 +14,7 @@ public class ProductService {
 	@Autowired
 	private ProductRepository productRepository;
 
-	// all products, used to fill the Products page grid
+	// all products, used to fill the Products page grids
 	public List<Product> getAllProducts() {
 		return productRepository.findAll();
 	}

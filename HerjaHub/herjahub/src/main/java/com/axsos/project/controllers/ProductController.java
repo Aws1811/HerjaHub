@@ -14,7 +14,7 @@ import com.axsos.project.services.StoreService;
 
 @Controller
 public class ProductController {
-
+// here are for using the services with final
 	@Autowired
 	private ProductService productService;
 

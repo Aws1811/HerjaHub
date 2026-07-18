@@ -16,7 +16,7 @@
 </div>
 <hr>
 
-<h1>Add Product</h1>
+<h1>Add new Product to the store</h1>
 
 <form:form action="/store/products/add" method="post" modelAttribute="product">
 
