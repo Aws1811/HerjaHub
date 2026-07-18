@@ -37,7 +37,7 @@ body {
 body::before {
     content: "";
     display: block;
-    height: 6px;
+    height: 12px;
     background: linear-gradient(90deg, #e62d36 0 25%, black 25% 50%,white 50% 75%, #0d6b33 75% 100%);
 }
 

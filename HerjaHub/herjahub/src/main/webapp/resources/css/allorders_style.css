@@ -1,0 +1,142 @@
+/* ============================================
+   HerjaHub - My Orders page (customer)
+   Same warm, natural vibe as the other pages:
+   olive green + brick red + golden accent.
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+    --color-bg: #f7f5ef;
+    --color-card: #ffffff;
+    --color-text: #2b2b28;
+    --color-muted: #857f6d;
+    --color-border: #e4ddc9;
+
+    --color-primary: #3a5a40;        /* olive green */
+    --color-primary-dark: #23361f;
+    --color-accent: #b5533c;         /* brick red */
+    --color-gold: #c98a3e;           /* warm gold, like olive oil */
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0 0 30px;
+    font-family: 'Inter', Arial, sans-serif;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    line-height: 1.6;
+}
+
+/* same decorative stripe as every other page */
+body::before {
+    content: "";
+    display: block;
+    height: 12px;
+    background: linear-gradient(90deg, #e62d36 0 25%, black 25% 50%, white 50% 75%, #0d6b33 75% 100%);
+}
+
+h1 {
+    font-family: 'Poppins', 'Inter', sans-serif;
+    color: var(--color-primary-dark);
+    font-size: 26px;
+    margin: 22px 30px 20px;
+}
+
+a {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+hr {
+    display: none;
+}
+
+/* ===== Testing nav - small and out of the way ===== */
+.test-nav {
+    background: none;
+    border: none;
+    padding: 14px 30px 0;
+    font-size: 12px;
+    color: var(--color-muted);
+}
+
+.test-nav a {
+    color: var(--color-muted);
+}
+
+.test-nav a:hover {
+    color: var(--color-primary);
+}
+
+.muted {
+    color: var(--color-muted);
+    margin: 0 30px;
+}
+
+/* ===== One card per order ===== */
+.order-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px;
+    background-color: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    padding: 16px 22px;
+    margin: 0 30px 16px;
+    box-shadow: 0 10px 22px -16px rgba(41, 66, 49, 0.3);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.order-row:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 26px -14px rgba(41, 66, 49, 0.4);
+}
+
+.order-row br {
+    display: none; /* the flex layout handles spacing, so the line break isn't needed visually */
+}
+
+.order-number {
+    font-family: 'Poppins', sans-serif;
+    color: var(--color-primary-dark);
+    font-size: 15px;
+}
+
+.order-date {
+    color: var(--color-muted);
+    font-size: 13px;
+}
+
+.status-badge {
+    background-color: var(--color-bg);
+    color: var(--color-gold);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 999px;
+}
+
+.order-total {
+    font-weight: 600;
+    color: var(--color-accent);
+    margin-left: auto;
+}
+
+.view-link {
+    background-color: var(--color-primary);
+    color: #ffffff !important;
+    font-weight: 600;
+    font-size: 13px;
+    padding: 8px 16px;
+    border-radius: 999px;
+}
+
+.view-link:hover {
+    background-color: var(--color-primary-dark);
+}

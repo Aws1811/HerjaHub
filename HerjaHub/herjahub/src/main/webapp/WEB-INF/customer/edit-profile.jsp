@@ -6,11 +6,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Edit Profile</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/edit_profile_style.css">
 </head>
 <body>
 
 <%-- ===== Testing nav: quick links to every customer page ===== --%>
-<div>
+<div class="test-nav">
     <a href="${pageContext.request.contextPath}/customer/dashboard">Dashboard</a> |
     <a href="${pageContext.request.contextPath}/customer/products">Products</a> |
     <a href="${pageContext.request.contextPath}/customer/products/1">Product Details</a> |
@@ -19,34 +20,80 @@
     <a href="${pageContext.request.contextPath}/customer/orders/1/confirmation">Order Confirmation</a> |
     <a href="${pageContext.request.contextPath}/customer/profile/edit">Edit Profile</a>
 </div>
-<hr>
 
+<div class="profile-card">
 
-<h1>Edit Profile</h1>
+    <%-- ===== Top brand bar, like the reference's dark header ===== --%>
+    <div class="brand-bar">
+        <span class="brand-name">HerjaHub</span>
+        <span class="breadcrumb">Profile Overview</span>
+        <span class="brand-bar-right">
+            <c:out value="${editProfileForm.firstName} ${editProfileForm.lastName}" />
+        </span>
+    </div>
 
-<%-- Note: Customer has no "image" field yet, so this is just a placeholder for now --%>
-<p>(profile photo placeholder)</p>
+    <%-- ===== Cover banner - decorative pattern instead of a real cover photo ===== --%>
+    <div class="cover-banner">
+        <svg viewBox="0 0 1000 500" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" y="0" width="1000" height="166.67" fill="#000000"/>
+            <rect x="0" y="166.67" width="1000" height="166.67" fill="#ffffff"/>
+            <rect x="0" y="333.33" width="1000" height="166.67" fill="#007a3d"/>
+            <polygon points="0,0 0,500 250,250" fill="#ce1126"/>
+        </svg>
+    </div>
 
-<form:form action="/customer/profile/edit" method="post" modelAttribute="editProfileForm">
+    <%-- ===== Avatar + name row, overlapping the banner ===== --%>
+    <div class="identity-row">
+        <%-- Note: Customer has no "image" field yet, so this is a placeholder avatar for now --%>
+        <div class="avatar-placeholder">
+            <c:out value="${editProfileForm.firstName.substring(0,1)}" />
+        </div>
 
-    <form:label path="firstName">First Name</form:label>
-    <form:input path="firstName" />
-    <form:errors path="firstName" />
+        <div class="identity-text">
+            <h1><c:out value="${editProfileForm.firstName} ${editProfileForm.lastName}" /></h1>
+            <p class="identity-email"><c:out value="${editProfileForm.email}" /></p>
+        </div>
 
-    <form:label path="lastName">Last Name</form:label>
-    <form:input path="lastName" />
-    <form:errors path="lastName" />
+        <%-- This button lives outside the <form> tag, but the "form" attribute
+             ties it to the form below by id, so clicking it still submits those
+             fields - that's how it can visually sit up here next to the name. --%>
+        <input class="save-btn" type="submit" value="Save changes" form="editProfileForm" />
+    </div>
 
-    <form:label path="email">Email</form:label>
-    <form:input path="email" />
-    <form:errors path="email" />
+    <%-- ===== Personal details form ===== --%>
+    <form:form id="editProfileForm" cssClass="profile-form" action="/customer/profile/edit" method="post" modelAttribute="editProfileForm">
 
-    <form:label path="newPassword">New Password</form:label>
-    <form:password path="newPassword" />
-    <form:errors path="newPassword" />
+        <h2 class="section-title">Personal details</h2>
 
-    <input type="submit" value="Save Changes" />
-</form:form>
+        <div class="field-grid">
+            <div class="field">
+                <form:label path="firstName">First name</form:label>
+                <form:input path="firstName" />
+                <form:errors path="firstName" cssClass="error-text" />
+            </div>
+
+            <div class="field">
+                <form:label path="lastName">Last name</form:label>
+                <form:input path="lastName" />
+                <form:errors path="lastName" cssClass="error-text" />
+            </div>
+
+            <div class="field">
+                <form:label path="email">Email</form:label>
+                <form:input path="email" />
+                <form:errors path="email" cssClass="error-text" />
+            </div>
+
+            <div class="field">
+                <form:label path="newPassword">New password</form:label>
+                <form:password path="newPassword" />
+                <form:errors path="newPassword" cssClass="error-text" />
+            </div>
+        </div>
+
+    </form:form>
+
+</div>
 
 </body>
 </html>
