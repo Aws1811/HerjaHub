@@ -72,7 +72,7 @@
      to satisfy the database column. ===== --%>
 <h3>Leave a Comment</h3>
 
-<form:form action="${pageContext.request.contextPath}/customer/products/${product.id}/comments" method="post" modelAttribute="comment">
+<form:form action="${pageContext.request.contextPath}/customer/products/${product.id}/comments" method="post" modelAttribute="newComment">
 
     <form:label path="rating">Rating (1-5)</form:label>
     <form:input path="rating" type="number" min="1" max="5" />

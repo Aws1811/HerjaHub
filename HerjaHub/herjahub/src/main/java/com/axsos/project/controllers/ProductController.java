@@ -54,7 +54,7 @@ public class ProductController {
 		model.addAttribute("product", productOpt.get());
 
 		// an empty Comment for the "leave a comment" form on this page to bind to
-		model.addAttribute("comment", new Comment());
+		model.addAttribute("newComment", new Comment());
 
 		return "customer/product-details";
 	}
@@ -62,7 +62,7 @@ public class ProductController {
 	// handles a customer submitting a new comment (with a rating) on a product
 	@PostMapping("/customer/products/{id}/comments")
 	public String addComment(@PathVariable("id") Long id,
-							  @Valid @ModelAttribute("comment") Comment comment,
+							  @Valid @ModelAttribute("newComment") Comment comment,
 							  BindingResult bindingResult,
 							  HttpSession session,
 							  Model model) {
