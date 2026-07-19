@@ -66,17 +66,12 @@
     </c:otherwise>
 </c:choose>
 
-<%-- ===== Leave a comment. The Comment model requires a rating (1-5), so
-     that's included here even though a full ratings feature (averages,
-     star breakdowns, etc.) isn't built - this is just the minimum needed
-     to satisfy the database column. ===== --%>
+<%-- ===== Leave a comment. Rating isn't included here - the ratings feature
+     itself isn't built yet, and Comment.rating is no longer required, so
+     this is just the comment text. ===== --%>
 <h3>Leave a Comment</h3>
 
 <form:form action="${pageContext.request.contextPath}/customer/products/${product.id}/comments" method="post" modelAttribute="newComment">
-
-    <form:label path="rating">Rating (1-5)</form:label>
-    <form:input path="rating" type="number" min="1" max="5" />
-    <form:errors path="rating" cssClass="error-text" />
 
     <form:label path="comment">Comment</form:label>
     <form:textarea path="comment" />

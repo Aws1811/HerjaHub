@@ -53,7 +53,11 @@ public class ProductController {
 
 		model.addAttribute("product", productOpt.get());
 
-		// an empty Comment for the "leave a comment" form on this page to bind to
+		// an empty Comment for the "leave a comment" form on this page to bind to.
+		// Named "newComment" rather than "comment" on purpose - Comment has a field
+		// that's also called "comment", and if the model attribute shared that exact
+		// name, Spring would try to resolve the whole object from a single request
+		// parameter (via its JPA id) instead of binding each field individually.
 		model.addAttribute("newComment", new Comment());
 
 		return "customer/product-details";
@@ -62,10 +66,10 @@ public class ProductController {
 	// handles a customer submitting a new comment (with a rating) on a product
 	@PostMapping("/customer/products/{id}/comments")
 	public String addComment(@PathVariable("id") Long id,
-							  @Valid @ModelAttribute("newComment") Comment comment,
-							  BindingResult bindingResult,
-							  HttpSession session,
-							  Model model) {
+	                         @Valid @ModelAttribute("newComment") Comment comment,
+	                         BindingResult bindingResult,
+	                         HttpSession session,
+	                         Model model) {
 
 		Customer customer = (Customer) session.getAttribute("loggedInCustomer");
 		if (customer == null) {
@@ -82,6 +86,15 @@ public class ProductController {
 			model.addAttribute("product", productOpt.get());
 			return "customer/product-details";
 		}
+
+		// Always clear the id before saving. This form only ever creates a NEW
+		// comment, but if a non-null id ever ends up on this object (e.g. a
+		// stale cached page resubmitting an old form), Hibernate would treat
+		// it as an UPDATE to an existing row instead of an INSERT of a new
+		// one - which fails loudly (StaleObjectStateException) since that
+		// row doesn't actually match. Clearing it here guarantees this is
+		// always treated as a brand new comment.
+		comment.setId(null);
 
 		// attach the comment to the logged-in customer and this product before saving
 		comment.setCustomer(customer);
