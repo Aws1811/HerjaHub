@@ -4,6 +4,7 @@ package com.axsos.project.models;
 
 import java.time.LocalDateTime;
 
+import jakarta.validation.constraints.NotEmpty;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -29,7 +30,8 @@ public class Comment {
 	// page). The column is kept here so it's ready to use once that
 	// feature is actually built, instead of having to add it back later.
 	private Integer rating;
-	@Size(max = 1000, message = "Comment cannot exceed 1000 characters")
+	@NotEmpty(message = "please fill the comment")
+	@Size(min = 5,max = 1000, message = "Comment cannot exceed 1000 characters")
 	@Column(columnDefinition = "TEXT")
 	private String comment;
 	@CreationTimestamp
