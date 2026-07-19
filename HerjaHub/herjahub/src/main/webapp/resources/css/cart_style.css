@@ -1,5 +1,5 @@
 /* ============================================
-   HerjaHub - My Orders page (customer)
+   HerjaHub - Cart page (customer)
    New forest-green / nonprofit-inspired design
    ============================================ */
 
@@ -14,7 +14,6 @@
     --charcoal: #1b2420;
     --muted: #6f7a71;
     --border: rgba(18,53,36,0.1);
-    --gold: #b7862c;
 }
 
 * { box-sizing: border-box; }
@@ -45,48 +44,43 @@ h1 {
 
 .muted { color: var(--muted); margin: 0 30px; }
 
-.order-row {
+.cart-line {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
-    gap: 16px;
+    gap: 18px;
     background: var(--white);
     border: 1px solid var(--border);
-    padding: 18px 24px;
+    padding: 16px 22px;
     margin: 0 30px 12px;
-    max-width: 740px;
+    max-width: 640px;
 }
-.order-row br { display: none; }
-.order-number {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 700;
-    color: var(--forest-dark);
-    text-transform: uppercase;
-    font-size: 13px;
-}
-.order-date { color: var(--muted); font-size: 13px; }
-.status-badge {
-    background: #fdf3e2;
-    color: var(--gold);
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-    padding: 6px 12px;
-}
-.order-total {
-    font-weight: 700;
-    color: var(--forest-dark);
-    margin-left: auto;
-}
-.view-link {
-    background: var(--leaf);
-    color: var(--forest-dark) !important;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 700;
-    text-transform: uppercase;
+.image-placeholder {
+    width: 60px;
+    height: 60px;
+    background: var(--cream);
+    color: var(--muted);
     font-size: 12px;
-    padding: 8px 18px;
-    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-.view-link:hover { background: var(--forest); color: #fff !important; }
+.cart-name { flex: 1; font-weight: 600; }
+.cart-qty { color: var(--muted); font-size: 13px; }
+.cart-subtotal { font-weight: 700; color: var(--forest-dark); }
+
+form { margin: 0 30px; max-width: 640px; }
+input[type="submit"] {
+    width: 100%;
+    background: var(--leaf);
+    color: var(--forest-dark);
+    border: none;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 14px;
+    padding: 15px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+input[type="submit"]:hover { background: var(--forest); color: #fff; }

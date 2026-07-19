@@ -1,5 +1,5 @@
 /* ============================================
-   HerjaHub - My Orders page (customer)
+   HerjaHub - Order Confirmation page (customer)
    New forest-green / nonprofit-inspired design
    ============================================ */
 
@@ -14,7 +14,6 @@
     --charcoal: #1b2420;
     --muted: #6f7a71;
     --border: rgba(18,53,36,0.1);
-    --gold: #b7862c;
 }
 
 * { box-sizing: border-box; }
@@ -32,61 +31,52 @@ body {
 .test-nav a { color: var(--muted); text-decoration: none; }
 .test-nav a:hover { color: var(--leaf); }
 
-h1 {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 800;
-    text-transform: uppercase;
-    color: #fff;
-    background: var(--forest-dark);
-    padding: 26px 30px;
-    margin: 0 0 30px;
-    font-size: 22px;
-}
-
-.muted { color: var(--muted); margin: 0 30px; }
-
-.order-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 16px;
+.confirmation-box {
+    max-width: 400px;
+    margin: 20px auto 0;
+    text-align: center;
     background: var(--white);
     border: 1px solid var(--border);
-    padding: 18px 24px;
-    margin: 0 30px 12px;
-    max-width: 740px;
+    padding: 40px;
 }
-.order-row br { display: none; }
-.order-number {
+
+.checkmark {
+    width: 64px;
+    height: 64px;
+    line-height: 64px;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    background: var(--leaf);
+    color: var(--forest-dark);
+    font-size: 28px;
+    font-weight: 700;
+}
+
+h1 {
     font-family: 'Poppins', sans-serif;
     font-weight: 700;
-    color: var(--forest-dark);
     text-transform: uppercase;
-    font-size: 13px;
-}
-.order-date { color: var(--muted); font-size: 13px; }
-.status-badge {
-    background: #fdf3e2;
-    color: var(--gold);
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-    padding: 6px 12px;
-}
-.order-total {
-    font-weight: 700;
+    font-size: 18px;
     color: var(--forest-dark);
-    margin-left: auto;
+    letter-spacing: 0.02em;
 }
-.view-link {
+
+table { width: 100%; margin: 20px 0; border-collapse: collapse; }
+table td { padding: 10px 4px; border-bottom: 1px solid var(--border); text-align: left; font-size: 14px; }
+
+.btn-link {
+    display: block;
+    margin-top: 10px;
+    padding: 13px;
     background: var(--leaf);
-    color: var(--forest-dark) !important;
+    color: var(--forest-dark);
     font-family: 'Poppins', sans-serif;
     font-weight: 700;
     text-transform: uppercase;
     font-size: 12px;
-    padding: 8px 18px;
+    letter-spacing: 0.04em;
     text-decoration: none;
 }
-.view-link:hover { background: var(--forest); color: #fff !important; }
+.btn-link:hover { background: var(--forest); color: #fff; }
+.btn-link.secondary { background: transparent; border: 1px solid var(--border); color: var(--charcoal); }
+.btn-link.secondary:hover { background: var(--cream); }

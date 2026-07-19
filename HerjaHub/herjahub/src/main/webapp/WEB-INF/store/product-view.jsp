@@ -5,51 +5,59 @@
 <head>
     <meta charset="UTF-8">
     <title>Edit Product</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/product-view.css">
 </head>
 <body>
 
 <%-- ===== Testing nav ===== --%>
-<div>
+<div class="test-nav">
     <a href="${pageContext.request.contextPath}/store/dashboard">Dashboard</a> |
     <a href="${pageContext.request.contextPath}/store/products/add">Add Product</a>
 </div>
-<hr>
 
-<h1>Edit Product</h1>
+<div class="page-card">
 
-<%-- product image --%>
-<c:choose>
-    <c:when test="${empty product.image}">
-        <p>(image placeholder)</p>
-    </c:when>
-    <c:otherwise>
-        <img src="${product.image}" alt="${product.productName}" width="200" />
-    </c:otherwise>
-</c:choose>
+    <h1>Edit Product</h1>
 
-<p><c:out value="${product.productName}" /></p>
-<p><c:out value="${product.description}" /></p>
-<p>$<c:out value="${product.price}" /></p>
+    <div class="top-row">
+        <%-- product image --%>
+        <c:choose>
+            <c:when test="${empty product.image}">
+                <div class="image-placeholder">image</div>
+            </c:when>
+            <c:otherwise>
+                <img class="product-image" src="${product.image}" alt="${product.productName}" />
+            </c:otherwise>
+        </c:choose>
 
-<a href="${pageContext.request.contextPath}/store/products/${product.id}/edit">Edit</a>
+        <div class="product-summary">
+            <p class="product-name"><c:out value="${product.productName}" /></p>
+            <p class="product-description"><c:out value="${product.description}" /></p>
+            <p class="product-price">$<c:out value="${product.price}" /></p>
 
-<hr>
+            <a class="edit-link" href="${pageContext.request.contextPath}/store/products/${product.id}/edit">Edit</a>
+        </div>
+    </div>
 
-<h2>Comments</h2>
+    <div class="comments-section">
+        <h2 class="section-title">Comments</h2>
 
-<c:choose>
-    <c:when test="${empty product.comments}">
-        <p>No comments yet.</p>
-    </c:when>
-    <c:otherwise>
-        <c:forEach var="comment" items="${product.comments}">
-            <p>
-                <strong><c:out value="${comment.customer.firstName}" /></strong> -
-                <c:out value="${comment.comment}" />
-            </p>
-        </c:forEach>
-    </c:otherwise>
-</c:choose>
+        <c:choose>
+            <c:when test="${empty product.comments}">
+                <p class="muted">No comments yet.</p>
+            </c:when>
+            <c:otherwise>
+                <c:forEach var="comment" items="${product.comments}">
+                    <p class="comment-line">
+                        <strong><c:out value="${comment.customer.firstName}" /></strong> -
+                        <c:out value="${comment.comment}" />
+                    </p>
+                </c:forEach>
+            </c:otherwise>
+        </c:choose>
+    </div>
+
+</div>
 
 </body>
 </html>

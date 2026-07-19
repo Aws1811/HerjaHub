@@ -1,250 +1,151 @@
 /* ============================================
    HerjaHub - Edit Profile page (customer)
-   Layout inspired by a "profile overview" reference:
-   dark brand bar, cover banner, overlapping avatar,
-   two-column personal details form.
+   New forest-green / nonprofit-inspired design
    ============================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap');
 
 :root {
-    --color-bg: #f7f5ef;
-    --color-card: #ffffff;
-    --color-text: #2b2b28;
-    --color-muted: #857f6d;
-    --color-border: #e4ddc9;
-
-    --color-primary: #3a5a40;
-    --color-primary-dark: #23361f;
-    --color-accent: #b5533c;
-    --color-gold: #c98a3e;
+    --forest-dark: #123524;
+    --forest: #1f5c3a;
+    --leaf: #7ac74f;
+    --cream: #f6f5ef;
+    --white: #ffffff;
+    --charcoal: #1b2420;
+    --muted: #6f7a71;
+    --border: rgba(18,53,36,0.1);
+    --accent: #b5533c;
 }
 
-* {
-    box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
     margin: 0;
     padding: 30px 0 60px;
-    font-family: 'Inter', Arial, sans-serif;
-    background-color: #6d7a6e;
-    color: var(--color-text);
+    font-family: 'Inter', sans-serif;
+    background-color: var(--cream);
+    color: var(--charcoal);
     line-height: 1.6;
-
-    /* diagonal accent stripes across the page, standing in for the
-       reference design's teal/yellow shapes, using our own palette */
-    background-image:
-        repeating-linear-gradient(135deg, rgba(201, 138, 62, 0.35) 0 26px, transparent 26px 140px),
-        repeating-linear-gradient(135deg, rgba(181, 83, 60, 0.3) 0 20px, transparent 20px 170px);
-    background-repeat: no-repeat, no-repeat;
-    background-position: -100px -60px, 60% -40px;
-    background-size: 340px 340px, 300px 300px;
 }
 
-a {
-    color: #e4ddc9;
-    text-decoration: none;
-}
+a { color: var(--forest); text-decoration: none; }
 
-/* ===== Testing nav - small strip above the card ===== */
-.test-nav {
-    max-width: 760px;
-    margin: 0 auto 16px;
-    padding: 0 10px;
-    font-size: 12px;
-    color: #f0ede2;
-}
+.test-nav { max-width: 760px; margin: 0 auto 16px; padding: 0 10px; font-size: 12px; color: var(--muted); }
+.test-nav a:hover { text-decoration: underline; }
 
-.test-nav a:hover {
-    text-decoration: underline;
-}
-
-/* ===== The whole profile page is one floating white card ===== */
 .profile-card {
     max-width: 760px;
     margin: 0 auto;
-    background-color: var(--color-card);
-    border-radius: 16px;
+    background: var(--white);
+    border: 1px solid var(--border);
     overflow: hidden;
-    box-shadow: 0 24px 50px -20px rgba(0, 0, 0, 0.45);
 }
 
-/* ===== Dark brand bar ===== */
 .brand-bar {
     display: flex;
     align-items: center;
     gap: 14px;
-    background-color: #202520;
-    color: #f0ede2;
+    background: var(--forest-dark);
+    color: #dfe8df;
     padding: 14px 24px;
     font-size: 13px;
 }
-
 .brand-name {
     font-family: 'Poppins', sans-serif;
-    font-weight: 700;
-    color: #ffffff;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--leaf);
+    letter-spacing: 0.03em;
 }
-
-.breadcrumb {
-    color: #b9b3a0;
-}
-
-.brand-bar-right {
-    margin-left: auto;
-    font-weight: 500;
-    color: #e4ddc9;
-}
-
-/* ===== Cover banner - decorative pattern instead of a real cover photo ===== */
-/*.cover-banner {*/
-/*    height: 130px;*/
-/*    background:*/
-/*        repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0 10px, transparent 10px 20px),*/
-/*        linear-gradient(120deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);*/
-/*}*/
+.breadcrumb { color: #9fb3a3; }
+.brand-bar-right { margin-left: auto; font-weight: 500; }
 
 .cover-banner {
     height: 130px;
-    position: relative;
-    overflow: hidden;
-    /*background-color: var(--color-primary-dark);*/
+    background:
+        repeating-linear-gradient(135deg, rgba(255,255,255,0.06) 0 10px, transparent 10px 20px),
+        linear-gradient(120deg, var(--forest) 0%, var(--forest-dark) 100%);
 }
 
-.cover-banner svg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 1;
-}
-/* ===== Avatar + name, overlapping the banner ===== */
 .identity-row {
     display: flex;
     align-items: flex-end;
     gap: 18px;
     padding: 0 28px;
-    margin-top: -46px;
+    margin-top: -44px;
 }
 
 .avatar-placeholder {
-    width: 92px;
-    height: 92px;
+    width: 90px;
+    height: 90px;
     border-radius: 50%;
-    background-color: var(--color-gold);
-    color: #ffffff;
+    background: var(--leaf);
+    color: var(--forest-dark);
     font-family: 'Poppins', sans-serif;
-    font-size: 32px;
-    font-weight: 600;
+    font-size: 30px;
+    font-weight: 800;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 4px solid #ffffff;
-    box-shadow: 0 6px 16px -6px rgba(0, 0, 0, 0.4);
+    border: 4px solid #fff;
 }
 
-.identity-text {
-    padding-bottom: 6px;
-}
-
+.identity-text { padding-bottom: 6px; }
 .identity-text h1 {
     font-family: 'Poppins', sans-serif;
-    font-size: 20px;
-    color: var(--color-primary-dark);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 19px;
+    color: var(--forest-dark);
     margin: 0;
 }
-
-.identity-email {
-    font-size: 13px;
-    color: var(--color-muted);
-    margin: 2px 0 0;
-}
+.identity-email { font-size: 13px; color: var(--muted); margin: 2px 0 0; }
 
 .save-btn {
     margin-left: auto;
     margin-bottom: 8px;
-    background-color: #ffffff;
-    color: var(--color-primary-dark);
-    border: 1.5px solid var(--color-primary);
-    border-radius: 999px;
-    padding: 9px 22px;
-    font-weight: 600;
-    font-size: 13px;
+    background: var(--leaf);
+    color: var(--forest-dark);
+    border: none;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-size: 12px;
+    padding: 11px 22px;
     cursor: pointer;
 }
+.save-btn:hover { background: var(--forest); color: #fff; }
 
-.save-btn:hover {
-    background-color: var(--color-primary);
-    color: #ffffff;
-}
-
-/* ===== Personal details section ===== */
-.profile-form {
-    padding: 30px 28px 36px;
-}
+.profile-form { padding: 30px 28px 36px; }
 
 .section-title {
     font-family: 'Poppins', sans-serif;
-    font-size: 16px;
-    color: var(--color-muted);
-    font-weight: 600;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 14px;
+    color: var(--muted);
     margin: 0 0 6px;
     padding-bottom: 12px;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--border);
 }
 
-.field-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px 24px;
-    margin-top: 20px;
-}
-
-.field label {
-    display: block;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--color-muted);
-    margin-bottom: 6px;
-}
-
+.field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 24px; margin-top: 20px; }
+.field label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--muted); margin-bottom: 6px; }
 .field input[type="text"],
 .field input[type="email"],
 .field input[type="password"] {
     width: 100%;
     padding: 10px 12px;
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
-    font-family: inherit;
+    border: 1px solid var(--border);
     font-size: 14px;
 }
-
-.field input:focus {
-    outline: none;
-    border-color: var(--color-primary);
-}
-
-.error-text {
-    display: block;
-    color: var(--color-accent);
-    font-size: 12px;
-    margin-top: 4px;
-}
+.field input:focus { outline: none; border-color: var(--leaf); }
+.error-text { display: block; color: var(--accent); font-size: 12px; margin-top: 4px; }
 
 @media (max-width: 600px) {
-    .field-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .identity-row {
-        flex-wrap: wrap;
-    }
-
-    .save-btn {
-        margin-left: 0;
-        width: 100%;
-        margin-top: 12px;
-    }
+    .field-grid { grid-template-columns: 1fr; }
+    .identity-row { flex-wrap: wrap; }
+    .save-btn { margin-left: 0; width: 100%; margin-top: 12px; }
 }
