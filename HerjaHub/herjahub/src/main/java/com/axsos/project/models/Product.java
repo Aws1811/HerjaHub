@@ -25,7 +25,7 @@ import jakarta.validation.constraints.Size;
 @Entity
 @Table(name = "products")
 public class Product {
-	 @Id
+	@Id
 	   @GeneratedValue(strategy = GenerationType.IDENTITY)
 	   private Long id;
 	   @NotNull(message = "Product name is required")
