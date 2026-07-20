@@ -535,7 +535,25 @@
 
   // Re-apply server-rendered state after a failed submit (which panel to show, which role was picked)
   window.addEventListener('DOMContentLoaded', function(){
-    
+    <c:if test="${showRegister}">
+      setMode(true);
+    </c:if>
+    <c:choose>
+      <c:when test="${registrationForm.accountType == 'store'}">
+        setRole('owner');
+      </c:when>
+      <c:otherwise>
+        setRole('customer');
+      </c:otherwise>
+    </c:choose>
+    <c:choose>
+      <c:when test="${loginForm.loginType == 'store'}">
+        setLoginRole('store');
+      </c:when>
+      <c:otherwise>
+        setLoginRole('customer');
+      </c:otherwise>
+    </c:choose>
   });
 </script>
 
