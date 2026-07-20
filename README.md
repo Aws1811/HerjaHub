@@ -46,18 +46,6 @@ This project was built as part of an academy full-stack track, using Java (Sprin
 - Passwords are hashed with BCrypt, never stored in plain text
 - Ownership checks on edit routes, so a store owner cannot view or edit another store's product by changing the URL
 
-## Project Structure
-
-```
-com.axsos.project
-├── controllers      - handles HTTP requests, one controller per role/area (Auth, Customer, Store, Product)
-├── dto              - form-backing objects used for pages that shouldn't bind directly to an entity
-├── models           - JPA entities (Customer, Store, Product, Order, OrderItem, Comment)
-├── repositores      - Spring Data JPA repositories
-└── services         - business logic, sits between controllers and repositories
-```
-
-Views live under `src/main/webapp/WEB-INF/`, split into a `customer/` and `store/` folder matching the two roles.
 
 ## Getting Started
 
@@ -78,11 +66,6 @@ Views live under `src/main/webapp/WEB-INF/`, split into a `customer/` and `store
    ```
 5. The app runs on `http://localhost:8080` by default
 
-## Database
-
-The schema is built around six entities: `customers`, `stores`, `products`, `orders`, `order_items`, and `comments`. A store has many products; an order can contain many products through `order_items`; and comments are tied to a specific product and customer.
-
-The full ER diagram is available in the project wiki.
 
 ## Planned / Future Work
 
