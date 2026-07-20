@@ -433,7 +433,16 @@
                   </div>
                   <form:errors path="description" cssClass="field-error" element="span"/>
 
-                
+                  <div class="row-2">
+                    <div>
+                      <div class="field">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3-8.7A2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .3 2 .6 3a2 2 0 01-.5 2L8 10a16 16 0 006 6l1.3-1.2a2 2 0 012-.5c1 .3 2 .5 3 .6a2 2 0 011.7 2z"/></svg>
+                        <form:input path="phone" placeholder=" " cssErrorClass="field-error-input"/>
+                        <label>Phone number</label>
+                      </div>
+                      <form:errors path="phone" cssClass="field-error" element="span"/>
+                    </div>
+                    <div>
                       <div class="field">
                         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
                         <form:input path="address" placeholder=" " cssErrorClass="field-error-input"/>
