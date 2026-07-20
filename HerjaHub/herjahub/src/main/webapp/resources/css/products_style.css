@@ -1,0 +1,169 @@
+/* ============================================
+   HerjaHub - Products page (customer)
+   New design system: dark forest green + leaf-green
+   accent, bold uppercase headings - nonprofit/nature
+   inspired, matching the Maikop reference.
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+    --forest-dark: #123524;
+    --forest: #1f5c3a;
+    --leaf: #7ac74f;
+    --cream: #f6f5ef;
+    --white: #ffffff;
+    --charcoal: #1b2420;
+    --muted: #6f7a71;
+    --border: rgba(18,53,36,0.1);
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    padding: 0 0 40px;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--cream);
+    color: var(--charcoal);
+    line-height: 1.6;
+}
+
+a { color: var(--forest); text-decoration: none; }
+hr { display: none; }
+
+.test-nav { font-size: 12px; color: var(--muted); padding: 16px 30px 10px; }
+.test-nav a { color: var(--muted); }
+.test-nav a:hover { color: var(--leaf); }
+
+/* ===== Dark hero-style nav bar ===== */
+.navbar {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    background: var(--forest-dark);
+    padding: 20px 34px;
+    margin: 0 30px 30px;
+    border-radius: 4px;
+}
+.navbar a {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #dfe8df;
+}
+.navbar a:first-child {
+    font-size: 20px;
+    color: var(--leaf);
+    margin-right: auto;
+    letter-spacing: 0.02em;
+}
+.navbar a:hover { color: var(--leaf); }
+
+/* ===== Filter strip ===== */
+.sidebar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    padding: 20px 30px;
+    margin: 0 30px 30px;
+}
+.sidebar h3 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 14px;
+    color: var(--forest-dark);
+    margin: 0;
+    padding-right: 18px;
+    border-right: 2px solid var(--leaf);
+}
+.sidebar p {
+    font-weight: 700;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0;
+}
+.filter-option {
+    font-size: 14px;
+    padding: 7px 16px;
+    border-radius: 999px;
+    background: var(--cream);
+    border: 1px solid var(--border);
+}
+.muted { color: var(--muted); font-size: 12px; }
+
+h1 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    font-size: 26px;
+    color: var(--forest-dark);
+    margin: 0 30px 22px;
+}
+
+/* ===== Product grid ===== */
+.product-card {
+    position: relative;
+    width: 216px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    padding: 20px;
+    margin: 0 30px 24px 0;
+    text-align: center;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.product-card:first-of-type { margin-left: 30px; }
+.product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 30px -18px rgba(18,53,36,0.35);
+}
+.product-card a { color: var(--charcoal); display: block; }
+
+/* small leaf-green corner badge, echoing the reference's circular accent */
+.product-card::before {
+    content: "";
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--leaf);
+}
+
+.image-placeholder {
+    background: var(--cream);
+    color: var(--muted);
+    font-size: 12px;
+    padding: 36px 0;
+    margin-bottom: 14px;
+}
+
+.product-name {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    margin: 6px 0 8px;
+}
+.product-price {
+    display: inline-block;
+    background: var(--forest-dark);
+    color: var(--leaf);
+    font-weight: 700;
+    font-size: 13px;
+    padding: 5px 14px;
+    border-radius: 999px;
+    margin: 0;
+}

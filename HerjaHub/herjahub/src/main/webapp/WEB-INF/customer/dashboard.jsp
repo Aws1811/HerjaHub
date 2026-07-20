@@ -21,6 +21,12 @@
   .welcome-card{ background:#fff; border-radius:20px; padding:32px; box-shadow:0 20px 40px -30px rgba(17,17,17,0.25); }
   .welcome-card h1{ font-family:'Newsreader',serif; font-weight:500; margin:0 0 8px; font-size:28px; }
   .welcome-card p{ color:#6b7280; margin:0; }
+  .test-nav{ background:#fff; border-radius:20px; padding:24px 32px; margin-top:24px; box-shadow:0 20px 40px -30px rgba(17,17,17,0.25); }
+  .test-nav h2{ font-family:'Newsreader',serif; font-weight:500; margin:0 0 4px; font-size:18px; }
+  .test-nav p{ color:#6b7280; margin:0 0 16px; font-size:13px; }
+  .test-nav .links{ display:flex; flex-wrap:wrap; gap:10px; }
+  .test-nav a{ color:var(--charcoal); text-decoration:none; font-weight:600; font-size:13px; padding:8px 14px; border:1px solid rgba(31,41,55,0.15); border-radius:10px; }
+  .test-nav a:hover{ background:var(--light-gray); }
 </style>
 </head>
 <body>
@@ -32,6 +38,21 @@
     <div class="welcome-card">
       <h1 class="font-display">Welcome, ${customer.firstName}!</h1>
       <p>You're logged in as a customer. Browse the marketplace and support local artisans.</p>
+    </div>
+
+    <%-- ===== Testing nav: quick links to every customer page ===== --%>
+    <div class="test-nav">
+      <h2>Testing Navigation</h2>
+      <p>Temporary links for going through every customer page during development.</p>
+      <div class="links">
+        <a href="${pageContext.request.contextPath}/customer/dashboard">Dashboard</a>
+        <a href="${pageContext.request.contextPath}/customer/products">Products</a>
+        <a href="${pageContext.request.contextPath}/customer/products/1">Product Details (id=1)</a>
+        <a href="${pageContext.request.contextPath}/customer/cart">Cart</a>
+        <a href="${pageContext.request.contextPath}/customer/orders">My Orders</a>
+        <a href="${pageContext.request.contextPath}/customer/orders/1/confirmation">Order Confirmation (id=1)</a>
+        <a href="${pageContext.request.contextPath}/customer/profile/edit">Edit Profile</a>
+      </div>
     </div>
   </div>
 </body>

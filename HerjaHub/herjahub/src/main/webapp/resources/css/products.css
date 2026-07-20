@@ -1,0 +1,140 @@
+/* ============================================
+   HerjaHub - Products page (customer)
+   Matches the site's established design system
+   (same palette/fonts as the login and dashboard pages)
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,500&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    --white: #FFFFFF;
+    --light-gray: #F8F9FA;
+    --charcoal: #1F2937;
+    --muted: #6b7280;
+    --border: rgba(31,41,55,0.08);
+    --green: #198754;
+    --green-dark: #146c43;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    padding: 30px;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--light-gray);
+    color: var(--charcoal);
+    line-height: 1.6;
+}
+
+h1, h3 {
+    font-family: 'Newsreader', serif;
+    font-weight: 500;
+}
+
+a { color: var(--green); text-decoration: none; }
+hr { display: none; }
+
+.test-nav {
+    font-size: 12px;
+    color: var(--muted);
+    padding: 0 4px 14px;
+}
+.test-nav a { color: var(--muted); }
+.test-nav a:hover { color: var(--green); }
+
+/* ===== Nav bar ===== */
+.navbar {
+    display: flex;
+    align-items: center;
+    gap: 26px;
+    background: var(--white);
+    border-radius: 16px;
+    padding: 16px 26px;
+    margin-bottom: 24px;
+    box-shadow: 0 20px 40px -30px rgba(17,17,17,0.25);
+}
+.navbar a {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--charcoal);
+    padding: 6px 4px;
+    border-bottom: 2px solid transparent;
+}
+.navbar a:first-child {
+    font-family: 'Newsreader', serif;
+    font-size: 19px;
+    color: var(--green-dark);
+    margin-right: auto;
+}
+.navbar a:hover { color: var(--green); border-bottom-color: var(--green); }
+
+/* ===== Filter strip ===== */
+.sidebar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 18px;
+    background: var(--white);
+    border-radius: 16px;
+    padding: 18px 24px;
+    margin-bottom: 26px;
+    box-shadow: 0 20px 40px -30px rgba(17,17,17,0.25);
+}
+.sidebar h3 {
+    margin: 0;
+    font-size: 16px;
+    padding-right: 18px;
+    border-right: 1px solid var(--border);
+}
+.sidebar p {
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin: 0;
+}
+.filter-option {
+    font-size: 14px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: var(--light-gray);
+}
+.muted { color: var(--muted); font-size: 12px; }
+
+h1 { font-size: 26px; margin: 4px 0 20px; }
+
+/* ===== Product grid ===== */
+.product-card {
+    width: 210px;
+    background: var(--white);
+    border-radius: 18px;
+    padding: 18px;
+    margin: 0 20px 20px 0;
+    text-align: center;
+    box-shadow: 0 20px 40px -30px rgba(17,17,17,0.25);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 24px 44px -20px rgba(17,17,17,0.3);
+}
+.product-card a { color: var(--charcoal); display: block; }
+
+.image-placeholder {
+    background: var(--light-gray);
+    color: var(--muted);
+    font-size: 12px;
+    padding: 34px 0;
+    border-radius: 12px;
+    margin-bottom: 12px;
+}
+
+.product-name {
+    font-family: 'Newsreader', serif;
+    font-weight: 500;
+    font-size: 16px;
+    margin: 6px 0 4px;
+}
+.product-price { color: var(--green-dark); font-weight: 600; margin: 0; }
