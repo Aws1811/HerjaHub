@@ -1,229 +1,169 @@
 /* ============================================
    HerjaHub - Products page (customer)
-   Bolder, warmer redesign: olive green + brick red +
-   golden accent, circular product images, ribbon badges.
+   New design system: dark forest green + leaf-green
+   accent, bold uppercase headings - nonprofit/nature
+   inspired, matching the Maikop reference.
    ============================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap');
 
 :root {
-    --color-bg: #f7f5ef;
-    --color-card: #ffffff;
-    --color-text: #2b2b28;
-    --color-muted: #857f6d;
-    --color-border: #e4ddc9;
-
-    --color-primary: #3a5a40;        /* olive green */
-    --color-primary-dark: #23361f;
-    --color-accent: #b5533c;         /* brick red */
-    --color-gold: #c98a3e;           /* warm gold, like olive oil */
+    --forest-dark: #123524;
+    --forest: #1f5c3a;
+    --leaf: #7ac74f;
+    --cream: #f6f5ef;
+    --white: #ffffff;
+    --charcoal: #1b2420;
+    --muted: #6f7a71;
+    --border: rgba(18,53,36,0.1);
 }
 
-* {
-    box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
     margin: 0;
-    padding: 0 0 30px;
-    font-family: 'Inter', Arial, sans-serif;
-    background-color: var(--color-bg);
-    color: var(--color-text);
+    padding: 0 0 40px;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--cream);
+    color: var(--charcoal);
     line-height: 1.6;
 }
 
-/* thin decorative stripe at the very top, a small nod to the
-   colors without literally drawing a flag */
-body::before {
-    content: "";
-    display: block;
-    height: 12px;
-    background: linear-gradient(90deg, #e62d36 0 25%, black 25% 50%,white 50% 75%, #0d6b33 75% 100%);
-}
+a { color: var(--forest); text-decoration: none; }
+hr { display: none; }
 
-h1, h3 {
-    font-family: 'Poppins', 'Inter', sans-serif;
-    color: var(--color-primary-dark);
-}
+.test-nav { font-size: 12px; color: var(--muted); padding: 16px 30px 10px; }
+.test-nav a { color: var(--muted); }
+.test-nav a:hover { color: var(--leaf); }
 
-a {
-    color: var(--color-primary);
-    text-decoration: none;
-}
-
-hr {
-    display: none;
-}
-
-/* ===== Testing nav - small and out of the way ===== */
-.test-nav {
-    background: none;
-    border: none;
-    padding: 14px 30px 10px;
-    font-size: 12px;
-    color: var(--color-muted);
-}
-
-.test-nav a {
-    color: var(--color-muted);
-}
-
-.test-nav a:hover {
-    color: var(--color-primary);
-}
-
-/* ===== Real nav bar: bold header band, like a hero header ===== */
+/* ===== Dark hero-style nav bar ===== */
 .navbar {
     display: flex;
     align-items: center;
-    gap: 8px;
-    background: linear-gradient(120deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
-    border-radius: 16px;
-    padding: 18px 28px;
-    margin: 0 30px 26px;
-    box-shadow: 0 14px 30px -18px rgba(35, 54, 31, 0.55);
+    gap: 30px;
+    background: var(--forest-dark);
+    padding: 20px 34px;
+    margin: 0 30px 30px;
+    border-radius: 4px;
 }
-
 .navbar a {
-    color: #f2efe3;
-    font-weight: 600;
-    font-size: 14px;
-    padding: 8px 14px;
-    border-radius: 999px;
-}
-
-.navbar a:first-child {
     font-family: 'Poppins', sans-serif;
-    font-size: 19px;
-    color: #ffffff;
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #dfe8df;
+}
+.navbar a:first-child {
+    font-size: 20px;
+    color: var(--leaf);
     margin-right: auto;
-    padding-left: 0;
+    letter-spacing: 0.02em;
 }
+.navbar a:hover { color: var(--leaf); }
 
-.navbar a:hover {
-    background-color: rgba(255, 255, 255, 0.16);
-}
-
-/* ===== Sidebar filter - horizontal strip above the grid.
-   (Kept as a simple block instead of floating it beside the grid,
-   since the JSP has no wrapping container to safely float against.) ===== */
+/* ===== Filter strip ===== */
 .sidebar {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 18px;
-    margin: 0 30px 26px;
-    background-color: var(--color-card);
-    border: 1px solid var(--color-border);
-    border-radius: 16px;
-    padding: 18px 22px;
-    box-shadow: 0 10px 24px -18px rgba(41, 66, 49, 0.3);
+    gap: 16px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    padding: 20px 30px;
+    margin: 0 30px 30px;
 }
-
 .sidebar h3 {
-    margin: 0;
-    font-size: 16px;
-    padding-right: 18px;
-    border-right: 2px dashed var(--color-border);
-}
-
-.sidebar p {
-    font-weight: 600;
-    font-size: 12px;
-    color: var(--color-gold);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.05em;
+    font-size: 14px;
+    color: var(--forest-dark);
+    margin: 0;
+    padding-right: 18px;
+    border-right: 2px solid var(--leaf);
+}
+.sidebar p {
+    font-weight: 700;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
     margin: 0;
 }
-
 .filter-option {
     font-size: 14px;
-    padding: 6px 12px;
+    padding: 7px 16px;
     border-radius: 999px;
-    background-color: var(--color-bg);
+    background: var(--cream);
+    border: 1px solid var(--border);
 }
-
-.muted {
-    color: var(--color-muted);
-    font-size: 12px;
-    font-weight: 400 !important;
-    text-transform: none;
-}
+.muted { color: var(--muted); font-size: 12px; }
 
 h1 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
     font-size: 26px;
-    margin: 0 30px 20px;
+    color: var(--forest-dark);
+    margin: 0 30px 22px;
 }
 
 /* ===== Product grid ===== */
 .product-card {
     position: relative;
-    width: 200px;
-    background-color: var(--color-card);
-    border: 1px solid var(--color-border);
-    border-radius: 18px;
-    padding: 20px 16px 16px;
-    margin: 0 20px 20px 30px;
+    width: 216px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    padding: 20px;
+    margin: 0 30px 24px 0;
     text-align: center;
-    box-shadow: 0 10px 22px -16px rgba(41, 66, 49, 0.3);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
-
+.product-card:first-of-type { margin-left: 30px; }
 .product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 16px 28px -14px rgba(41, 66, 49, 0.45);
+    transform: translateY(-6px);
+    box-shadow: 0 18px 30px -18px rgba(18,53,36,0.35);
 }
+.product-card a { color: var(--charcoal); display: block; }
 
-/* small ribbon badge in the corner, a nod to the "fresh/sale" tags
-   in the reference design, styled with the gold accent instead */
+/* small leaf-green corner badge, echoing the reference's circular accent */
 .product-card::before {
-    content: "Handmade";
+    content: "";
     position: absolute;
-    top: 12px;
-    left: 12px;
-    background-color: var(--color-gold);
-    color: #ffffff;
-    font-size: 10px;
-    font-weight: 600;
-    padding: 4px 10px;
-    border-radius: 999px;
-}
-
-.product-card a {
-    color: var(--color-text);
-    display: block;
-}
-
-/* circular product image, like the reference's round thumbnails */
-.image-placeholder {
-    width: 120px;
-    height: 120px;
-    margin: 6px auto 12px;
+    top: 14px;
+    right: 14px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
-    background-color: #eef2ea;
-    color: var(--color-muted);
-    font-size: 11px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 10px;
+    background: var(--leaf);
+}
+
+.image-placeholder {
+    background: var(--cream);
+    color: var(--muted);
+    font-size: 12px;
+    padding: 36px 0;
+    margin-bottom: 14px;
 }
 
 .product-name {
     font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-    font-size: 15px;
-    margin: 4px 0 4px;
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    margin: 6px 0 8px;
 }
-
 .product-price {
     display: inline-block;
-    color: #ffffff;
-    background-color: var(--color-accent);
-    font-weight: 600;
+    background: var(--forest-dark);
+    color: var(--leaf);
+    font-weight: 700;
     font-size: 13px;
-    padding: 4px 12px;
+    padding: 5px 14px;
     border-radius: 999px;
     margin: 0;
 }

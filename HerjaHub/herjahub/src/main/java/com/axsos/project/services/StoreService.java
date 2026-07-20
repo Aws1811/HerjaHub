@@ -1,25 +1,73 @@
 package com.axsos.project.services;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.axsos.project.dto.EditStoreForm;
 import com.axsos.project.dto.RegistrationForm;
+import com.axsos.project.dto.StorePageForm;
+import com.axsos.project.dto.StoreProfileForm;
 import com.axsos.project.models.Store;
 import com.axsos.project.repositores.StoreRepository;
 
 
 @Service
 public class StoreService {
-    @Autowired
+	@Autowired
     private StoreRepository storeRepository;
 
     public boolean emailExists(String email) {
         return storeRepository.existsByEmail(email);
+    }
+
+    public Optional<Store> findById(Long id) {
+        return storeRepository.findById(id);
+    }
+
+    // same as findById, but with the products collection already initialized -
+    // use this whenever a view needs to read store.getProducts() (e.g. fn:length(store.products))
+    public Store findByIdWithProducts(Long id) {
+        return storeRepository.findByIdWithProducts(id).orElse(null);
+    }
+
+    // Updates the editable profile fields (never touches email or password here)
+    public Store updateProfile(Store store, StoreProfileForm form) {
+        store.setFirstName(form.getFirstName());
+        store.setLastName(form.getLastName());
+        store.setStoreName(form.getStoreName());
+        store.setDescription(form.getDescription());
+        store.setPhone(form.getPhone());
+        store.setAddress(form.getAddress());
+        if (form.getImage() != null && !form.getImage().isBlank()) {
+            store.setImage(form.getImage());
+        }
+        return storeRepository.save(store);
+    }
+
+    // Updates the editable profile fields from the Edit Store page (imageUrl null keeps the existing logo)
+    public Store updateProfileFromPage(Store store, StorePageForm form, String imageUrl) {
+        store.setFirstName(form.getFirstName());
+        store.setLastName(form.getLastName());
+        store.setStoreName(form.getStoreName());
+        store.setDescription(form.getDescription());
+        store.setPhone(form.getPhone());
+        store.setAddress(form.getAddress());
+        if (imageUrl != null) {
+            store.setImage(imageUrl);
+        }
+        return storeRepository.save(store);
+    }
+
+    // Verifies the current password, then sets the new (hashed) one
+    public boolean changePassword(Store store, String currentPassword, String newPassword) {
+        if (!BCrypt.checkpw(currentPassword, store.getPassword())) {
+            return false;
+        }
+        store.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
+        storeRepository.save(store);
+        return true;
     }
 
     // Saves a new store owner using the values entered in the registration form
@@ -48,32 +96,6 @@ public class StoreService {
         }
 
         return Optional.empty();
-    }
-
-    // all stores, used to fill the "Store" filter on the Products page
-    public List<Store> getAllStores() {
-        return storeRepository.findAll();
-    }
-
-    // one store by id, freshly loaded from the database. Used whenever a page
-    // needs a store's lazy collections (like its products) - the Store object
-    // cached in the session was loaded during an earlier request, and its
-    // Hibernate session is already closed, so lazy fields on it can't be
-    // read anymore (see LazyInitializationException). Re-fetching here gets
-    // a copy tied to the current request's Hibernate session instead.
-    public Optional<Store> getStoreById(Long id) {
-        return storeRepository.findById(id);
-    }
-
-    // Updates the store's public info (name, description, phone, address)
-    // from the Edit Store form - same "copy fields onto the real entity,
-    // then save" pattern as CustomerService.updateProfile.
-    public Store updateStoreProfile(Store store, EditStoreForm form) {
-        store.setStoreName(form.getStoreName());
-        store.setDescription(form.getDescription());
-        store.setPhone(form.getPhone());
-        store.setAddress(form.getAddress());
-        return storeRepository.save(store);
     }
 
 }

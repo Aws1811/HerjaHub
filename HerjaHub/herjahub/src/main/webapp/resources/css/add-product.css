@@ -1,0 +1,77 @@
+/* ============================================
+   HerjaHub - Add Product page (store owner)
+   New forest-green / nonprofit-inspired design
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+    --forest-dark: #123524;
+    --forest: #1f5c3a;
+    --leaf: #7ac74f;
+    --cream: #f6f5ef;
+    --white: #ffffff;
+    --charcoal: #1b2420;
+    --muted: #6f7a71;
+    --border: rgba(18,53,36,0.1);
+    --accent: #b5533c;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    padding: 30px;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--cream);
+    color: var(--charcoal);
+    line-height: 1.6;
+}
+
+.test-nav { font-size: 12px; color: var(--muted); padding: 0 4px 20px; }
+.test-nav a { color: var(--muted); text-decoration: none; }
+.test-nav a:hover { color: var(--leaf); }
+
+.form-box {
+    max-width: 460px;
+    margin: 0 auto;
+    background: var(--white);
+    border: 1px solid var(--border);
+    padding: 36px;
+}
+
+h1 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    text-align: center;
+    font-size: 18px;
+    color: var(--forest-dark);
+    letter-spacing: 0.02em;
+}
+
+.add-product-form label { display: block; margin-top: 14px; margin-bottom: 4px; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.03em; color: var(--muted); }
+.add-product-form input[type="text"], .add-product-form textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    font-family: inherit;
+}
+.add-product-form textarea { min-height: 80px; }
+.error-text { color: var(--accent); font-size: 12px; }
+
+input[type="submit"] {
+    width: 100%;
+    margin-top: 22px;
+    padding: 14px;
+    background: var(--leaf);
+    color: var(--forest-dark);
+    border: none;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 13px;
+    cursor: pointer;
+}
+input[type="submit"]:hover { background: var(--forest); color: #fff; }

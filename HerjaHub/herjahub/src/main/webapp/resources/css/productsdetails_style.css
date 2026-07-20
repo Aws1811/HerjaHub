@@ -1,192 +1,127 @@
 /* ============================================
    HerjaHub - Product Details page (customer)
-   Same warm, natural vibe as the Products page:
-   olive green + brick red + golden accent.
+   New forest-green / nonprofit-inspired design
    ============================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap');
 
 :root {
-    --color-bg: #f7f5ef;
-    --color-card: #ffffff;
-    --color-text: #2b2b28;
-    --color-muted: #857f6d;
-    --color-border: #e4ddc9;
-
-    --color-primary: #3a5a40;        /* olive green */
-    --color-primary-dark: #23361f;
-    --color-accent: #b5533c;         /* brick red */
-    --color-gold: #c98a3e;           /* warm gold, like olive oil */
+    --forest-dark: #123524;
+    --forest: #1f5c3a;
+    --leaf: #7ac74f;
+    --cream: #f6f5ef;
+    --white: #ffffff;
+    --charcoal: #1b2420;
+    --muted: #6f7a71;
+    --border: rgba(18,53,36,0.1);
 }
 
-* {
-    box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
     margin: 0;
-    padding: 0 0 30px;
-    font-family: 'Inter', Arial, sans-serif;
-    background-color: var(--color-bg);
-    color: var(--color-text);
+    padding: 0 0 40px;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--cream);
+    color: var(--charcoal);
     line-height: 1.6;
 }
 
-/* same decorative stripe as the Products page, kept identical on every page */
-body::before {
-    content: "";
-    display: block;
-    height: 12px;
-    background: linear-gradient(90deg, #e62d36 0 25%, black 25% 50%, white 50% 75%, #0d6b33 75% 100%);
-}
+a { color: var(--forest); text-decoration: none; }
+hr { display: none; }
 
-h1, h2, h3 {
-    font-family: 'Poppins', 'Inter', sans-serif;
-    color: var(--color-primary-dark);
-}
+.test-nav { font-size: 12px; color: var(--muted); padding: 16px 30px; }
+.test-nav a { color: var(--muted); }
+.test-nav a:hover { color: var(--leaf); }
 
+/* dark header band, like the reference's hero sections */
 h1 {
-    font-size: 26px;
-    margin: 22px 30px 20px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #fff;
+    background: var(--forest-dark);
+    padding: 26px 30px;
+    margin: 0 0 30px;
+    font-size: 22px;
 }
 
-a {
-    color: var(--color-primary);
-    text-decoration: none;
-}
-
-hr {
-    display: none;
-}
-
-/* ===== Testing nav - small and out of the way ===== */
-.test-nav {
-    background: none;
-    border: none;
-    padding: 14px 30px 0;
-    font-size: 12px;
-    color: var(--color-muted);
-}
-
-.test-nav a {
-    color: var(--color-muted);
-}
-
-.test-nav a:hover {
-    color: var(--color-primary);
-}
-
-.muted {
-    color: var(--color-muted);
-    font-size: 13px;
-    margin: 0 30px 10px;
-}
-
-/* ===== Product image, centered and styled like a card ===== */
+.image-placeholder,
 .product-image {
-    display: block;
-    width: 260px;
+    width: 280px;
     height: 260px;
-    object-fit: cover;
-    margin: 0 auto 20px;
-    border-radius: 20px;
-    box-shadow: 0 14px 28px -16px rgba(41, 66, 49, 0.4);
+    float: left;
+    margin: 0 30px 20px 30px;
 }
-
 .image-placeholder {
-    width: 260px;
-    height: 260px;
-    margin: 0 auto 20px;
-    background-color: #eef2ea;
-    color: var(--color-muted);
-    border-radius: 20px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    color: var(--muted);
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
     padding: 20px;
 }
+.product-image { object-fit: cover; }
 
-/* ===== Title / description / price ===== */
+/* these are normal block elements after the floated image above, so their
+   text naturally wraps to the right of it - no fixed margin guesswork needed */
 .product-title {
-    text-align: center;
-    font-size: 22px;
-    margin: 0 30px 6px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 20px;
+    color: var(--forest-dark);
+    margin: 0 30px 8px 0;
 }
-
-.description {
-    text-align: center;
-    color: var(--color-muted);
-    max-width: 480px;
-    margin: 0 auto 14px;
-}
-
+.description { color: var(--muted); margin: 0 30px 14px 0; }
 .price {
-    display: table;
-    margin: 0 auto 20px;
-    color: #ffffff;
-    background-color: var(--color-accent);
-    font-weight: 600;
+    display: inline-block;
+    margin: 0 30px 18px 0;
+    background: var(--forest-dark);
+    color: var(--leaf);
+    font-weight: 700;
     font-size: 16px;
-    padding: 6px 18px;
+    padding: 8px 18px;
     border-radius: 999px;
 }
 
-/* ===== Add to Cart form, styled like a small card ===== */
-.add-to-cart-form {
-    max-width: 320px;
-    margin: 0 auto 26px;
-    background-color: var(--color-card);
-    border: 1px solid var(--color-border);
-    border-radius: 16px;
-    padding: 20px 24px;
-    text-align: center;
-    box-shadow: 0 10px 22px -16px rgba(41, 66, 49, 0.3);
-}
-
-.add-to-cart-form label {
-    display: block;
-    font-weight: 600;
-    font-size: 13px;
-    margin-bottom: 8px;
-    color: var(--color-primary-dark);
-}
-
+.add-to-cart-form { clear: left; margin: 20px 30px 40px; }
 .add-to-cart-form input[type="number"] {
     width: 70px;
-    padding: 8px;
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
+    padding: 10px;
+    border: 1px solid var(--border);
     margin-right: 10px;
-    text-align: center;
 }
-
 .add-to-cart-form input[type="submit"] {
-    background-color: var(--color-primary);
-    color: #ffffff;
+    background: var(--leaf);
+    color: var(--forest-dark);
     border: none;
-    border-radius: 999px;
-    padding: 10px 22px;
-    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 13px;
+    padding: 12px 26px;
     cursor: pointer;
 }
+.add-to-cart-form input[type="submit"]:hover { background: var(--forest); color: #fff; }
 
-.add-to-cart-form input[type="submit"]:hover {
-    background-color: var(--color-primary-dark);
-}
-
-/* ===== Comments ===== */
 h3 {
-    text-align: center;
-    font-size: 18px;
-    margin: 0 0 14px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 15px;
+    color: var(--forest-dark);
+    margin: 0 30px 14px;
 }
-
 .comment-line {
-    max-width: 480px;
-    margin: 0 auto 10px;
-    background-color: var(--color-card);
-    border: 1px dashed var(--color-border);
-    border-radius: 12px;
-    padding: 10px 16px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    padding: 12px 18px;
+    margin: 0 30px 10px;
 }
+.muted { color: var(--muted); margin: 0 30px; }

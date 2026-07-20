@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <!DOCTYPE html>
 <html>
@@ -40,7 +41,7 @@
 <p class="price">$ <c:out value="${product.price}" /></p>
 
 <%-- Add to Cart form --%>
-<form class="add-to-cart-form" action="/customer/cart/add/${product.id}" method="post">
+<form class="add-to-cart-form" action="${pageContext.request.contextPath}/customer/cart/add/${product.id}" method="post">
     <label>Quantity</label>
     <input type="number" name="quantity" value="1" min="1" />
     <input type="submit" value="Add to Cart" />
@@ -48,36 +49,54 @@
 
 <hr>
 
-<h3>Comments</h3>
+<%-- ===== Reviews. CustomerProductController passes:
+     - comments: List<CommentDTO> (already sorted newest first)
+     - avgRating / reviewCount: shown at the top of this section
+     - reviewForm: bound to the form below (rating + comment text) ===== --%>
+<h3>Reviews</h3>
+
+<c:if test="${reviewCount > 0}">
+    <p class="rating-summary">
+        Average rating:
+        <fmt:formatNumber value="${avgRating}" maxFractionDigits="1" />
+        (<c:out value="${reviewCount}" /> reviews)
+    </p>
+</c:if>
 
 <c:choose>
-    <c:when test="${empty product.comments}">
-        <p class="muted">No comments yet.</p>
+    <c:when test="${empty comments}">
+        <p class="muted">No reviews yet.</p>
     </c:when>
     <c:otherwise>
-        <%-- named "existingComment" (not "comment") so it doesn't shadow the
-             "comment" model attribute used by the form below --%>
-        <c:forEach var="existingComment" items="${product.comments}">
+        <c:forEach var="existingComment" items="${comments}">
             <p class="comment-line">
-                <strong><c:out value="${existingComment.customer.firstName}" /></strong> -
-                <c:out value="${existingComment.comment}" />
+                <strong><c:out value="${existingComment.customerName}" /></strong>
+                <c:if test="${not empty existingComment.rating}">
+                    - <c:out value="${existingComment.rating}" />/5
+                </c:if>
+                - <c:out value="${existingComment.comment}" />
             </p>
         </c:forEach>
     </c:otherwise>
 </c:choose>
 
-<%-- ===== Leave a comment. Rating isn't included here - the ratings feature
-     itself isn't built yet, and Comment.rating is no longer required, so
-     this is just the comment text. ===== --%>
-<h3>Leave a Comment</h3>
+<h3>Leave a Review</h3>
 
-<form:form action="${pageContext.request.contextPath}/customer/products/${product.id}/comments" method="post" modelAttribute="newComment">
+<c:if test="${not empty errorMessage}">
+    <p class="error-text"><c:out value="${errorMessage}" /></p>
+</c:if>
 
-    <form:label path="comment">Comment</form:label>
+<form:form action="${pageContext.request.contextPath}/customer/products/${product.id}/reviews" method="post" modelAttribute="reviewForm">
+
+    <form:label path="rating">Rating (1-5)</form:label>
+    <form:input path="rating" type="number" min="1" max="5" />
+    <form:errors path="rating" cssClass="error-text" />
+
+    <form:label path="comment">Review</form:label>
     <form:textarea path="comment" />
     <form:errors path="comment" cssClass="error-text" />
 
-    <input type="submit" value="Post Comment" />
+    <input type="submit" value="Post Review" />
 </form:form>
 
 </body>

@@ -198,7 +198,7 @@ public class CustomerController {
 		return "redirect:/customer/dashboard";
 	}
 
-	// small helper so every cart route read/write the session the same way
+	// small helper so every cart route reads/writes the session the same way
 	@SuppressWarnings("unchecked")
 	private List<CartItem> getCartFromSession(HttpSession session) {
 		List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
