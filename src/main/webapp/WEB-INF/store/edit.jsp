@@ -96,7 +96,16 @@
 </style>
 </head>
 <body>
-  
+  <c:set var="mn" value="${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']}"/>
+  <div class="topbar">
+    <div class="brand"><div class="mark"><i data-lucide="leaf" style="width:19px;height:19px;"></i></div> HerjaHub</div>
+    <div class="topbar-nav">
+      <a href="${pageContext.request.contextPath}/store/dashboard">Dashboard</a>
+      <a href="${pageContext.request.contextPath}/store/products">Products</a>
+      <a class="logout" href="${pageContext.request.contextPath}/logout">Logout</a>
+    </div>
+  </div>
+
   <div class="page-wrap">
 
     <div class="profile-header">
