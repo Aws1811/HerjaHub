@@ -25,4 +25,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	// single product with its store already loaded - used by the product detail page
 	@Query("SELECT p FROM Product p JOIN FETCH p.store WHERE p.id = :id")
 	Optional<Product> findByIdWithStore(@Param("id") Long id);
+
+	// Get products that are still available.
+	List<Product> findByQuantityGreaterThan(Integer quantity);
 }
