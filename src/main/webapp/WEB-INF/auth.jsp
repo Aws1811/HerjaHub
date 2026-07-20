@@ -400,7 +400,49 @@
 
                 <div class="row-2">
                   <div>
-                    
+                    <div class="field">
+                      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
+                      <form:password path="password" placeholder=" " cssErrorClass="field-error-input"/>
+                      <label>Password</label>
+                    </div>
+                    <form:errors path="password" cssClass="field-error" element="span"/>
+                  </div>
+                  <div>
+                    <div class="field">
+                      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
+                      <form:password path="confirmPassword" placeholder=" " cssErrorClass="field-error-input"/>
+                      <label>Confirm password</label>
+                    </div>
+                    <form:errors path="confirmPassword" cssClass="field-error" element="span"/>
+                  </div>
+                </div>
+
+                <!-- Store owner extra fields -->
+                <div class="expand-wrap" id="ownerFields">
+                  <div class="field">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l1-5h16l1 5M4 9h16v10a1 1 0 01-1 1H5a1 1 0 01-1-1V9z"/></svg>
+                    <form:input path="storeName" placeholder=" " cssErrorClass="field-error-input"/>
+                    <label>Store name</label>
+                  </div>
+                  <form:errors path="storeName" cssClass="field-error" element="span"/>
+
+                  <div class="field">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+                    <form:input path="description" placeholder=" "/>
+                    <label>Store description</label>
+                  </div>
+                  <form:errors path="description" cssClass="field-error" element="span"/>
+
+                  <div class="row-2">
+                    <div>
+                      <div class="field">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3-8.7A2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .3 2 .6 3a2 2 0 01-.5 2L8 10a16 16 0 006 6l1.3-1.2a2 2 0 012-.5c1 .3 2 .5 3 .6a2 2 0 011.7 2z"/></svg>
+                        <form:input path="phone" placeholder=" " cssErrorClass="field-error-input"/>
+                        <label>Phone number</label>
+                      </div>
+                      <form:errors path="phone" cssClass="field-error" element="span"/>
+                    </div>
+                    <div>
                       <div class="field">
                         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
                         <form:input path="address" placeholder=" " cssErrorClass="field-error-input"/>
