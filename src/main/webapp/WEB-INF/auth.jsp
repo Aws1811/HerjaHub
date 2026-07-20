@@ -421,7 +421,18 @@
                 <div class="expand-wrap" id="ownerFields">
                   <div class="field">
                     <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l1-5h16l1 5M4 9h16v10a1 1 0 01-1 1H5a1 1 0 01-1-1V9z"/></svg>
-             
+                    <form:input path="storeName" placeholder=" " cssErrorClass="field-error-input"/>
+                    <label>Store name</label>
+                  </div>
+                  <form:errors path="storeName" cssClass="field-error" element="span"/>
+
+                  <div class="field">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+                    <form:input path="description" placeholder=" "/>
+                    <label>Store description</label>
+                  </div>
+                  <form:errors path="description" cssClass="field-error" element="span"/>
+
                   <div class="row-2">
                     <div>
                       <div class="field">
