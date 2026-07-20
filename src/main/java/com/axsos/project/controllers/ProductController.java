@@ -97,5 +97,10 @@ public class ProductController {
 		return ResponseEntity.status(401).body(new MessageResponse("You must be logged in as a store owner"));
 	}
 
-	
+	private String firstError(BindingResult bindingResult) {
+		return bindingResult.getFieldErrors().stream()
+				.findFirst()
+				.map(e -> e.getDefaultMessage())
+				.orElse("Invalid input");
+	}
 }
