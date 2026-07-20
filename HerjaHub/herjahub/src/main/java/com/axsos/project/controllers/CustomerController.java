@@ -50,7 +50,7 @@ public class CustomerController {
         }
 
         model.addAttribute("customer", customer);
-        return "customer/dashboard";
+        return "/customer/products";
     }
 
 	// adds one product to the logged-in customer's cart (the cart lives in the session for now)
@@ -195,7 +195,7 @@ public class CustomerController {
 		// keep the session copy in sync with the freshly saved info
 		session.setAttribute("loggedInCustomer", updated);
 
-		return "redirect:/customer/dashboard";
+		return "redirect:/customer/products";
 	}
 
 	// small helper so every cart route reads/writes the session the same way
