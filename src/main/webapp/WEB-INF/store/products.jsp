@@ -342,17 +342,7 @@
       }
     }
 
-    searchInput.addEventListener('input', function () { currentPage = 1; render(); });
-    sortSelect.addEventListener('change', function () { currentPage = 1; render(); });
-    chips.forEach(function (chip) {
-      chip.addEventListener('click', function () {
-        chips.forEach(function (c) { c.classList.remove('active'); });
-        chip.classList.add('active');
-        currentFilter = chip.dataset.filter;
-        currentPage = 1;
-        render();
-      });
-    });
+    
 
     render();
   })();
