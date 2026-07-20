@@ -70,7 +70,7 @@
   thead th{ text-align:left; font-size:12px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:700; padding:14px 16px; border-bottom:1px solid var(--border); cursor:pointer; user-select:none; white-space:nowrap; }
   thead th:hover{ color:var(--olive-dark); }
   thead th .sort-arrow{ font-size:10px; margin-left:4px; opacity:.5; }
-  tbody tr{ border-bottom:1px solid var(--border); transition:background .12s ease; }
+  tbody tr{ border-bottom:1px solid var(--border); transition:background .12s ease; cursor:pointer; }
   tbody tr:last-child{ border-bottom:none; }
   tbody tr:hover{ background:var(--ivory); }
   tbody td{ padding:12px 16px; font-size:14px; vertical-align:middle; }
@@ -186,6 +186,7 @@
               <tbody id="products-tbody">
                 <c:forEach var="p" items="${products}">
                   <tr class="product-row"
+                      data-href="${pageContext.request.contextPath}/store/products/${p.id}"
                       data-name="<c:out value='${p.productName}'/>"
                       data-price="${p.price}"
                       data-created="${p.createdAt}"
@@ -220,6 +221,7 @@
                     </td>
                     <td>
                       <div class="row-actions" style="justify-content:flex-end;">
+                        <a class="icon-action" href="${pageContext.request.contextPath}/store/products/${p.id}" title="View"><i data-lucide="eye" style="width:15px;height:15px;"></i></a>
                         <a class="icon-action" href="${pageContext.request.contextPath}/store/products/${p.id}/edit" title="Edit"><i data-lucide="pencil" style="width:15px;height:15px;"></i></a>
                         <div class="icon-action danger" title="Delete" onclick="openDeleteModal(${p.id}, '<c:out value="${p.productName}"/>')"><i data-lucide="trash-2" style="width:15px;height:15px;"></i></div>
                       </div>
@@ -272,6 +274,15 @@
   }
   document.getElementById('delete-modal-overlay').addEventListener('click', function (e) {
     if (e.target === this) closeDeleteModal();
+  });
+
+  // ---------- click a row to view/edit that product's details ----------
+  document.querySelectorAll('.product-row').forEach(function (row) {
+    row.addEventListener('click', function (e) {
+      if (e.target.closest('.row-actions')) return; // let Edit/Delete buttons handle their own click
+      var href = row.dataset.href;
+      if (href) window.location.href = href;
+    });
   });
 
   // ---------- client-side search / filter / sort / pagination ----------
