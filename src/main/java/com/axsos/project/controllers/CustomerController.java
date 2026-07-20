@@ -11,17 +11,5 @@ import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class CustomerController {
-	@GetMapping("/customer/dashboard")
-    public String dashboard(HttpSession session, Model model) {
-
-        // check if a customer is logged in by looking at the session
-        Customer customer = (Customer) session.getAttribute("loggedInCustomer");
-
-        if (customer == null) {
-            return "redirect:/auth";
-        }
-
-        model.addAttribute("customer", customer);
-        return "customer/dashboard";
-    }
+	
 }
