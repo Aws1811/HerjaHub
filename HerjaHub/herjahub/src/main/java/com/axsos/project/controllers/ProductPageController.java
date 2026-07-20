@@ -50,6 +50,26 @@ public class ProductPageController {
 		return "store/products";
 	}
 
+	// GET /store/products/{id} - read-only "Product Details" page
+	@GetMapping("/{id}")
+	public String showProductDetails(@PathVariable Long id, HttpSession session, Model model) {
+		Store store = requireStore(session);
+		if (store == null) {
+			return "redirect:/auth";
+		}
+		Optional<Product> ownedProduct = productService.getOwnedProduct(id, store.getId());
+		if (ownedProduct.isEmpty()) {
+			return "redirect:/store/products";
+		}
+		Product product = ownedProduct.get();
+		ProductDTO stats = productService.toDTO(product); // adds unitsSold / revenue
+
+		model.addAttribute("product", product);
+		model.addAttribute("stats", stats);
+		model.addAttribute("comments", commentService.getCommentsForProduct(id));
+		return "store/product-details";
+	}
+
 	// GET /store/products/add - blank "Add Product" form
 	@GetMapping("/add")
 	public String showAddForm(HttpSession session, Model model) {
