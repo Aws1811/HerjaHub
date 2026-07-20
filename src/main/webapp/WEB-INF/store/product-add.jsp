@@ -179,3 +179,19 @@
   ['dragleave', 'drop'].forEach(function (evt) {
     dropzone.addEventListener(evt, function (e) { e.preventDefault(); dropzone.classList.remove('dragover'); });
   });
+  dropzone.addEventListener('drop', function (e) {
+    e.preventDefault();
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      fileInput.files = e.dataTransfer.files;
+      showPreview(e.dataTransfer.files[0]);
+    }
+  });
+
+  previewRemove.addEventListener('click', function (e) {
+    e.preventDefault();
+    fileInput.value = '';
+    previewWrap.style.display = 'none';
+  });
+</script>
+</body>
+</html>
