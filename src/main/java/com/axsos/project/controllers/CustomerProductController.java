@@ -94,5 +94,14 @@ public class CustomerProductController {
 		model.addAttribute("reviewCount", commentService.getReviewCount(productId));
 	}
 
-	
+	private String firstError(BindingResult bindingResult) {
+		return bindingResult.getFieldErrors().stream()
+				.findFirst()
+				.map(e -> e.getDefaultMessage())
+				.orElse("Please check the form and try again");
+	}
+
+	private Customer requireCustomer(HttpSession session) {
+		return (Customer) session.getAttribute("loggedInCustomer");
+	}
 }
