@@ -116,14 +116,6 @@
   .actions-right{ display:flex; gap:12px; }
 
   /* ===== Comments panel below the form ===== */
-  .comments-panel{ margin-top:24px; background:var(--white); border:1px solid var(--neutral-2); border-radius:var(--radius-lg); padding:24px; box-shadow:var(--shadow-sm); }
-  .comment-row{ padding:14px 0; border-bottom:1px solid var(--neutral-2); }
-  .comment-row:last-child{ border-bottom:none; padding-bottom:0; }
-  .comment-top{ display:flex; align-items:center; justify-content:space-between; font-size:13.5px; margin-bottom:5px; }
-  .comment-rating{ display:flex; align-items:center; gap:4px; color:var(--gold); font-weight:700; }
-  .comment-text{ color:var(--text-2); font-size:13px; margin:0; }
-  .empty-note{ text-align:center; padding:24px; color:var(--text-2); font-size:13.5px; }
-
   /* ===== Delete confirmation modal ===== */
   .modal-overlay{ display:none; position:fixed; inset:0; background:rgba(17,17,17,0.45); backdrop-filter:blur(4px); align-items:center; justify-content:center; z-index:60; }
   .modal-box{ background:var(--white); border-radius:var(--radius-lg); padding:30px; width:100%; max-width:420px; margin:0 20px; box-shadow:var(--shadow-md); }
@@ -317,30 +309,6 @@
                 </div>
             </div>
         </form>
-
-        <%-- ===== Comments panel ===== --%>
-        <div class="comments-panel">
-            <div class="panel-head">
-                <div class="panel-icon"><i data-lucide="message-square" width="17" height="17"></i></div>
-                <h2>Comments</h2>
-            </div>
-            <c:choose>
-                <c:when test="${not empty comments}">
-                    <c:forEach var="cm" items="${comments}">
-                        <div class="comment-row">
-                            <div class="comment-top">
-                                <strong><c:out value="${cm.customerName}" /></strong>
-                                <span class="comment-rating">${cm.rating}/5 <i data-lucide="star" width="12" height="12"></i></span>
-                            </div>
-                            <p class="comment-text"><c:out value="${cm.comment}" /></p>
-                        </div>
-                    </c:forEach>
-                </c:when>
-                <c:otherwise>
-                    <div class="empty-note">No comments on this product yet.</div>
-                </c:otherwise>
-            </c:choose>
-        </div>
     </div>
 </div>
 

@@ -57,7 +57,7 @@
     -webkit-mask-image:radial-gradient(circle at bottom right, black 0%, black 15%, transparent 65%);
     mask-image:radial-gradient(circle at bottom right, black 0%, black 15%, transparent 65%); }
 
-  .page{ max-width:760px; padding:36px 32px 60px; }
+  .page{ max-width:760px; margin:0 auto; padding:36px 32px 60px; }
 
   /* ===================== SIGNATURE: single centered "profile hub" card, avatar overlapping a banner ===================== */
   .profile-card{ background:var(--white); border:1px solid var(--neutral-2); border-radius:28px; overflow:hidden; box-shadow:var(--shadow-md); animation:fadeInUp .5s var(--ease); }

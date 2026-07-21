@@ -182,7 +182,7 @@
                 <div class="product-grid" id="product-grid">
                     <c:forEach var="product" items="${products}" varStatus="i">
                         <a class="product-card" data-name="${fn:toLowerCase(product.productName)}"
-                           href="${pageContext.request.contextPath}/store/products/${product.id}/edit"
+                           href="${pageContext.request.contextPath}/store/products/${product.id}"
                            style="animation-delay:${i.index * 0.04}s">
                             <div class="product-image-wrap">
                                 <c:choose>
