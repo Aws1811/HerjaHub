@@ -28,8 +28,22 @@ public class AuthController {
     @Autowired
     private StoreService storeService;
 
+    // Shows the public landing page - if someone's already logged in, skip straight to their dashboard
+    @GetMapping("/")
+    public String showLandingPage(HttpSession session) {
+        Customer customer = (Customer) session.getAttribute("loggedInCustomer");
+        if (customer != null) {
+            return "redirect:/customer/dashboard";
+        }
+        Store store = (Store) session.getAttribute("loggedInStore");
+        if (store != null) {
+            return "redirect:/store/dashboard";
+        }
+        return "landing";
+    }
+
     // Shows the login/register page
-    @GetMapping({"/", "/auth"})
+    @GetMapping("/auth")
     public String showAuthPage(Model model) {
         model.addAttribute("loginForm", new LoginForm());
         model.addAttribute("registrationForm", new RegistrationForm());

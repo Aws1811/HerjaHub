@@ -110,6 +110,13 @@ public class CustomerProductController {
 			return "customer/product-detail";
 		}
 
+		// one review per customer per product - block a second attempt with a clear message
+		if (commentService.hasCustomerReviewed(id, customer.getId())) {
+			addDetailAttributes(model, customer, productOpt.get(), id);
+			model.addAttribute("errorMessage", "You have already reviewed this product.");
+			return "customer/product-detail";
+		}
+
 		commentService.addComment(id, customer, form.getRating(), form.getComment());
 		return "redirect:/customer/products/" + id;
 	}
@@ -120,6 +127,7 @@ public class CustomerProductController {
 		model.addAttribute("comments", commentService.getCommentsForProduct(productId));
 		model.addAttribute("avgRating", commentService.getAverageRating(productId));
 		model.addAttribute("reviewCount", commentService.getReviewCount(productId));
+		model.addAttribute("alreadyReviewed", commentService.hasCustomerReviewed(productId, customer.getId()));
 	}
 
 	private String firstError(BindingResult bindingResult) {

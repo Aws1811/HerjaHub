@@ -35,6 +35,7 @@
   .sidebar-brand .mark{ width:38px; height:38px; border-radius:12px; flex-shrink:0; overflow:hidden; background:linear-gradient(135deg, var(--red), var(--green)); display:flex; align-items:center; justify-content:center; color:var(--white); font-family:'Poppins',sans-serif; font-weight:800; }
   .sidebar-brand .mark img{ width:100%; height:100%; object-fit:cover; }
   .sidebar-brand .name{ font-family:'Poppins',sans-serif; font-weight:800; font-size:17px; }
+  .sidebar-brand .name .hub-accent{ background:linear-gradient(90deg, #CE1126, #007A3D); -webkit-background-clip:text; background-clip:text; color:transparent; }
   .side-label{ font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--text-2); padding:14px 12px 8px; }
   .side-link{ display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:var(--radius-sm); font-weight:600; font-size:14px; color:var(--text-1); margin-bottom:3px; transition:all .22s var(--ease); position:relative; }
   .side-link svg{ flex-shrink:0; opacity:.8; }
@@ -119,7 +120,10 @@
   .btn-submit:hover{ transform:translateY(-2px); box-shadow:0 14px 26px -14px rgba(0,122,61,0.5); }
 
   @media (max-width: 900px){
-    .sidebar{ transform:translateX(-100%); }
+    .sidebar{ transform:translateX(-100%); transition:transform .3s ease; }
+    .sidebar.open{ transform:translateX(0); }
+    .menu-btn{ display:flex; }
+    .sidebar-overlay.show{ display:block; }
     .main-area{ margin-left:0; }
   }
   @media (max-width: 560px){
@@ -129,6 +133,21 @@
     .stat-cell:first-child{ border-top:none; }
     .profile-identity{ flex-direction:column; align-items:flex-start; }
     .profile-identity h1{ margin-bottom:2px; }
+  }
+
+  .menu-btn{ display:flex; width:40px; height:40px; border-radius:12px; border:1px solid var(--neutral-2); background:var(--white); color:var(--text-1); align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
+  .sidebar-overlay{ display:none; position:fixed; inset:0; z-index:25; background:rgba(17,17,17,0.35); }
+
+  /* ===== Sidebar toggle - works at any screen size, higher specificity beats the responsive defaults above ===== */
+  .sidebar, .main-area{ transition:transform .28s ease, margin-left .28s ease; }
+  body.sidebar-hidden .sidebar{ transform:translateX(-100%); }
+  body.sidebar-hidden .main-area{ margin-left:0; }
+  body:not(.sidebar-hidden) .sidebar{ transform:translateX(0); }
+  @media (min-width:901px){
+    body:not(.sidebar-hidden) .main-area{ margin-left:var(--sidebar-w); }
+  }
+  @media (max-width:900px){
+    body:not(.sidebar-hidden) .sidebar-overlay{ display:block; }
   }
 </style>
 </head>
@@ -141,7 +160,7 @@
 <aside class="sidebar">
     <a class="sidebar-brand" href="${pageContext.request.contextPath}/store/dashboard">
         <div class="mark"><img src="${pageContext.request.contextPath}/resources/images/herjahub-logo.jpg" alt="HerjaHub" /></div>
-        <div class="name">HerjaHub</div>
+        <div class="name">Herja<span class="hub-accent">Hub</span></div>
     </a>
     <div class="side-label">Overview</div>
     <a class="side-link" href="${pageContext.request.contextPath}/store/dashboard">
@@ -161,8 +180,11 @@
     </div>
 </aside>
 
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 <div class="main-area">
     <div class="topbar">
+        <button class="menu-btn" id="menuBtn" type="button" aria-label="Toggle sidebar"><i data-lucide="menu" width="20" height="20"></i></button>
         <div class="topbar-title">Store Profile</div>
         <div class="user-chip">
             <div class="user-avatar"><c:out value="${fn:substring(store.storeName, 0, 1)}" /></div>
@@ -378,5 +400,15 @@
   });
 </script>
 
+
+<script>
+  (function(){
+    var btn = document.getElementById('menuBtn'), overlay = document.getElementById('sidebarOverlay');
+    function isMobile(){ return window.matchMedia('(max-width:900px)').matches; }
+    if (isMobile()) { document.body.classList.add('sidebar-hidden'); } // start closed on small screens only
+    if (btn) btn.addEventListener('click', function(){ document.body.classList.toggle('sidebar-hidden'); });
+    if (overlay) overlay.addEventListener('click', function(){ document.body.classList.add('sidebar-hidden'); });
+  })();
+</script>
 </body>
 </html>

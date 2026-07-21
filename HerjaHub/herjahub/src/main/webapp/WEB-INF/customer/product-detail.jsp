@@ -29,7 +29,7 @@
         };
     </script>
     <style>
-        :root{ --sidebar-w:250px; --topbar-h:68px; --ease:cubic-bezier(.4,0,.2,1); }
+        :root{ --red:#CE1126; --green:#007A3D; --white:#FFFFFF; --neutral-1:#F8F9FA; --neutral-2:#E9ECEF; --text-1:#1F2937; --text-2:#6B7280; --sidebar-w:250px; --topbar-h:68px; --ease:cubic-bezier(.4,0,.2,1); }
         html,body{ height:100%; }
         body{ margin:0; }
 
@@ -48,6 +48,7 @@
         }
         .sidebar-brand .mark img{ width:100%; height:100%; object-fit:cover; }
         .sidebar-brand .name{ font-family:'Poppins',sans-serif; font-weight:800; font-size:17px; color:#1F2937; }
+  .sidebar-brand .name .hub-accent{ background:linear-gradient(90deg, #CE1126, #007A3D); -webkit-background-clip:text; background-clip:text; color:transparent; }
         .side-label{ font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:#6B7280; padding:14px 12px 8px; }
         .side-link{
             display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:12px;
@@ -158,12 +159,46 @@
         .submit-review:hover{ transform:translateY(-1px); box-shadow:0 14px 26px -14px rgba(0,122,61,0.5); }
 
         @media (max-width: 900px){
-            .sidebar{ transform:translateX(-100%); }
+            .sidebar{ transform:translateX(-100%); transition:transform .3s ease; }
+    .sidebar.open{ transform:translateX(0); }
+    .menu-btn{ display:flex; }
+    .sidebar-overlay.show{ display:block; }
             .main-area{ margin-left:0; }
             .product-layout{ grid-template-columns:1fr; }
             .stage{ padding:24px 20px 50px; }
         }
-    </style>
+    
+  .menu-btn{ display:flex; width:40px; height:40px; border-radius:12px; border:1px solid var(--neutral-2); background:var(--white); color:var(--text-1); align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
+  .sidebar-overlay{ display:none; position:fixed; inset:0; z-index:25; background:rgba(17,17,17,0.35); }
+
+.topbar-right{ display:flex; align-items:center; gap:12px; }
+  .cart-btn{ position:relative; margin-left:auto; width:40px; height:40px; border-radius:50%; background:var(--white); border:1px solid var(--neutral-2); display:flex; align-items:center; justify-content:center; color:var(--text-1); transition:all .2s ease; flex-shrink:0; }
+  .user-chip{ display:flex; align-items:center; gap:10px; padding:6px 14px 6px 6px; border-radius:999px; background:var(--white); border:1px solid var(--neutral-2); }
+  .user-avatar{ width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, var(--red), var(--green)); color:#fff; font-weight:700; font-size:13px; flex-shrink:0; }
+  .u-name{ font-size:13px; font-weight:600; }
+  .cart-btn:hover{ border-color:var(--green); color:var(--green); }
+  .cart-count{ position:absolute; top:-4px; right:-4px; min-width:17px; height:17px; padding:0 4px; border-radius:999px; background:var(--red); color:#fff; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+  .store-line{ display:inline-flex; align-items:center; gap:6px; font-size:13.5px; font-weight:600; color:var(--text-2); margin:2px 0 12px; transition:color .2s ease; }
+  .store-line:hover{ color:var(--green); }
+  .star-input{ display:inline-flex; flex-direction:row-reverse; gap:4px; margin-top:6px; }
+  .star-input input{ display:none; }
+  .star-input label{ cursor:pointer; color:var(--neutral-2); transition:color .15s ease, transform .15s ease; }
+  .star-input label:hover{ transform:scale(1.12); }
+  .star-input label:hover, .star-input label:hover ~ label,
+  .star-input input:checked ~ label{ color:#C9A227; }
+
+  /* ===== Sidebar toggle - works at any screen size, higher specificity beats the responsive defaults above ===== */
+  .sidebar, .main-area{ transition:transform .28s ease, margin-left .28s ease; }
+  body.sidebar-hidden .sidebar{ transform:translateX(-100%); }
+  body.sidebar-hidden .main-area{ margin-left:0; }
+  body:not(.sidebar-hidden) .sidebar{ transform:translateX(0); }
+  @media (min-width:901px){
+    body:not(.sidebar-hidden) .main-area{ margin-left:var(--sidebar-w); }
+  }
+  @media (max-width:900px){
+    body:not(.sidebar-hidden) .sidebar-overlay{ display:block; }
+  }
+</style>
 </head>
 <body class="bg-background text-foreground font-sans">
 
@@ -173,7 +208,7 @@
 <aside class="sidebar">
     <a class="sidebar-brand" href="${pageContext.request.contextPath}/customer/dashboard">
         <div class="mark"><img src="${pageContext.request.contextPath}/resources/images/herjahub-logo.jpg" alt="HerjaHub" /></div>
-        <div class="name">HerjaHub</div>
+        <div class="name">Herja<span class="hub-accent">Hub</span></div>
     </a>
 
     <div class="side-label">Shop</div>
@@ -208,10 +243,13 @@
     </div>
 </aside>
 
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 <div class="main-area">
 
     <%-- ===================== TOPBAR with breadcrumb ===================== --%>
     <div class="topbar">
+        <button class="menu-btn" id="menuBtn" type="button" aria-label="Toggle sidebar"><i data-lucide="menu" width="20" height="20"></i></button>
         <div class="crumb">
             <a href="${pageContext.request.contextPath}/customer/dashboard">Home</a>
             <i data-lucide="chevron-right" width="14" height="14"></i>
@@ -220,7 +258,8 @@
             <span class="current"><c:out value="${product.productName}"/></span>
         </div>
 <div class="topbar-right">
-    <div class="user-chip">
+    <a class="cart-btn" href="${pageContext.request.contextPath}/customer/cart" title="View cart"><i data-lucide="shopping-cart" width="18" height="18"></i><c:if test="${not empty sessionScope.cart}"><span class="cart-count">${fn:length(sessionScope.cart)}</span></c:if></a>
+        <div class="user-chip">
         <div class="user-avatar"><c:out value="${fn:substring(customer.firstName, 0, 1)}" /></div>
         <span class="u-name"><c:out value="${customer.firstName}" /></span>
     </div>
@@ -245,7 +284,7 @@
                         </c:otherwise>
                     </c:choose>
                 </div>
-                <div class="price-tag"><span class="cur">$</span><c:out value="${product.price}"/></div>
+                <div class="price-tag"><span class="cur">$</span><fmt:formatNumber value="${product.price}" minFractionDigits="2" maxFractionDigits="2" /></div>
             </div>
 
             <div class="info">
@@ -258,6 +297,9 @@
                     </c:otherwise>
                 </c:choose>
                 <h1><c:out value="${product.productName}"/></h1>
+                <a class="store-line" href="${pageContext.request.contextPath}/customer/stores/${product.store.id}">
+                    <i data-lucide="store" width="13" height="13"></i> by <c:out value="${product.store.storeName}"/>
+                </a>
 
                 <c:if test="${reviewCount > 0}">
                 <div class="rating-row">
@@ -370,22 +412,38 @@
                 </div>
             </c:if>
 
-            <div class="review-form-card">
-                <h3>Leave a Review</h3>
-                <form:form action="${pageContext.request.contextPath}/customer/products/${product.id}/reviews" method="post" modelAttribute="reviewForm">
-                    <form:label path="rating" cssClass="field-label">Rating (1-5)</form:label>
-                    <form:input path="rating" type="number" min="1" max="5" cssClass="field-input"/>
-                    <form:errors path="rating" cssClass="error-text"/>
+            <c:choose>
+                <c:when test="${alreadyReviewed}">
+                    <div class="review-form-card">
+                        <h3>Leave a Review</h3>
+                        <p class="muted" style="margin:0;"><i data-lucide="check-circle-2" width="14" height="14" style="vertical-align:-2px; color:var(--green);"></i> You've already reviewed this product - each customer can leave one review.</p>
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <div class="review-form-card">
+                        <h3>Leave a Review</h3>
+                        <form:form action="${pageContext.request.contextPath}/customer/products/${product.id}/reviews" method="post" modelAttribute="reviewForm">
+                            <span class="field-label">Rating</span>
+                            <div class="star-input">
+                                <input type="radio" id="star5" name="rating" value="5" /><label for="star5" title="5 stars"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></label>
+                                <input type="radio" id="star4" name="rating" value="4" /><label for="star4" title="4 stars"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></label>
+                                <input type="radio" id="star3" name="rating" value="3" /><label for="star3" title="3 stars"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></label>
+                                <input type="radio" id="star2" name="rating" value="2" /><label for="star2" title="2 stars"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></label>
+                                <input type="radio" id="star1" name="rating" value="1" /><label for="star1" title="1 star"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></label>
+                            </div>
+                            <form:errors path="rating" cssClass="error-text"/>
 
-                    <div style="height:16px;"></div>
+                            <div style="height:16px;"></div>
 
-                    <form:label path="comment" cssClass="field-label">Review</form:label>
-                    <form:textarea path="comment" rows="4" cssClass="field-input" style="resize:vertical;"/>
-                    <form:errors path="comment" cssClass="error-text"/>
+                            <form:label path="comment" cssClass="field-label">Review</form:label>
+                            <form:textarea path="comment" rows="4" cssClass="field-input" style="resize:vertical;"/>
+                            <form:errors path="comment" cssClass="error-text"/>
 
-                    <button type="submit" class="submit-review">Post Review</button>
-                </form:form>
-            </div>
+                            <button type="submit" class="submit-review">Post Review</button>
+                        </form:form>
+                    </div>
+                </c:otherwise>
+            </c:choose>
         </div>
     </div>
 </div>
@@ -405,5 +463,15 @@
     })();
 </script>
 
+
+<script>
+  (function(){
+    var btn = document.getElementById('menuBtn'), overlay = document.getElementById('sidebarOverlay');
+    function isMobile(){ return window.matchMedia('(max-width:900px)').matches; }
+    if (isMobile()) { document.body.classList.add('sidebar-hidden'); } // start closed on small screens only
+    if (btn) btn.addEventListener('click', function(){ document.body.classList.toggle('sidebar-hidden'); });
+    if (overlay) overlay.addEventListener('click', function(){ document.body.classList.add('sidebar-hidden'); });
+  })();
+</script>
 </body>
 </html>

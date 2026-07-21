@@ -32,12 +32,12 @@ public class ProductService {
 				.collect(Collectors.toList());
 	}
 
-	// products that are in stock but below the low-stock threshold (same rule the
-	// Products page badge uses: quantity > 0 and quantity < 5), lowest quantity first,
+	// products that are in stock but at/below the low-stock threshold (same rule the
+	// Products page badge uses: quantity > 0 and quantity <= 5), lowest quantity first,
 	// used by the "Low Stock" widget on the dashboard
 	public List<ProductDTO> getLowStockProducts(Long storeId) {
 		return productRepository.findByStoreIdOrderByCreatedAtDesc(storeId).stream()
-				.filter(p -> p.getQuantity() != null && p.getQuantity() > 0 && p.getQuantity() < 5)
+				.filter(p -> p.getQuantity() != null && p.getQuantity() > 0 && p.getQuantity() <= 5)
 				.sorted((a, b) -> Integer.compare(a.getQuantity(), b.getQuantity()))
 				.map(this::toDTO)
 				.collect(Collectors.toList());

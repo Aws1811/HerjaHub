@@ -46,10 +46,19 @@ public class CommentService {
 				.collect(Collectors.toList());
 	}
 
-	// lets a logged-in customer leave a rating + review on a product
+	// true if this customer already left a review on this product
+	public boolean hasCustomerReviewed(Long productId, Long customerId) {
+		return commentRepository.existsByProductIdAndCustomerId(productId, customerId);
+	}
+
+	// lets a logged-in customer leave a rating + review on a product -
+	// one review per customer per product, so a repeat attempt is a no-op
 	public Optional<CommentDTO> addComment(Long productId, Customer customer, Integer rating, String text) {
 		Optional<Product> productOpt = productRepository.findById(productId);
 		if (productOpt.isEmpty()) {
+			return Optional.empty();
+		}
+		if (hasCustomerReviewed(productId, customer.getId())) {
 			return Optional.empty();
 		}
 		Comment comment = new Comment(rating, text, customer, productOpt.get());

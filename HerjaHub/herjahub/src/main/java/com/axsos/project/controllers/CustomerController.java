@@ -86,6 +86,26 @@ public class CustomerController {
 		return "customer/stores";
 	}
 
+	// a single store's public page: its info + every product it sells -
+	// linked from the Stores list, the dashboard's featured stores, and product detail
+	@GetMapping("/customer/stores/{id}")
+	public String showStore(@PathVariable("id") Long id, HttpSession session, Model model) {
+
+		Customer customer = (Customer) session.getAttribute("loggedInCustomer");
+		if (customer == null) {
+			return "redirect:/auth";
+		}
+
+		Store store = storeService.findByIdWithProducts(id);
+		if (store == null) {
+			return "redirect:/customer/stores";
+		}
+
+		model.addAttribute("customer", customer);
+		model.addAttribute("store", store);
+		return "customer/showStore";
+	}
+
 	// small helper: returns the first "size" items of a list, or the whole
 	// list if it's already smaller than that
 	private <T> List<T> capList(List<T> list, int size) {
@@ -134,7 +154,10 @@ public class CustomerController {
 		}
 
 		session.setAttribute("cart", cart);
-		return "redirect:/customer/cart";
+
+		// always land back on the products list after adding, regardless of which
+		// product page they added from
+		return "redirect:/customer/products";
 	}
 
 	// shows everything currently in the logged-in customer's cart
@@ -245,7 +268,26 @@ public class CustomerController {
 			return "redirect:/auth";
 		}
 
+		// if the email changed, it must not belong to another account
+		if (!customer.getEmail().equalsIgnoreCase(form.getEmail()) && customerService.emailExists(form.getEmail())) {
+			bindingResult.rejectValue("email", "error", "This email is already registered");
+		}
+
+		// changing the password requires the current one, verified, and the new one must be at least 8 chars
+		boolean changingPassword = form.getNewPassword() != null && !form.getNewPassword().isBlank();
+		if (changingPassword) {
+			if (form.getCurrentPassword() == null || form.getCurrentPassword().isBlank()) {
+				bindingResult.rejectValue("currentPassword", "error", "Enter your current password to set a new one");
+			} else if (!customerService.checkPassword(customer, form.getCurrentPassword())) {
+				bindingResult.rejectValue("currentPassword", "error", "Current password is incorrect");
+			}
+			if (form.getNewPassword().length() < 8) {
+				bindingResult.rejectValue("newPassword", "error", "New password must be at least 8 characters");
+			}
+		}
+
 		if (bindingResult.hasErrors()) {
+			model.addAttribute("customer", customer); // topbar/hero read this; without it the re-render blanks them
 			return "customer/edit-profile";
 		}
 

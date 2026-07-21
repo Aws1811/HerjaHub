@@ -44,6 +44,15 @@ public class CustomerService {
         return Optional.empty();
     }
 
+    // verifies a raw password against the customer's stored (hashed) password -
+    // used by Edit Profile before allowing a password change
+    public boolean checkPassword(Customer customer, String rawPassword) {
+        if (rawPassword == null || customer.getPassword() == null) {
+            return false;
+        }
+        return BCrypt.checkpw(rawPassword, customer.getPassword());
+    }
+
     // Updates an existing customer's info from the Edit Profile form.
     // If newPassword is left blank, the current password is kept as-is.
     public Customer updateProfile(Customer customer, EditProfileForm form) {
