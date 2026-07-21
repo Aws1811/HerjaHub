@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
-<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <%-- ===== Product grid fragment =====
      Rendered both as part of the full /customer/products page and, standalone,
      by GET /customer/products/grid for the AJAX search/price-filter to swap in. --%>
@@ -43,7 +42,7 @@
                         </div>
                         <div class="product-body">
                             <p class="product-name"><c:out value="${product.productName}" /></p>
-                            <p class="product-price">$<fmt:formatNumber value="${product.price}" minFractionDigits="2" maxFractionDigits="2" /></p>
+                            <p class="product-price">$<c:out value="${product.price}" /></p>
                         </div>
                     </a>
                 </div>

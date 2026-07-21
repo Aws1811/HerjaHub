@@ -68,7 +68,6 @@
   }
   .sidebar-brand .mark img{ width:100%; height:100%; object-fit:cover; }
   .sidebar-brand .name{ font-family:'Poppins',sans-serif; font-weight:800; font-size:17px; }
-  .sidebar-brand .name .hub-accent{ background:linear-gradient(90deg, #CE1126, #007A3D); -webkit-background-clip:text; background-clip:text; color:transparent; }
 
   .side-label{ font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--text-2); padding:14px 12px 8px; }
   .side-link{
@@ -168,10 +167,7 @@
   .empty-state h3{ font-family:'Poppins',sans-serif; font-weight:700; font-size:19px; color:var(--text-1); margin:0 0 6px; }
 
   @media (max-width: 900px){
-    .sidebar{ transform:translateX(-100%); transition:transform .3s ease; }
-    .sidebar.open{ transform:translateX(0); }
-    .menu-btn{ display:flex; }
-    .sidebar-overlay.show{ display:block; }
+    .sidebar{ transform:translateX(-100%); }
     .main-area{ margin-left:0; }
   }
   .search-bar{
@@ -202,25 +198,6 @@
   .filter-clear:hover{ color:var(--red); border-color:var(--red); }
   .grid-loading{ text-align:center; padding:40px; color:var(--text-2); font-size:13px; }
   #productGrid{ transition:opacity .15s var(--ease); }
-
-  .menu-btn{ display:flex; width:40px; height:40px; border-radius:12px; border:1px solid var(--neutral-2); background:var(--white); color:var(--text-1); align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
-  .sidebar-overlay{ display:none; position:fixed; inset:0; z-index:25; background:rgba(17,17,17,0.35); }
-
-  .cart-btn{ position:relative; margin-left:auto; width:40px; height:40px; border-radius:50%; background:var(--white); border:1px solid var(--neutral-2); display:flex; align-items:center; justify-content:center; color:var(--text-1); transition:all .2s ease; flex-shrink:0; }
-  .cart-btn:hover{ border-color:var(--green); color:var(--green); }
-  .cart-count{ position:absolute; top:-4px; right:-4px; min-width:17px; height:17px; padding:0 4px; border-radius:999px; background:var(--red); color:#fff; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; }
-
-  /* ===== Sidebar toggle - works at any screen size, higher specificity beats the responsive defaults above ===== */
-  .sidebar, .main-area{ transition:transform .28s ease, margin-left .28s ease; }
-  body.sidebar-hidden .sidebar{ transform:translateX(-100%); }
-  body.sidebar-hidden .main-area{ margin-left:0; }
-  body:not(.sidebar-hidden) .sidebar{ transform:translateX(0); }
-  @media (min-width:901px){
-    body:not(.sidebar-hidden) .main-area{ margin-left:var(--sidebar-w); }
-  }
-  @media (max-width:900px){
-    body:not(.sidebar-hidden) .sidebar-overlay{ display:block; }
-  }
 </style>
 </head>
 <body style="--keffiyeh-pattern: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22140%22 height=%22140%22><g fill=%22none%22 stroke=%22%23ffffff%22 stroke-width=%222%22 opacity=%220.5%22><path d=%22M0 70 L70 0 L140 70 L70 140 Z%22/><path d=%22M70 0 L70 140%22/><path d=%22M0 70 L140 70%22/></g></svg>')">
@@ -232,7 +209,7 @@
 <aside class="sidebar">
     <a class="sidebar-brand" href="${pageContext.request.contextPath}/customer/dashboard">
         <div class="mark"><img src="${pageContext.request.contextPath}/resources/images/herjahub-logo.jpg" alt="HerjaHub" /></div>
-        <div class="name">Herja<span class="hub-accent">Hub</span></div>
+        <div class="name">HerjaHub</div>
     </a>
 
     <div class="side-label">Shop</div>
@@ -268,17 +245,13 @@
     </div>
 </aside>
 
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
-
 <div class="main-area">
 
     <%-- ===================== TOPBAR (reusable shell) ===================== --%>
     <div class="topbar">
-        <button class="menu-btn" id="menuBtn" type="button" aria-label="Toggle sidebar"><i data-lucide="menu" width="20" height="20"></i></button>
         <div class="topbar-title">Products</div>
         <div class="topbar-right">
-            <a class="cart-btn" href="${pageContext.request.contextPath}/customer/cart" title="View cart"><i data-lucide="shopping-cart" width="18" height="18"></i><c:if test="${not empty sessionScope.cart}"><span class="cart-count">${fn:length(sessionScope.cart)}</span></c:if></a>
-        <div class="user-chip">
+            <div class="user-chip">
                 <div class="user-avatar"><c:out value="${fn:substring(customer.firstName, 0, 1)}" /></div>
                 <span class="u-name"><c:out value="${customer.firstName}" /></span>
             </div>
@@ -404,15 +377,5 @@
 </script>
 
 <script>lucide.createIcons();</script>
-
-<script>
-  (function(){
-    var btn = document.getElementById('menuBtn'), overlay = document.getElementById('sidebarOverlay');
-    function isMobile(){ return window.matchMedia('(max-width:900px)').matches; }
-    if (isMobile()) { document.body.classList.add('sidebar-hidden'); } // start closed on small screens only
-    if (btn) btn.addEventListener('click', function(){ document.body.classList.toggle('sidebar-hidden'); });
-    if (overlay) overlay.addEventListener('click', function(){ document.body.classList.add('sidebar-hidden'); });
-  })();
-</script>
 </body>
 </html>
