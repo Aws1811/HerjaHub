@@ -108,19 +108,29 @@ public class CustomerController {
 			return "redirect:/customer/products";
 		}
 
+		Product product = productOpt.get();
+		int available = product.getQuantity() == null ? 0 : product.getQuantity();
+
+		// out of stock - nothing to add, send them back to the (now-hidden-button) product page
+		if (available <= 0) {
+			return "redirect:/customer/products/" + productId;
+		}
+
 		List<CartItem> cart = getCartFromSession(session);
 
-		// if it's already in the cart, just bump the quantity instead of adding a duplicate line
+		// if it's already in the cart, just bump the quantity instead of adding a duplicate line -
+		// either way, never let the cart hold more of this product than is actually in stock
 		boolean alreadyInCart = false;
 		for (CartItem item : cart) {
 			if (item.getProduct().getId().equals(productId)) {
-				item.setQuantity(item.getQuantity() + quantity);
+				int newQuantity = Math.min(item.getQuantity() + quantity, available);
+				item.setQuantity(newQuantity);
 				alreadyInCart = true;
 				break;
 			}
 		}
 		if (!alreadyInCart) {
-			cart.add(new CartItem(productOpt.get(), quantity));
+			cart.add(new CartItem(product, Math.min(quantity, available)));
 		}
 
 		session.setAttribute("cart", cart);
@@ -156,6 +166,12 @@ public class CustomerController {
 		}
 
 		Order order = orderService.placeOrder(customer, cart);
+
+		// every item in the cart went out of stock between being added and checking out -
+		// nothing was ordered, so leave the cart alone and send them back to it
+		if (order == null) {
+			return "redirect:/customer/cart";
+		}
 
 		// empty the cart now that it has become a real order
 		session.setAttribute("cart", new ArrayList<CartItem>());

@@ -85,7 +85,7 @@
     <div class="w-full lg:w-72 h-64 lg:h-auto bg-secondary flex items-center justify-center flex-shrink-0 overflow-hidden">
       <c:choose>
         <c:when test="${not empty product.image}">
-          <img src="${pageContext.request.contextPath}${product.image}" alt="${product.productName}" class="w-full h-full object-cover"/>
+          <img src="${product.image}" alt="${product.productName}" class="w-full h-full object-cover"/>
         </c:when>
         <c:otherwise>
           <svg class="w-10 h-10 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>

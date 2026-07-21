@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 
 <!DOCTYPE html>
@@ -41,10 +41,11 @@
         }
         .sidebar-brand{ display:flex; align-items:center; gap:10px; padding:6px 10px 26px; text-decoration:none; color:inherit; }
         .sidebar-brand .mark{
-            width:38px; height:38px; border-radius:12px; flex-shrink:0;
+            width:38px; height:38px; border-radius:12px; flex-shrink:0; overflow:hidden;
             background:linear-gradient(135deg, #CE1126, #007A3D);
             display:flex; align-items:center; justify-content:center; color:#fff; font-family:'Poppins',sans-serif; font-weight:800;
         }
+        .sidebar-brand .mark img{ width:100%; height:100%; object-fit:cover; }
         .sidebar-brand .name{ font-family:'Poppins',sans-serif; font-weight:800; font-size:17px; color:#1F2937; }
         .side-label{ font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:#6B7280; padding:14px 12px 8px; }
         .side-link{
@@ -168,7 +169,7 @@
 <%-- ===================== SIDEBAR ===================== --%>
 <aside class="sidebar">
     <a class="sidebar-brand" href="${pageContext.request.contextPath}/customer/dashboard">
-        <div class="mark">ه</div>
+        <div class="mark"><img src="${pageContext.request.contextPath}/resources/images/herjahub-logo.jpg" alt="HerjaHub" /></div>
         <div class="name">HerjaHub</div>
     </a>
 

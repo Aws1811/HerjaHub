@@ -72,11 +72,6 @@
   .btn-add{ display:flex; align-items:center; gap:8px; padding:12px 22px; border-radius:999px; border:none; background:linear-gradient(135deg,var(--red),var(--green)); color:#fff; font-weight:700; font-size:13.5px; cursor:pointer; transition:all .2s var(--ease); flex-shrink:0; }
   .btn-add:hover{ transform:translateY(-2px); box-shadow:0 14px 26px -14px rgba(0,122,61,0.5); }
 
-  .filter-chips{ display:flex; gap:8px; flex-wrap:wrap; }
-  .chip{ padding:8px 15px; border-radius:999px; border:1px solid var(--neutral-2); background:var(--white); font-size:12.5px; font-weight:700; color:var(--text-2); cursor:pointer; transition:all .18s var(--ease); user-select:none; }
-  .chip:hover{ border-color:var(--green); color:var(--green); }
-  .chip.active{ background:linear-gradient(135deg,var(--red),var(--green)); color:#fff; border-color:transparent; }
-
   .product-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:20px; }
   .product-card{
     background:rgba(255,255,255,0.85); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
@@ -167,12 +162,6 @@
                 <i data-lucide="search" width="16" height="16"></i>
                 <input type="text" id="product-search" placeholder="Search your products..." autocomplete="off" />
             </div>
-            <div class="filter-chips" id="filter-chips">
-                <span class="chip active" data-filter="all">All</span>
-                <span class="chip" data-filter="in">In Stock</span>
-                <span class="chip" data-filter="low">Low Stock</span>
-                <span class="chip" data-filter="out">Out of Stock</span>
-            </div>
             <a class="btn-add" href="${pageContext.request.contextPath}/store/products/add">
                 <i data-lucide="plus" width="16" height="16"></i> Add Product
             </a>
@@ -193,7 +182,6 @@
                 <div class="product-grid" id="product-grid">
                     <c:forEach var="product" items="${products}" varStatus="i">
                         <a class="product-card" data-name="${fn:toLowerCase(product.productName)}"
-                           data-status="<c:choose><c:when test='${product.quantity == 0}'>out</c:when><c:when test='${product.quantity <= 5}'>low</c:when><c:otherwise>in</c:otherwise></c:choose>"
                            href="${pageContext.request.contextPath}/store/products/${product.id}/edit"
                            style="animation-delay:${i.index * 0.04}s">
                             <div class="product-image-wrap">
@@ -202,7 +190,7 @@
                                         <p class="image-placeholder"><i data-lucide="image" width="22" height="22"></i> No image</p>
                                     </c:when>
                                     <c:otherwise>
-                                        <img src="${pageContext.request.contextPath}${product.image}" alt="${product.productName}" />
+                                        <img src="${product.image}" alt="${product.productName}" />
                                     </c:otherwise>
                                 </c:choose>
                                 <c:if test="${product.quantity == 0}">
@@ -243,37 +231,22 @@
 
 <script>
   var searchInput = document.getElementById('product-search');
-  var chips = document.querySelectorAll('#filter-chips .chip');
-  var currentFilter = 'all';
-
-  function applyFilters() {
-    var term = (searchInput ? searchInput.value : '').trim().toLowerCase();
-    var cards = document.querySelectorAll('#product-grid .product-card');
-    var visibleCount = 0;
-    cards.forEach(function(card) {
-      var matchesTerm = card.getAttribute('data-name').indexOf(term) !== -1;
-      var matchesStatus = currentFilter === 'all' || card.getAttribute('data-status') === currentFilter;
-      var visible = matchesTerm && matchesStatus;
-      card.style.display = visible ? '' : 'none';
-      if (visible) visibleCount++;
-    });
-    var noResults = document.getElementById('no-results');
-    if (noResults) {
-      noResults.style.display = (visibleCount === 0) ? 'block' : 'none';
-    }
-  }
-
   if (searchInput) {
-    searchInput.addEventListener('input', applyFilters);
-  }
-  chips.forEach(function(chip) {
-    chip.addEventListener('click', function() {
-      chips.forEach(function(c) { c.classList.remove('active'); });
-      chip.classList.add('active');
-      currentFilter = chip.getAttribute('data-filter');
-      applyFilters();
+    searchInput.addEventListener('input', function() {
+      var term = searchInput.value.trim().toLowerCase();
+      var cards = document.querySelectorAll('#product-grid .product-card');
+      var visibleCount = 0;
+      cards.forEach(function(card) {
+        var matches = card.getAttribute('data-name').indexOf(term) !== -1;
+        card.style.display = matches ? '' : 'none';
+        if (matches) visibleCount++;
+      });
+      var noResults = document.getElementById('no-results');
+      if (noResults) {
+        noResults.style.display = (term && visibleCount === 0) ? 'block' : 'none';
+      }
     });
-  });
+  }
 </script>
 
 </body>

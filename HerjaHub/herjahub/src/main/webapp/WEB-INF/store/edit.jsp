@@ -11,7 +11,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <script>
   tailwind.config = {
     theme: {
@@ -29,78 +28,31 @@
   };
 </script>
 <style>
-  :root{
-    --red:#CE1126; --green:#007A3D; --white:#FFFFFF; --neutral-1:#F8F9FA; --neutral-2:#E9ECEF;
-    --text-1:#1F2937; --text-2:#6B7280;
-    --radius-lg:24px; --radius-md:18px; --radius-sm:12px;
-    --shadow-sm:0 4px 16px rgba(31,41,55,0.06); --shadow-md:0 18px 40px -16px rgba(31,41,55,0.18);
-    --ease:cubic-bezier(.4,0,.2,1); --sidebar-w:250px; --topbar-h:68px;
-  }
   .keffiyeh-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0;
     background-image: repeating-linear-gradient(45deg,currentColor 0,currentColor 1px,transparent 1px,transparent 14px),
     repeating-linear-gradient(-45deg,currentColor 0,currentColor 1px,transparent 1px,transparent 14px); opacity: 0.05; }
   .field-error-input { border-color: #D72638 !important; background-color: #FFF5F5 !important; }
-
-  .sidebar{ position:fixed; top:0; left:0; bottom:0; width:var(--sidebar-w); z-index:30; background:rgba(255,255,255,0.7); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-right:1px solid rgba(255,255,255,0.6); display:flex; flex-direction:column; padding:22px 16px; }
-  .sidebar-brand{ display:flex; align-items:center; gap:10px; padding:6px 10px 26px; text-decoration:none; color:inherit; }
-  .sidebar-brand .mark{ width:38px; height:38px; border-radius:12px; flex-shrink:0; background:linear-gradient(135deg, var(--red), var(--green)); display:flex; align-items:center; justify-content:center; color:var(--white); font-family:'Newsreader',serif; font-weight:800; }
-  .sidebar-brand .name{ font-family:'Newsreader',serif; font-weight:800; font-size:17px; }
-  .side-label{ font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--text-2); padding:14px 12px 8px; }
-  .side-link{ display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:var(--radius-sm); font-weight:600; font-size:14px; color:var(--text-1); margin-bottom:3px; transition:all .22s var(--ease); position:relative; text-decoration:none; }
-  .side-link svg, .side-link i{ flex-shrink:0; opacity:.8; }
-  .side-link:hover{ background:var(--neutral-2); }
-  .side-link.active{ background:linear-gradient(90deg, rgba(206,17,38,0.1), rgba(0,122,61,0.1)); box-shadow:inset 0 0 0 1px rgba(0,122,61,0.15); }
-  .side-link.active svg, .side-link.active i{ opacity:1; color:var(--green); }
-  .side-link.active::before{ content:""; position:absolute; left:-16px; top:8px; bottom:8px; width:4px; border-radius:4px; background:linear-gradient(180deg, var(--red), var(--green)); }
-  .sidebar-footer{ margin-top:auto; padding-top:14px; border-top:1px solid var(--neutral-2); }
-
-  .main-area{ margin-left:var(--sidebar-w); min-height:100%; position:relative; z-index:1; }
-  .topbar{ position:sticky; top:0; z-index:20; height:var(--topbar-h); display:flex; align-items:center; justify-content:space-between; gap:16px; padding:0 28px; background:rgba(255,255,255,0.65); backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px); border-bottom:1px solid rgba(255,255,255,0.5); }
-  .topbar-title{ font-family:'Newsreader',serif; font-weight:700; font-size:16px; }
-  .user-chip{ display:flex; align-items:center; gap:10px; padding:6px 14px 6px 6px; border-radius:999px; background:var(--white); border:1px solid var(--neutral-2); }
-  .user-avatar{ width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, var(--red), var(--green)); color:#fff; font-weight:700; font-size:13px; flex-shrink:0; }
-  .u-name{ font-size:13px; font-weight:600; }
-
-  @media (max-width: 900px){
-    .sidebar{ transform:translateX(-100%); }
-    .main-area{ margin-left:0; }
-  }
 </style>
 </head>
 <body class="bg-background text-foreground font-sans min-h-screen relative text-[#1F2937]">
 
 <div class="keffiyeh-bg"></div>
 
-<aside class="sidebar">
-    <a class="sidebar-brand" href="${pageContext.request.contextPath}/store/dashboard">
-        <div class="mark">ه</div><div class="name">HerjaHub</div>
-    </a>
-    <div class="side-label">Overview</div>
-    <a class="side-link" href="${pageContext.request.contextPath}/store/dashboard">
-        <i data-lucide="layout-dashboard" width="18" height="18"></i> Dashboard
-    </a>
-    <div class="side-label">Manage</div>
-    <a class="side-link" href="${pageContext.request.contextPath}/store/products">
-        <i data-lucide="shopping-bag" width="18" height="18"></i> Products
-    </a>
-    <a class="side-link active" href="${pageContext.request.contextPath}/store/edit">
-        <i data-lucide="store" width="18" height="18"></i> Store Profile
-    </a>
-    <div class="sidebar-footer">
-        <a class="side-link" href="${pageContext.request.contextPath}/logout" style="color:var(--red);">
-            <i data-lucide="log-out" width="18" height="18"></i> Log out
-        </a>
+<%-- Navbar --%>
+<nav class="sticky top-0 z-50 bg-card/80 backdrop-blur-lg border-b border-border">
+  <div class="w-full max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+    <div class="flex items-center gap-3">
+      <div class="flex items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/80 text-white font-serif font-bold w-7 h-7" style="font-size:1.05rem;">ه</div>
+      <div><div class="font-serif font-bold text-lg leading-tight">HerjaHub</div><div class="text-xs text-muted-foreground">Store Dashboard</div></div>
     </div>
-</aside>
-
-<div class="main-area">
-  <div class="topbar">
-    <div class="topbar-title">Store Profile</div>
-    <div class="user-chip">
-        <div class="user-avatar"><c:out value="${fn:substring(store.storeName, 0, 1)}" /></div>
-        <span class="u-name"><c:out value="${store.storeName}" /></span>
+    <div class="flex items-center gap-3">
+      <a href="${pageContext.request.contextPath}/store/edit" class="w-10 h-10 rounded-full bg-secondary hover:bg-primary/10 flex items-center justify-center transition-colors">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </a>
+      <a href="${pageContext.request.contextPath}/logout" class="text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors">Log out</a>
     </div>
   </div>
+</nav>
 
 <c:set var="mn" value="${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']}"/>
 
@@ -113,7 +65,7 @@
       <c:choose>
         <c:when test="${not empty store.image}">
           <div class="w-20 h-20 rounded-2xl bg-white/20 border-2 border-white/40 overflow-hidden flex-shrink-0">
-            <img src="${pageContext.request.contextPath}${store.image}" alt="Store Logo" class="w-full h-full object-cover"/>
+            <img src="${store.image}" alt="Store Logo" class="w-full h-full object-cover"/>
           </div>
         </c:when>
         <c:otherwise>
@@ -271,7 +223,6 @@
     </c:if>
   </div>
 </div>
-</div>
 
 <script>
   var logoInput = document.getElementById('logo-input');
@@ -281,7 +232,6 @@
       dropzone.querySelector('.dz-title').textContent = logoInput.files[0].name;
     }
   });
-  try { if (window.lucide) { lucide.createIcons(); } } catch (e) { console.warn("Icon rendering failed:", e); }
 </script>
 
 </body>

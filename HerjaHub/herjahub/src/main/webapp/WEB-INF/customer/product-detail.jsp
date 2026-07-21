@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -41,10 +42,11 @@
         }
         .sidebar-brand{ display:flex; align-items:center; gap:10px; padding:6px 10px 26px; text-decoration:none; color:inherit; }
         .sidebar-brand .mark{
-            width:38px; height:38px; border-radius:12px; flex-shrink:0;
+            width:38px; height:38px; border-radius:12px; flex-shrink:0; overflow:hidden;
             background:linear-gradient(135deg, #CE1126, #007A3D);
             display:flex; align-items:center; justify-content:center; color:#fff; font-family:'Poppins',sans-serif; font-weight:800;
         }
+        .sidebar-brand .mark img{ width:100%; height:100%; object-fit:cover; }
         .sidebar-brand .name{ font-family:'Poppins',sans-serif; font-weight:800; font-size:17px; color:#1F2937; }
         .side-label{ font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:#6B7280; padding:14px 12px 8px; }
         .side-link{
@@ -109,6 +111,8 @@
         /* Info column */
         .info{ padding-top:6px; animation:fadeInUp .5s var(--ease) .08s backwards; }
         .info .stock-pill{ display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:999px; background:rgba(0,122,61,0.1); color:#007A3D; font-size:12px; font-weight:700; margin-bottom:16px; }
+        .info .stock-pill.out{ background:rgba(206,17,38,0.1); color:#CE1126; }
+        .unavailable-notice{ display:flex; align-items:center; gap:10px; padding:16px 18px; border-radius:16px; background:#FBEAEA; border:1px solid #F3CACA; color:#CE1126; font-size:13.5px; font-weight:600; margin-bottom:28px; }
         .info h1{ font-family:'Poppins',sans-serif; font-weight:800; font-size:30px; color:#1F2937; margin:0 0 12px; line-height:1.15; }
         .rating-row{ display:flex; align-items:center; gap:10px; margin-bottom:18px; }
         .stars{ display:flex; gap:2px; color:#007A3D; }
@@ -168,7 +172,7 @@
 <%-- ===================== SIDEBAR ===================== --%>
 <aside class="sidebar">
     <a class="sidebar-brand" href="${pageContext.request.contextPath}/customer/dashboard">
-        <div class="mark">ه</div>
+        <div class="mark"><img src="${pageContext.request.contextPath}/resources/images/herjahub-logo.jpg" alt="HerjaHub" /></div>
         <div class="name">HerjaHub</div>
     </a>
 
@@ -232,10 +236,12 @@
                 <div class="gallery-frame">
                     <c:choose>
                         <c:when test="${not empty product.image}">
-                            <img src="${pageContext.request.contextPath}${product.image}" alt="${product.productName}"/>
+                            <img src="${pageContext.request.contextPath}${product.image}" alt="${product.productName}"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"/>
+                            <img src="${pageContext.request.contextPath}/resources/images/product-placeholder.jpg" alt="No image available" style="display:none;"/>
                         </c:when>
                         <c:otherwise>
-                            <div class="placeholder"><i data-lucide="image" width="56" height="56"></i></div>
+                            <img src="${pageContext.request.contextPath}/resources/images/product-placeholder.jpg" alt="No image available"/>
                         </c:otherwise>
                     </c:choose>
                 </div>
@@ -243,7 +249,14 @@
             </div>
 
             <div class="info">
-                <div class="stock-pill"><i data-lucide="check-circle-2" width="13" height="13"></i> In Stock</div>
+                <c:choose>
+                    <c:when test="${product.quantity == null || product.quantity <= 0}">
+                        <div class="stock-pill out"><i data-lucide="x-circle" width="13" height="13"></i> Out of Stock</div>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="stock-pill"><i data-lucide="check-circle-2" width="13" height="13"></i> In Stock</div>
+                    </c:otherwise>
+                </c:choose>
                 <h1><c:out value="${product.productName}"/></h1>
 
                 <c:if test="${reviewCount > 0}">
@@ -266,29 +279,47 @@
 
                 <p class="desc"><c:out value="${product.description}"/></p>
 
-                <div class="qty-row">
-                    <label>Quantity</label>
-                    <div class="qty-stepper">
-                        <button type="button" id="qtyDec" class="qty-btn">&minus;</button>
-                        <span class="qty-val" id="qtyVal">1</span>
-                        <button type="button" id="qtyInc" class="qty-btn">+</button>
-                    </div>
-                </div>
+                <c:choose>
+                    <c:when test="${product.quantity == null || product.quantity <= 0}">
+                        <div class="unavailable-notice">
+                            <i data-lucide="alert-circle" width="18" height="18"></i>
+                            This item is not available
+                        </div>
+                        <div class="action-row">
+                            <button type="button" class="icon-btn" title="Save for later">
+                                <i data-lucide="heart" width="18" height="18"></i>
+                            </button>
+                            <button type="button" class="icon-btn" title="Share">
+                                <i data-lucide="share-2" width="18" height="18"></i>
+                            </button>
+                        </div>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="qty-row">
+                            <label>Quantity</label>
+                            <div class="qty-stepper">
+                                <button type="button" id="qtyDec" class="qty-btn">&minus;</button>
+                                <span class="qty-val" id="qtyVal">1</span>
+                                <button type="button" id="qtyInc" class="qty-btn">+</button>
+                            </div>
+                        </div>
 
-                <div class="action-row">
-                    <form action="${pageContext.request.contextPath}/customer/cart/add/${product.id}" method="post" style="flex:1; display:flex;">
-                        <input type="hidden" name="quantity" id="cartQty" value="1"/>
-                        <button type="submit" class="btn-add">
-                            <i data-lucide="shopping-cart" width="17" height="17"></i> Add to Cart
-                        </button>
-                    </form>
-                    <button type="button" class="icon-btn" title="Save for later">
-                        <i data-lucide="heart" width="18" height="18"></i>
-                    </button>
-                    <button type="button" class="icon-btn" title="Share">
-                        <i data-lucide="share-2" width="18" height="18"></i>
-                    </button>
-                </div>
+                        <div class="action-row">
+                            <form action="${pageContext.request.contextPath}/customer/cart/add/${product.id}" method="post" style="flex:1; display:flex;">
+                                <input type="hidden" name="quantity" id="cartQty" value="1"/>
+                                <button type="submit" class="btn-add">
+                                    <i data-lucide="shopping-cart" width="17" height="17"></i> Add to Cart
+                                </button>
+                            </form>
+                            <button type="button" class="icon-btn" title="Save for later">
+                                <i data-lucide="heart" width="18" height="18"></i>
+                            </button>
+                            <button type="button" class="icon-btn" title="Share">
+                                <i data-lucide="share-2" width="18" height="18"></i>
+                            </button>
+                        </div>
+                    </c:otherwise>
+                </c:choose>
 
                 <div class="assurance">
                     <div class="assurance-row"><span class="check"><i data-lucide="check" width="14" height="14"></i></span> Free shipping on orders over $50</div>
@@ -363,11 +394,14 @@
 
 <script>
     (function() {
-        var qty = 1;
+        var qtyDec = document.getElementById('qtyDec');
+        var qtyInc = document.getElementById('qtyInc');
         var qtyVal = document.getElementById('qtyVal');
         var cartQty = document.getElementById('cartQty');
-        document.getElementById('qtyDec').addEventListener('click', function() { if (qty > 1) { qty--; qtyVal.textContent = qty; cartQty.value = qty; } });
-        document.getElementById('qtyInc').addEventListener('click', function() { qty++; qtyVal.textContent = qty; cartQty.value = qty; });
+        if (!qtyDec || !qtyInc || !qtyVal || !cartQty) { return; } // out of stock - no stepper on the page
+        var qty = 1;
+        qtyDec.addEventListener('click', function() { if (qty > 1) { qty--; qtyVal.textContent = qty; cartQty.value = qty; } });
+        qtyInc.addEventListener('click', function() { qty++; qtyVal.textContent = qty; cartQty.value = qty; });
     })();
 </script>
 
