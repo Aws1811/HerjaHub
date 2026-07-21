@@ -1,3 +1,7 @@
+# Review
+[▶ Watch the review of the customer page with AI](https://drive.google.com/file/d/1aF33h4sTqKwSHGZS-ITVHbmEZjOm0nSs/view?usp=sharing)
+
+[▶ Watch the review of store owner page](https://drive.google.com/file/d/1n23M23-xcT9Td6M65YKKrTdBapVpkeyZ/view?usp=sharing)
 # HerjaHub
 
 HerjaHub is a web-based marketplace platform that supports Palestinian artisans by giving them an online space to showcase and sell their handmade products. Customers can browse stores and products, manage a cart, and place orders. Store owners can manage their own storefront and products.
