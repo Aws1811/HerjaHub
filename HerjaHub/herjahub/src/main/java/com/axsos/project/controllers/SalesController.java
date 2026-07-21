@@ -19,7 +19,7 @@ public class SalesController {
 	@Autowired
 	private SalesService salesService;
 
-	// GET /store/api/sales - monthly revenue points for the chart, plus summary totals for the tiles
+	// GET /store/api/sales - daily revenue points for the chart, plus summary totals for the tiles
 	@GetMapping
 	public ResponseEntity<?> getSales(HttpSession session) {
 		Store store = (Store) session.getAttribute("loggedInStore");
