@@ -14,7 +14,7 @@
     <a href="/home">Home</a>
     <a href="/products">Products</a>
     <a href="/stores">Stores</a>
-    <a href="/ai">AI</a>
+    <a href="${pageContext.request.contextPath}/customer/ai">AI</a>
     <a href="/cart">Cart</a>
     <a href="/profile">Profile</a>
 </div>
