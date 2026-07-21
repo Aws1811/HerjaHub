@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.axsos.project.dto.CartItem;
@@ -86,6 +87,26 @@ public class CustomerController {
 		return "customer/stores";
 	}
 
+	// a single store's public page: its info + every product it sells -
+	// linked from the Stores list, the dashboard's featured stores, and product detail
+	@GetMapping("/customer/stores/{id}")
+	public String showStore(@PathVariable("id") Long id, HttpSession session, Model model) {
+
+		Customer customer = (Customer) session.getAttribute("loggedInCustomer");
+		if (customer == null) {
+			return "redirect:/auth";
+		}
+
+		Store store = storeService.findByIdWithProducts(id);
+		if (store == null) {
+			return "redirect:/customer/stores";
+		}
+
+		model.addAttribute("customer", customer);
+		model.addAttribute("store", store);
+		return "customer/showStore";
+	}
+
 	// small helper: returns the first "size" items of a list, or the whole
 	// list if it's already smaller than that
 	private <T> List<T> capList(List<T> list, int size) {
@@ -96,6 +117,7 @@ public class CustomerController {
 	@PostMapping("/customer/cart/add/{productId}")
 	public String addToCart(@PathVariable("productId") Long productId,
 	                        @RequestParam(value = "quantity", defaultValue = "1") int quantity,
+	                        @RequestHeader(value = "Referer", required = false) String referer,
 	                        HttpSession session) {
 
 		Customer customer = (Customer) session.getAttribute("loggedInCustomer");
@@ -108,23 +130,39 @@ public class CustomerController {
 			return "redirect:/customer/products";
 		}
 
+		Product product = productOpt.get();
+		int available = product.getQuantity() == null ? 0 : product.getQuantity();
+
+		// out of stock - nothing to add, send them back to the (now-hidden-button) product page
+		if (available <= 0) {
+			return "redirect:/customer/products/" + productId;
+		}
+
 		List<CartItem> cart = getCartFromSession(session);
 
-		// if it's already in the cart, just bump the quantity instead of adding a duplicate line
+		// if it's already in the cart, just bump the quantity instead of adding a duplicate line -
+		// either way, never let the cart hold more of this product than is actually in stock
 		boolean alreadyInCart = false;
 		for (CartItem item : cart) {
 			if (item.getProduct().getId().equals(productId)) {
-				item.setQuantity(item.getQuantity() + quantity);
+				int newQuantity = Math.min(item.getQuantity() + quantity, available);
+				item.setQuantity(newQuantity);
 				alreadyInCart = true;
 				break;
 			}
 		}
 		if (!alreadyInCart) {
-			cart.add(new CartItem(productOpt.get(), quantity));
+			cart.add(new CartItem(product, Math.min(quantity, available)));
 		}
 
 		session.setAttribute("cart", cart);
-		return "redirect:/customer/cart";
+
+		// stay on whatever page the customer added from (product detail, etc.) -
+		// only trust same-app customer URLs so a forged Referer can't redirect elsewhere
+		if (referer != null && referer.contains("/customer/")) {
+			return "redirect:" + referer;
+		}
+		return "redirect:/customer/products";
 	}
 
 	// shows everything currently in the logged-in customer's cart
@@ -156,6 +194,12 @@ public class CustomerController {
 		}
 
 		Order order = orderService.placeOrder(customer, cart);
+
+		// every item in the cart went out of stock between being added and checking out -
+		// nothing was ordered, so leave the cart alone and send them back to it
+		if (order == null) {
+			return "redirect:/customer/cart";
+		}
 
 		// empty the cart now that it has become a real order
 		session.setAttribute("cart", new ArrayList<CartItem>());
@@ -229,7 +273,26 @@ public class CustomerController {
 			return "redirect:/auth";
 		}
 
+		// if the email changed, it must not belong to another account
+		if (!customer.getEmail().equalsIgnoreCase(form.getEmail()) && customerService.emailExists(form.getEmail())) {
+			bindingResult.rejectValue("email", "error", "This email is already registered");
+		}
+
+		// changing the password requires the current one, verified, and the new one must be at least 8 chars
+		boolean changingPassword = form.getNewPassword() != null && !form.getNewPassword().isBlank();
+		if (changingPassword) {
+			if (form.getCurrentPassword() == null || form.getCurrentPassword().isBlank()) {
+				bindingResult.rejectValue("currentPassword", "error", "Enter your current password to set a new one");
+			} else if (!customerService.checkPassword(customer, form.getCurrentPassword())) {
+				bindingResult.rejectValue("currentPassword", "error", "Current password is incorrect");
+			}
+			if (form.getNewPassword().length() < 8) {
+				bindingResult.rejectValue("newPassword", "error", "New password must be at least 8 characters");
+			}
+		}
+
 		if (bindingResult.hasErrors()) {
+			model.addAttribute("customer", customer); // topbar/hero read this; without it the re-render blanks them
 			return "customer/edit-profile";
 		}
 

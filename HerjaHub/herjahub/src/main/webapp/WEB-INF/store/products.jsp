@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -32,8 +33,10 @@
 
   .sidebar{ position:fixed; top:0; left:0; bottom:0; width:var(--sidebar-w); z-index:30; background:rgba(255,255,255,0.7); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-right:1px solid rgba(255,255,255,0.6); display:flex; flex-direction:column; padding:22px 16px; }
   .sidebar-brand{ display:flex; align-items:center; gap:10px; padding:6px 10px 26px; }
-  .sidebar-brand .mark{ width:38px; height:38px; border-radius:12px; flex-shrink:0; background:linear-gradient(135deg, var(--red), var(--green)); display:flex; align-items:center; justify-content:center; color:var(--white); font-family:'Poppins',sans-serif; font-weight:800; }
+  .sidebar-brand .mark{ width:38px; height:38px; border-radius:12px; flex-shrink:0; overflow:hidden; background:linear-gradient(135deg, var(--red), var(--green)); display:flex; align-items:center; justify-content:center; color:var(--white); font-family:'Poppins',sans-serif; font-weight:800; }
+  .sidebar-brand .mark img{ width:100%; height:100%; object-fit:cover; }
   .sidebar-brand .name{ font-family:'Poppins',sans-serif; font-weight:800; font-size:17px; }
+  .sidebar-brand .name .hub-accent{ background:linear-gradient(90deg, #CE1126, #007A3D); -webkit-background-clip:text; background-clip:text; color:transparent; }
   .side-label{ font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--text-2); padding:14px 12px 8px; }
   .side-link{ display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:var(--radius-sm); font-weight:600; font-size:14px; color:var(--text-1); margin-bottom:3px; transition:all .22s var(--ease); position:relative; }
   .side-link svg{ flex-shrink:0; opacity:.8; }
@@ -65,10 +68,19 @@
   .count-pill{ display:inline-flex; align-items:center; gap:6px; padding:3px 11px; border-radius:999px; background:rgba(0,122,61,0.1); color:var(--green); font-size:12px; font-weight:700; margin-left:10px; vertical-align:middle; }
 
   .toolbar{ display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:24px; flex-wrap:wrap; animation:fadeInUp .4s var(--ease) .05s backwards; }
+  .toolbar-left{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
   .search-box{ position:relative; flex:1; min-width:220px; max-width:360px; }
   .search-box svg{ position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--text-2); pointer-events:none; }
   .search-box input{ width:100%; padding:11px 14px 11px 40px; border:1px solid var(--neutral-2); border-radius:999px; background:var(--white); font-size:13.5px; font-family:'Inter',sans-serif; transition:all .2s var(--ease); }
   .search-box input:focus{ outline:none; border-color:var(--green); box-shadow:0 0 0 3px rgba(0,122,61,0.12); }
+  .stock-filters{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .stock-filter-btn{
+    display:flex; align-items:center; gap:6px; padding:9px 15px; border-radius:999px; border:1px solid var(--neutral-2);
+    background:var(--white); font-size:12.5px; font-weight:600; color:var(--text-2); cursor:pointer; transition:all .2s var(--ease);
+  }
+  .stock-filter-btn:hover{ border-color:var(--green); color:var(--green); }
+  .stock-filter-btn.active{ background:linear-gradient(135deg,var(--red),var(--green)); border-color:transparent; color:#fff; }
+  .stock-filter-btn .count{ font-size:11px; opacity:.85; }
   .btn-add{ display:flex; align-items:center; gap:8px; padding:12px 22px; border-radius:999px; border:none; background:linear-gradient(135deg,var(--red),var(--green)); color:#fff; font-weight:700; font-size:13.5px; cursor:pointer; transition:all .2s var(--ease); flex-shrink:0; }
   .btn-add:hover{ transform:translateY(-2px); box-shadow:0 14px 26px -14px rgba(0,122,61,0.5); }
 
@@ -107,10 +119,16 @@
   #no-results{ display:none; text-align:center; padding:50px 20px; color:var(--text-2); font-size:13.5px; }
 
   @media (max-width: 900px){
-    .sidebar{ transform:translateX(-100%); }
+    .sidebar{ transform:translateX(-100%); transition:transform .3s ease; }
+    .sidebar.open{ transform:translateX(0); }
+    .menu-btn{ display:flex; }
+    .sidebar-overlay.show{ display:block; }
     .main-area{ margin-left:0; }
     .page-header{ flex-direction:column; align-items:flex-start; }
   }
+
+  .menu-btn{ display:none; width:40px; height:40px; border-radius:12px; border:1px solid var(--neutral-2); background:var(--white); color:var(--text-1); align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
+  .sidebar-overlay{ display:none; position:fixed; inset:0; z-index:25; background:rgba(17,17,17,0.35); }
 </style>
 </head>
 <body>
@@ -119,7 +137,7 @@
 
 <aside class="sidebar">
     <a class="sidebar-brand" href="${pageContext.request.contextPath}/store/dashboard">
-        <div class="mark">ه</div><div class="name">HerjaHub</div>
+        <div class="mark"><img src="${pageContext.request.contextPath}/resources/images/herjahub-logo.jpg" alt="HerjaHub" /></div><div class="name">Herja<span class="hub-accent">Hub</span></div>
     </a>
     <div class="side-label">Overview</div>
     <a class="side-link" href="${pageContext.request.contextPath}/store/dashboard">
@@ -139,8 +157,11 @@
     </div>
 </aside>
 
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 <div class="main-area">
     <div class="topbar">
+        <button class="menu-btn" id="menuBtn" type="button" aria-label="Open menu"><i data-lucide="menu" width="20" height="20"></i></button>
         <div class="topbar-title">Products</div>
         <div class="user-chip">
             <div class="user-avatar"><c:out value="${fn:substring(store.storeName, 0, 1)}" /></div>
@@ -158,9 +179,20 @@
         </div>
 
         <div class="toolbar">
-            <div class="search-box">
-                <i data-lucide="search" width="16" height="16"></i>
-                <input type="text" id="product-search" placeholder="Search your products..." autocomplete="off" />
+            <div class="toolbar-left">
+                <div class="search-box">
+                    <i data-lucide="search" width="16" height="16"></i>
+                    <input type="text" id="product-search" placeholder="Search your products..." autocomplete="off" />
+                </div>
+                <div class="stock-filters">
+                    <button type="button" class="stock-filter-btn active" data-stock-filter="all">All</button>
+                    <button type="button" class="stock-filter-btn" data-stock-filter="low">
+                        <i data-lucide="alert-triangle" width="12" height="12"></i> Low Stock
+                    </button>
+                    <button type="button" class="stock-filter-btn" data-stock-filter="out">
+                        <i data-lucide="x-circle" width="12" height="12"></i> Out of Stock
+                    </button>
+                </div>
             </div>
             <a class="btn-add" href="${pageContext.request.contextPath}/store/products/add">
                 <i data-lucide="plus" width="16" height="16"></i> Add Product
@@ -182,6 +214,7 @@
                 <div class="product-grid" id="product-grid">
                     <c:forEach var="product" items="${products}" varStatus="i">
                         <a class="product-card" data-name="${fn:toLowerCase(product.productName)}"
+                           data-stock="${product.quantity == 0 ? 'out' : (product.quantity > 0 && product.quantity <= 5 ? 'low' : 'in')}"
                            href="${pageContext.request.contextPath}/store/products/${product.id}"
                            style="animation-delay:${i.index * 0.04}s">
                             <div class="product-image-wrap">
@@ -203,7 +236,7 @@
                             <div class="product-body">
                                 <p class="product-name"><c:out value="${product.productName}" /></p>
                                 <div class="product-meta">
-                                    <p class="product-price">$<c:out value="${product.price}" /></p>
+                                    <p class="product-price">$<fmt:formatNumber value="${product.price}" minFractionDigits="2" maxFractionDigits="2" /></p>
                                     <span class="product-qty">${product.quantity} in stock</span>
                                 </div>
                             </div>
@@ -230,24 +263,68 @@
 <script>lucide.createIcons();</script>
 
 <script>
+(function() {
   var searchInput = document.getElementById('product-search');
-  if (searchInput) {
-    searchInput.addEventListener('input', function() {
-      var term = searchInput.value.trim().toLowerCase();
-      var cards = document.querySelectorAll('#product-grid .product-card');
-      var visibleCount = 0;
-      cards.forEach(function(card) {
-        var matches = card.getAttribute('data-name').indexOf(term) !== -1;
-        card.style.display = matches ? '' : 'none';
-        if (matches) visibleCount++;
-      });
-      var noResults = document.getElementById('no-results');
-      if (noResults) {
-        noResults.style.display = (term && visibleCount === 0) ? 'block' : 'none';
-      }
+  var filterButtons = document.querySelectorAll('.stock-filter-btn');
+  var cards = document.querySelectorAll('#product-grid .product-card');
+  var noResults = document.getElementById('no-results');
+  var activeStockFilter = 'all';
+
+  // populate each pill with a live count of how many products fall into it
+  filterButtons.forEach(function(btn) {
+    var stock = btn.getAttribute('data-stock-filter');
+    if (stock === 'all') return;
+    var count = 0;
+    cards.forEach(function(card) { if (card.getAttribute('data-stock') === stock) count++; });
+    var label = document.createElement('span');
+    label.className = 'count';
+    label.textContent = ' (' + count + ')';
+    btn.appendChild(label);
+  });
+
+  function applyFilters() {
+    var term = searchInput ? searchInput.value.trim().toLowerCase() : '';
+    var visibleCount = 0;
+    cards.forEach(function(card) {
+      var matchesSearch = card.getAttribute('data-name').indexOf(term) !== -1;
+      var matchesStock = activeStockFilter === 'all' || card.getAttribute('data-stock') === activeStockFilter;
+      var visible = matchesSearch && matchesStock;
+      card.style.display = visible ? '' : 'none';
+      if (visible) visibleCount++;
     });
+
+    // the "+ Add Product" tile only makes sense when nothing is filtered out by stock status
+    var addTile = document.querySelector('#product-grid .add-tile');
+    if (addTile) addTile.style.display = (activeStockFilter === 'all') ? '' : 'none';
+
+    if (noResults) {
+      noResults.style.display = (visibleCount === 0) ? 'block' : 'none';
+    }
   }
+
+  if (searchInput) {
+    searchInput.addEventListener('input', applyFilters);
+  }
+
+  filterButtons.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      filterButtons.forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      activeStockFilter = btn.getAttribute('data-stock-filter');
+      applyFilters();
+    });
+  });
+})();
 </script>
 
+
+<script>
+  (function(){
+    var b=document.getElementById('menuBtn'), s=document.querySelector('.sidebar'), o=document.getElementById('sidebarOverlay');
+    if(!b||!s||!o) return;
+    b.addEventListener('click', function(){ s.classList.add('open'); o.classList.add('show'); });
+    o.addEventListener('click', function(){ s.classList.remove('open'); o.classList.remove('show'); });
+  })();
+</script>
 </body>
 </html>

@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -45,6 +46,7 @@
   .sidebar-brand .mark{ width:38px; height:38px; border-radius:12px; flex-shrink:0; overflow:hidden; background:linear-gradient(135deg, var(--red), var(--green)); display:flex; align-items:center; justify-content:center; color:var(--white); font-family:'Poppins',sans-serif; font-weight:800; }
   .sidebar-brand .mark img{ width:100%; height:100%; object-fit:cover; }
   .sidebar-brand .name{ font-family:'Poppins',sans-serif; font-weight:800; font-size:17px; }
+  .sidebar-brand .name .hub-accent{ background:linear-gradient(90deg, #CE1126, #007A3D); -webkit-background-clip:text; background-clip:text; color:transparent; }
   .side-label{ font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--text-2); padding:14px 12px 8px; }
   .side-link{ display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:var(--radius-sm); font-weight:600; font-size:14px; color:var(--text-1); margin-bottom:3px; transition:all .22s var(--ease); position:relative; }
   .side-link svg{ flex-shrink:0; opacity:.8; }
@@ -106,14 +108,18 @@
   .store-rail{ display:grid; grid-template-columns:repeat(4, 1fr); gap:18px; }
   .store-tile{ background:var(--white); border:1px solid var(--neutral-2); border-radius:var(--radius-md); padding:20px 18px; text-align:center; transition:all .25s var(--ease); }
   .store-tile:hover{ transform:translateY(-5px); box-shadow:var(--shadow-md); border-color:var(--green); }
-  .store-avatar{ width:52px; height:52px; margin:0 auto 12px; border-radius:16px; background:linear-gradient(135deg,var(--red),var(--green)); color:#fff; font-family:'Poppins',sans-serif; font-weight:800; font-size:19px; display:flex; align-items:center; justify-content:center; }
+  .store-avatar{ width:52px; height:52px; margin:0 auto 12px; border-radius:16px; overflow:hidden; background:linear-gradient(135deg,var(--red),var(--green)); color:#fff; font-family:'Poppins',sans-serif; font-weight:800; font-size:19px; display:flex; align-items:center; justify-content:center; }
+  .store-avatar img{ width:100%; height:100%; object-fit:cover; border-radius:16px; }
   .store-name{ font-weight:700; font-size:14px; margin:0 0 4px; }
   .store-desc{ font-size:12px; color:var(--text-2); margin:0; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
 
   .empty-note{ color:var(--text-2); font-size:13.5px; background:var(--white); border:1px dashed var(--neutral-2); border-radius:var(--radius-md); padding:24px; text-align:center; }
 
   @media (max-width: 900px){
-    .sidebar{ transform:translateX(-100%); }
+    .sidebar{ transform:translateX(-100%); transition:transform .3s ease; }
+    .sidebar.open{ transform:translateX(0); }
+    .menu-btn{ display:flex; }
+    .sidebar-overlay.show{ display:block; }
     .main-area{ margin-left:0; }
     .product-rail, .store-rail{ grid-template-columns:repeat(2, 1fr); }
   }
@@ -121,6 +127,13 @@
     .user-chip{ display:flex; align-items:center; gap:10px; padding:6px 14px 6px 6px; border-radius:999px; background:var(--white); border:1px solid var(--neutral-2); }
     .user-avatar{ width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, var(--red), var(--green)); color:#fff; font-weight:700; font-size:13px; flex-shrink:0; }
     .u-name{ font-size:13px; font-weight:600; }
+
+  .menu-btn{ display:none; width:40px; height:40px; border-radius:12px; border:1px solid var(--neutral-2); background:var(--white); color:var(--text-1); align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
+  .sidebar-overlay{ display:none; position:fixed; inset:0; z-index:25; background:rgba(17,17,17,0.35); }
+
+  .cart-btn{ position:relative; margin-left:auto; width:40px; height:40px; border-radius:50%; background:var(--white); border:1px solid var(--neutral-2); display:flex; align-items:center; justify-content:center; color:var(--text-1); transition:all .2s ease; flex-shrink:0; }
+  .cart-btn:hover{ border-color:var(--green); color:var(--green); }
+  .cart-count{ position:absolute; top:-4px; right:-4px; min-width:17px; height:17px; padding:0 4px; border-radius:999px; background:var(--red); color:#fff; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; }
 </style>
 </head>
 <body>
@@ -131,7 +144,7 @@
 <aside class="sidebar">
     <a class="sidebar-brand" href="${pageContext.request.contextPath}/customer/dashboard">
         <div class="mark"><img src="${pageContext.request.contextPath}/resources/images/herjahub-logo.jpg" alt="HerjaHub" /></div>
-        <div class="name">HerjaHub</div>
+        <div class="name">Herja<span class="hub-accent">Hub</span></div>
     </a>
 
     <div class="side-label">Shop</div>
@@ -166,13 +179,17 @@
     </div>
 </aside>
 
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 <div class="main-area">
 
     <%-- ===================== TOPBAR ===================== --%>
     <div class="topbar">
+        <button class="menu-btn" id="menuBtn" type="button" aria-label="Open menu"><i data-lucide="menu" width="20" height="20"></i></button>
         <div class="topbar-title">Dashboard</div>
 <div class="topbar-right">
-    <div class="user-chip">
+    <a class="cart-btn" href="${pageContext.request.contextPath}/customer/cart" title="View cart"><i data-lucide="shopping-cart" width="18" height="18"></i><c:if test="${not empty sessionScope.cart}"><span class="cart-count">${fn:length(sessionScope.cart)}</span></c:if></a>
+        <div class="user-chip">
         <div class="user-avatar"><c:out value="${fn:substring(customer.firstName, 0, 1)}" /></div>
         <span class="u-name"><c:out value="${customer.firstName}" /></span>
     </div>
@@ -221,7 +238,7 @@
                                     </div>
                                     <div class="pt-body">
                                         <p class="pt-name"><c:out value="${product.productName}" /></p>
-                                        <p class="pt-price">$<c:out value="${product.price}" /></p>
+                                        <p class="pt-price">$<fmt:formatNumber value="${product.price}" minFractionDigits="2" maxFractionDigits="2" /></p>
                                     </div>
                                 </a>
                             </div>
@@ -247,11 +264,22 @@
                 <c:otherwise>
                     <div class="store-rail">
                         <c:forEach var="store" items="${featuredStores}">
-                            <div class="store-tile">
-                                <div class="store-avatar"><c:out value="${fn:substring(store.storeName, 0, 1)}" /></div>
+                            <a class="store-tile" href="${pageContext.request.contextPath}/customer/stores/${store.id}">
+                                <div class="store-avatar">
+                                    <c:choose>
+                                        <c:when test="${not empty store.image}">
+                                            <img src="${pageContext.request.contextPath}${store.image}" alt="${store.storeName}"
+                                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';" />
+                                            <span style="display:none;"><c:out value="${fn:substring(store.storeName, 0, 1)}" /></span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <c:out value="${fn:substring(store.storeName, 0, 1)}" />
+                                        </c:otherwise>
+                                    </c:choose>
+                                </div>
                                 <p class="store-name"><c:out value="${store.storeName}" /></p>
                                 <p class="store-desc"><c:out value="${store.description}" /></p>
-                            </div>
+                            </a>
                         </c:forEach>
                     </div>
                 </c:otherwise>
@@ -262,5 +290,14 @@
 </div>
 
 <script>lucide.createIcons();</script>
+
+<script>
+  (function(){
+    var b=document.getElementById('menuBtn'), s=document.querySelector('.sidebar'), o=document.getElementById('sidebarOverlay');
+    if(!b||!s||!o) return;
+    b.addEventListener('click', function(){ s.classList.add('open'); o.classList.add('show'); });
+    o.addEventListener('click', function(){ s.classList.remove('open'); o.classList.remove('show'); });
+  })();
+</script>
 </body>
 </html>

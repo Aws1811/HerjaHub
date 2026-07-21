@@ -23,4 +23,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 	Double avgRatingByProductId(@Param("productId") Long productId);
 
 	long countByProductId(Long productId);
+
+	// whether this customer already reviewed this product - each customer gets one review per product
+	boolean existsByProductIdAndCustomerId(Long productId, Long customerId);
 }

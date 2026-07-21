@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.min.js"></script>
 <style>
   :root{
     --red:#CE1126; --green:#007A3D; --white:#FFFFFF; --neutral-1:#F8F9FA; --neutral-2:#E9ECEF;
@@ -35,8 +35,10 @@
   /* ===== App shell ===== */
   .sidebar{ position:fixed; top:0; left:0; bottom:0; width:var(--sidebar-w); z-index:30; background:rgba(255,255,255,0.7); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-right:1px solid rgba(255,255,255,0.6); display:flex; flex-direction:column; padding:22px 16px; }
   .sidebar-brand{ display:flex; align-items:center; gap:10px; padding:6px 10px 26px; }
-  .sidebar-brand .mark{ width:38px; height:38px; border-radius:12px; flex-shrink:0; background:linear-gradient(135deg, var(--red), var(--green)); display:flex; align-items:center; justify-content:center; color:var(--white); font-family:'Poppins',sans-serif; font-weight:800; }
+  .sidebar-brand .mark{ width:38px; height:38px; border-radius:12px; flex-shrink:0; overflow:hidden; background:linear-gradient(135deg, var(--red), var(--green)); display:flex; align-items:center; justify-content:center; color:var(--white); font-family:'Poppins',sans-serif; font-weight:800; }
+  .sidebar-brand .mark img{ width:100%; height:100%; object-fit:cover; }
   .sidebar-brand .name{ font-family:'Poppins',sans-serif; font-weight:800; font-size:17px; }
+  .sidebar-brand .name .hub-accent{ background:linear-gradient(90deg, #CE1126, #007A3D); -webkit-background-clip:text; background-clip:text; color:transparent; }
   .side-label{ font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--text-2); padding:14px 12px 8px; }
   .side-link{ display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:var(--radius-sm); font-weight:600; font-size:14px; color:var(--text-1); margin-bottom:3px; transition:all .22s var(--ease); position:relative; }
   .side-link svg{ flex-shrink:0; opacity:.8; }
@@ -115,11 +117,17 @@
   .stock-qty{ font-weight:800; font-size:13px; color:var(--red); background:rgba(206,17,38,0.08); padding:4px 11px; border-radius:999px; }
 
   @media (max-width: 1000px){
-    .sidebar{ transform:translateX(-100%); }
+    .sidebar{ transform:translateX(-100%); transition:transform .3s ease; }
+    .sidebar.open{ transform:translateX(0); }
+    .menu-btn{ display:flex; }
+    .sidebar-overlay.show{ display:block; }
     .main-area{ margin-left:0; }
     .kpi-row{ grid-template-columns:1fr 1fr; }
     .content-row, .bottom-row{ grid-template-columns:1fr; }
   }
+
+  .menu-btn{ display:none; width:40px; height:40px; border-radius:12px; border:1px solid var(--neutral-2); background:var(--white); color:var(--text-1); align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
+  .sidebar-overlay{ display:none; position:fixed; inset:0; z-index:25; background:rgba(17,17,17,0.35); }
 </style>
 </head>
 <body>
@@ -128,7 +136,7 @@
 
 <aside class="sidebar">
     <a class="sidebar-brand" href="${pageContext.request.contextPath}/store/dashboard">
-        <div class="mark">ه</div><div class="name">HerjaHub</div>
+        <div class="mark"><img src="${pageContext.request.contextPath}/resources/images/herjahub-logo.jpg" alt="HerjaHub" /></div><div class="name">Herja<span class="hub-accent">Hub</span></div>
     </a>
     <div class="side-label">Overview</div>
     <a class="side-link active" href="${pageContext.request.contextPath}/store/dashboard">
@@ -148,8 +156,11 @@
     </div>
 </aside>
 
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 <div class="main-area">
     <div class="topbar">
+        <button class="menu-btn" id="menuBtn" type="button" aria-label="Open menu"><i data-lucide="menu" width="20" height="20"></i></button>
         <div class="topbar-title">Dashboard</div>
         <div class="user-chip">
             <div class="user-avatar"><c:out value="${fn:substring(store.storeName, 0, 1)}" /></div>
@@ -207,9 +218,9 @@
         <div class="content-row">
             <div class="panel">
                 <h2>Sales Over Time</h2>
-                <p class="sub">Monthly revenue across all of your products.</p>
+                <p class="sub">Daily revenue across all of your products (last 30 days).</p>
                 <c:choose>
-                    <c:when test="${not empty sales.chart}">
+                    <c:when test="${sales.totalRevenue > 0}">
                         <div style="height:270px; position:relative;"><canvas id="salesChart"></canvas></div>
 
                         <c:set var="chartSum" value="${0}" />
@@ -217,7 +228,7 @@
                             <c:set var="chartSum" value="${chartSum + p.total}" />
                         </c:forEach>
                         <c:set var="chartCount" value="${fn:length(sales.chart)}" />
-                        <c:set var="avgPerMonth" value="${chartCount > 0 ? (chartSum / chartCount) : 0}" />
+                        <c:set var="avgPerDay" value="${chartCount > 0 ? (chartSum / chartCount) : 0}" />
                         <c:set var="latestTotal" value="${sales.chart[chartCount - 1].total}" />
 
                         <div class="chart-insight">
@@ -226,20 +237,20 @@
                                 <span class="insight-value">$<fmt:formatNumber value="${sales.totalRevenue}" minFractionDigits="2" maxFractionDigits="2" /></span>
                             </div>
                             <div class="insight-stat">
-                                <span class="insight-label">Avg / Month</span>
-                                <span class="insight-value">$<fmt:formatNumber value="${avgPerMonth}" minFractionDigits="2" maxFractionDigits="2" /></span>
+                                <span class="insight-label">Avg / Day</span>
+                                <span class="insight-value">$<fmt:formatNumber value="${avgPerDay}" minFractionDigits="2" maxFractionDigits="2" /></span>
                             </div>
                             <div class="insight-stat">
-                                <span class="insight-label">Latest Month</span>
+                                <span class="insight-label">Today</span>
                                 <c:choose>
-                                    <c:when test="${avgPerMonth == 0}">
+                                    <c:when test="${avgPerDay == 0}">
                                         <span class="insight-badge up"><i data-lucide="minus" width="12" height="12"></i> No baseline yet</span>
                                     </c:when>
-                                    <c:when test="${latestTotal >= avgPerMonth}">
-                                        <span class="insight-badge up"><i data-lucide="trending-up" width="12" height="12"></i> <fmt:formatNumber value="${((latestTotal - avgPerMonth) / avgPerMonth) * 100}" maxFractionDigits="0" />% above avg</span>
+                                    <c:when test="${latestTotal >= avgPerDay}">
+                                        <span class="insight-badge up"><i data-lucide="trending-up" width="12" height="12"></i> <fmt:formatNumber value="${((latestTotal - avgPerDay) / avgPerDay) * 100}" maxFractionDigits="0" />% above avg</span>
                                     </c:when>
                                     <c:otherwise>
-                                        <span class="insight-badge down"><i data-lucide="trending-down" width="12" height="12"></i> <fmt:formatNumber value="${((avgPerMonth - latestTotal) / avgPerMonth) * 100}" maxFractionDigits="0" />% below avg</span>
+                                        <span class="insight-badge down"><i data-lucide="trending-down" width="12" height="12"></i> <fmt:formatNumber value="${((avgPerDay - latestTotal) / avgPerDay) * 100}" maxFractionDigits="0" />% below avg</span>
                                     </c:otherwise>
                                 </c:choose>
                             </div>
@@ -373,5 +384,14 @@
   }
 </script>
 
+
+<script>
+  (function(){
+    var b=document.getElementById('menuBtn'), s=document.querySelector('.sidebar'), o=document.getElementById('sidebarOverlay');
+    if(!b||!s||!o) return;
+    b.addEventListener('click', function(){ s.classList.add('open'); o.classList.add('show'); });
+    o.addEventListener('click', function(){ s.classList.remove('open'); o.classList.remove('show'); });
+  })();
+</script>
 </body>
 </html>

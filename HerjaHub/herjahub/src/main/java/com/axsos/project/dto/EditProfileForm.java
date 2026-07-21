@@ -21,6 +21,9 @@ public class EditProfileForm {
 	@Email(message = "Please enter a valid email address")
 	private String email;
 
+	// required only when setting a new password - must match the customer's existing password
+	private String currentPassword;
+
 	// optional - only hashed and saved if the customer actually typed a new one
 	private String newPassword;
 
@@ -49,6 +52,14 @@ public class EditProfileForm {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public String getCurrentPassword() {
+		return currentPassword;
+	}
+
+	public void setCurrentPassword(String currentPassword) {
+		this.currentPassword = currentPassword;
 	}
 
 	public String getNewPassword() {

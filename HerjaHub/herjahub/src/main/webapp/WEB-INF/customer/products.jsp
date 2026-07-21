@@ -68,6 +68,7 @@
   }
   .sidebar-brand .mark img{ width:100%; height:100%; object-fit:cover; }
   .sidebar-brand .name{ font-family:'Poppins',sans-serif; font-weight:800; font-size:17px; }
+  .sidebar-brand .name .hub-accent{ background:linear-gradient(90deg, #CE1126, #007A3D); -webkit-background-clip:text; background-clip:text; color:transparent; }
 
   .side-label{ font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--text-2); padding:14px 12px 8px; }
   .side-link{
@@ -157,6 +158,8 @@
   .product-card:hover .product-image-wrap img{ transform:scale(1.06); }
   .image-placeholder{ color:var(--text-2); font-size:12.5px; margin:0; }
   .corner-accent{ position:absolute; top:0; right:0; width:36px; height:36px; background:linear-gradient(135deg, var(--red), var(--green)); clip-path:polygon(100% 0, 0 0, 100% 100%); opacity:.85; }
+  .out-of-stock-badge{ position:absolute; top:10px; left:10px; z-index:2; background:rgba(17,17,17,0.82); color:#fff; font-size:10.5px; font-weight:700; letter-spacing:.03em; text-transform:uppercase; padding:5px 10px; border-radius:999px; }
+  .product-card.is-out-of-stock .product-image-wrap img{ filter:grayscale(0.6); opacity:.55; }
   .product-body{ padding:15px 17px; display:flex; flex-direction:column; gap:6px; flex:1; }
   .product-name{ font-weight:700; font-size:14.5px; margin:0; color:var(--text-1); }
   .product-price{ margin:0; font-weight:800; font-size:15px; background:linear-gradient(90deg,var(--red),var(--green)); -webkit-background-clip:text; background-clip:text; color:transparent; }
@@ -165,7 +168,10 @@
   .empty-state h3{ font-family:'Poppins',sans-serif; font-weight:700; font-size:19px; color:var(--text-1); margin:0 0 6px; }
 
   @media (max-width: 900px){
-    .sidebar{ transform:translateX(-100%); }
+    .sidebar{ transform:translateX(-100%); transition:transform .3s ease; }
+    .sidebar.open{ transform:translateX(0); }
+    .menu-btn{ display:flex; }
+    .sidebar-overlay.show{ display:block; }
     .main-area{ margin-left:0; }
   }
   .search-bar{
@@ -178,6 +184,31 @@
   .search-bar input::placeholder{ color:#9CA3AF; }
   .clear-btn{ color:var(--text-2); display:flex; }
   .clear-btn:hover{ color:var(--red); }
+
+  .filter-bar{ display:flex; align-items:center; flex-wrap:wrap; gap:14px; margin:0 0 24px; }
+  .price-filter{
+    display:flex; align-items:center; gap:10px;
+    background:rgba(255,255,255,0.8); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+    border:1px solid rgba(255,255,255,0.6); border-radius:999px; padding:9px 16px;
+    box-shadow:var(--shadow-sm); color:var(--text-2); font-size:13px;
+  }
+  .price-filter label{ font-weight:600; font-size:12px; color:var(--text-2); white-space:nowrap; }
+  .price-filter input{
+    width:78px; border:none; outline:none; background:var(--neutral-1); border-radius:999px;
+    padding:6px 12px; font-size:13px; font-family:'Inter',sans-serif; color:var(--text-1);
+  }
+  .price-filter .dash{ color:var(--text-2); }
+  .filter-clear{ display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:600; color:var(--text-2); padding:9px 14px; border-radius:999px; border:1px solid var(--neutral-2); background:rgba(255,255,255,0.6); transition:all .2s var(--ease); }
+  .filter-clear:hover{ color:var(--red); border-color:var(--red); }
+  .grid-loading{ text-align:center; padding:40px; color:var(--text-2); font-size:13px; }
+  #productGrid{ transition:opacity .15s var(--ease); }
+
+  .menu-btn{ display:none; width:40px; height:40px; border-radius:12px; border:1px solid var(--neutral-2); background:var(--white); color:var(--text-1); align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
+  .sidebar-overlay{ display:none; position:fixed; inset:0; z-index:25; background:rgba(17,17,17,0.35); }
+
+  .cart-btn{ position:relative; margin-left:auto; width:40px; height:40px; border-radius:50%; background:var(--white); border:1px solid var(--neutral-2); display:flex; align-items:center; justify-content:center; color:var(--text-1); transition:all .2s ease; flex-shrink:0; }
+  .cart-btn:hover{ border-color:var(--green); color:var(--green); }
+  .cart-count{ position:absolute; top:-4px; right:-4px; min-width:17px; height:17px; padding:0 4px; border-radius:999px; background:var(--red); color:#fff; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; }
 </style>
 </head>
 <body style="--keffiyeh-pattern: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22140%22 height=%22140%22><g fill=%22none%22 stroke=%22%23ffffff%22 stroke-width=%222%22 opacity=%220.5%22><path d=%22M0 70 L70 0 L140 70 L70 140 Z%22/><path d=%22M70 0 L70 140%22/><path d=%22M0 70 L140 70%22/></g></svg>')">
@@ -189,7 +220,7 @@
 <aside class="sidebar">
     <a class="sidebar-brand" href="${pageContext.request.contextPath}/customer/dashboard">
         <div class="mark"><img src="${pageContext.request.contextPath}/resources/images/herjahub-logo.jpg" alt="HerjaHub" /></div>
-        <div class="name">HerjaHub</div>
+        <div class="name">Herja<span class="hub-accent">Hub</span></div>
     </a>
 
     <div class="side-label">Shop</div>
@@ -225,13 +256,17 @@
     </div>
 </aside>
 
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 <div class="main-area">
 
     <%-- ===================== TOPBAR (reusable shell) ===================== --%>
     <div class="topbar">
+        <button class="menu-btn" id="menuBtn" type="button" aria-label="Open menu"><i data-lucide="menu" width="20" height="20"></i></button>
         <div class="topbar-title">Products</div>
         <div class="topbar-right">
-            <div class="user-chip">
+            <a class="cart-btn" href="${pageContext.request.contextPath}/customer/cart" title="View cart"><i data-lucide="shopping-cart" width="18" height="18"></i><c:if test="${not empty sessionScope.cart}"><span class="cart-count">${fn:length(sessionScope.cart)}</span></c:if></a>
+        <div class="user-chip">
                 <div class="user-avatar"><c:out value="${fn:substring(customer.firstName, 0, 1)}" /></div>
                 <span class="u-name"><c:out value="${customer.firstName}" /></span>
             </div>
@@ -252,57 +287,119 @@
             </div>
         </div>
 
- <%-- ===== Search bar ===== --%>
-  <form class="search-bar" action="${pageContext.request.contextPath}/customer/products" method="get">
+ <%-- ===== Search bar + price filter ===== --%>
+  <form id="filterForm" class="search-bar" action="${pageContext.request.contextPath}/customer/products" method="get">
       <i data-lucide="search" width="17" height="17"></i>
-      <input type="text" name="q" value="${q}" placeholder="Search products..." autocomplete="off" />
+      <input type="text" id="searchInput" name="q" value="${q}" placeholder="Search products..." autocomplete="off" />
       <c:if test="${not empty q}">
           <a class="clear-btn" href="${pageContext.request.contextPath}/customer/products">
               <i data-lucide="x" width="15" height="15"></i>
           </a>
       </c:if>
   </form>
-        <%-- ===== Product grid ===== --%>
-        <c:choose>
-            <c:when test="${empty products}">
-                <div class="empty-state">
-                    <h3>No products yet</h3>
-                    <p class="muted">Check back soon - artisans are adding their catalog.</p>
-                </div>
-            </c:when>
-            <c:otherwise>
-                <div class="product-grid">
-                    <c:forEach var="product" items="${products}" varStatus="i">
-                        <div class="product-card" style="animation-delay:${i.index * 0.04}s">
-                            <a href="${pageContext.request.contextPath}/customer/products/${product.id}">
-                                <div class="product-image-wrap">
-                                    <div class="corner-accent"></div>
-                                    <c:choose>
-                                        <c:when test="${empty product.image}">
-                                            <img src="${pageContext.request.contextPath}/resources/images/product-placeholder.jpg" alt="No image available" />
-                                        </c:when>
-                                        <c:otherwise>
-                                            <img src="${pageContext.request.contextPath}${product.image}"
-                                                 alt="${product.productName}"
-                                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
-                                            <img src="${pageContext.request.contextPath}/resources/images/product-placeholder.jpg" alt="No image available" style="display:none;" />
-                                        </c:otherwise>
-                                    </c:choose>
-                                </div>
-                                <div class="product-body">
-                                    <p class="product-name"><c:out value="${product.productName}" /></p>
-                                    <p class="product-price">$<c:out value="${product.price}" /></p>
-                                </div>
-                            </a>
-                        </div>
-                    </c:forEach>
-                </div>
-            </c:otherwise>
-        </c:choose>
+
+  <div class="filter-bar">
+      <div class="price-filter">
+          <label for="minPriceInput">Price</label>
+          <input type="number" id="minPriceInput" min="0" step="0.01" placeholder="Min" value="${minPrice}" />
+          <span class="dash">&ndash;</span>
+          <input type="number" id="maxPriceInput" min="0" step="0.01" placeholder="Max" value="${maxPrice}" />
+      </div>
+      <a href="${pageContext.request.contextPath}/customer/products" class="filter-clear" id="clearFiltersBtn">
+          <i data-lucide="rotate-ccw" width="13" height="13"></i> Clear filters
+      </a>
+  </div>
+
+        <%-- ===== Product grid (swapped in-place by the AJAX search/filter) ===== --%>
+        <div id="productGrid">
+            <jsp:include page="products-grid.jsp" />
+        </div>
 
     </div>
 </div>
 
+<script>
+(function() {
+    var searchInput = document.getElementById('searchInput');
+    var minPriceInput = document.getElementById('minPriceInput');
+    var maxPriceInput = document.getElementById('maxPriceInput');
+    var clearFiltersBtn = document.getElementById('clearFiltersBtn');
+    var productGrid = document.getElementById('productGrid');
+    var contextPath = '${pageContext.request.contextPath}';
+    var debounceTimer = null;
+    var currentRequest = null;
+
+    function buildParams() {
+        var params = new URLSearchParams();
+        if (searchInput.value.trim()) params.set('q', searchInput.value.trim());
+        if (minPriceInput.value) params.set('minPrice', minPriceInput.value);
+        if (maxPriceInput.value) params.set('maxPrice', maxPriceInput.value);
+        return params;
+    }
+
+    function fetchGrid() {
+        var params = buildParams();
+
+        // keep the URL (and back button / refresh / share link) in sync with the current filters
+        var newUrl = contextPath + '/customer/products' + (params.toString() ? '?' + params.toString() : '');
+        window.history.replaceState(null, '', newUrl);
+
+        if (currentRequest) {
+            currentRequest.abort();
+        }
+        var controller = new AbortController();
+        currentRequest = controller;
+
+        productGrid.style.opacity = '0.5';
+
+        fetch(contextPath + '/customer/products/grid?' + params.toString(), { signal: controller.signal })
+            .then(function(res) { return res.text(); })
+            .then(function(html) {
+                productGrid.innerHTML = html;
+                productGrid.style.opacity = '1';
+                if (window.lucide) { lucide.createIcons(); }
+            })
+            .catch(function(err) {
+                if (err.name !== 'AbortError') {
+                    productGrid.style.opacity = '1';
+                }
+            });
+    }
+
+    function debouncedFetch() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(fetchGrid, 300);
+    }
+
+    searchInput.addEventListener('input', debouncedFetch);
+    minPriceInput.addEventListener('input', debouncedFetch);
+    maxPriceInput.addEventListener('input', debouncedFetch);
+
+    clearFiltersBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        searchInput.value = '';
+        minPriceInput.value = '';
+        maxPriceInput.value = '';
+        fetchGrid();
+    });
+
+    // stop the plain form submit (no-JS fallback) from doing a full page reload once JS is active
+    document.getElementById('filterForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        fetchGrid();
+    });
+})();
+</script>
+
 <script>lucide.createIcons();</script>
+
+<script>
+  (function(){
+    var b=document.getElementById('menuBtn'), s=document.querySelector('.sidebar'), o=document.getElementById('sidebarOverlay');
+    if(!b||!s||!o) return;
+    b.addEventListener('click', function(){ s.classList.add('open'); o.classList.add('show'); });
+    o.addEventListener('click', function(){ s.classList.remove('open'); o.classList.remove('show'); });
+  })();
+</script>
 </body>
 </html>

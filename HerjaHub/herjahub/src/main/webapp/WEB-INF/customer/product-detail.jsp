@@ -29,7 +29,7 @@
         };
     </script>
     <style>
-        :root{ --sidebar-w:250px; --topbar-h:68px; --ease:cubic-bezier(.4,0,.2,1); }
+        :root{ --red:#CE1126; --green:#007A3D; --white:#FFFFFF; --neutral-1:#F8F9FA; --neutral-2:#E9ECEF; --text-1:#1F2937; --text-2:#6B7280; --sidebar-w:250px; --topbar-h:68px; --ease:cubic-bezier(.4,0,.2,1); }
         html,body{ height:100%; }
         body{ margin:0; }
 
@@ -48,6 +48,7 @@
         }
         .sidebar-brand .mark img{ width:100%; height:100%; object-fit:cover; }
         .sidebar-brand .name{ font-family:'Poppins',sans-serif; font-weight:800; font-size:17px; color:#1F2937; }
+  .sidebar-brand .name .hub-accent{ background:linear-gradient(90deg, #CE1126, #007A3D); -webkit-background-clip:text; background-clip:text; color:transparent; }
         .side-label{ font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:#6B7280; padding:14px 12px 8px; }
         .side-link{
             display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:12px;
@@ -111,6 +112,8 @@
         /* Info column */
         .info{ padding-top:6px; animation:fadeInUp .5s var(--ease) .08s backwards; }
         .info .stock-pill{ display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:999px; background:rgba(0,122,61,0.1); color:#007A3D; font-size:12px; font-weight:700; margin-bottom:16px; }
+        .info .stock-pill.out{ background:rgba(206,17,38,0.1); color:#CE1126; }
+        .unavailable-notice{ display:flex; align-items:center; gap:10px; padding:16px 18px; border-radius:16px; background:#FBEAEA; border:1px solid #F3CACA; color:#CE1126; font-size:13.5px; font-weight:600; margin-bottom:28px; }
         .info h1{ font-family:'Poppins',sans-serif; font-weight:800; font-size:30px; color:#1F2937; margin:0 0 12px; line-height:1.15; }
         .rating-row{ display:flex; align-items:center; gap:10px; margin-bottom:18px; }
         .stars{ display:flex; gap:2px; color:#007A3D; }
@@ -156,12 +159,30 @@
         .submit-review:hover{ transform:translateY(-1px); box-shadow:0 14px 26px -14px rgba(0,122,61,0.5); }
 
         @media (max-width: 900px){
-            .sidebar{ transform:translateX(-100%); }
+            .sidebar{ transform:translateX(-100%); transition:transform .3s ease; }
+    .sidebar.open{ transform:translateX(0); }
+    .menu-btn{ display:flex; }
+    .sidebar-overlay.show{ display:block; }
             .main-area{ margin-left:0; }
             .product-layout{ grid-template-columns:1fr; }
             .stage{ padding:24px 20px 50px; }
         }
-    </style>
+    
+  .menu-btn{ display:none; width:40px; height:40px; border-radius:12px; border:1px solid var(--neutral-2); background:var(--white); color:var(--text-1); align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
+  .sidebar-overlay{ display:none; position:fixed; inset:0; z-index:25; background:rgba(17,17,17,0.35); }
+
+  .cart-btn{ position:relative; margin-left:auto; width:40px; height:40px; border-radius:50%; background:var(--white); border:1px solid var(--neutral-2); display:flex; align-items:center; justify-content:center; color:var(--text-1); transition:all .2s ease; flex-shrink:0; }
+  .cart-btn:hover{ border-color:var(--green); color:var(--green); }
+  .cart-count{ position:absolute; top:-4px; right:-4px; min-width:17px; height:17px; padding:0 4px; border-radius:999px; background:var(--red); color:#fff; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+  .store-line{ display:inline-flex; align-items:center; gap:6px; font-size:13.5px; font-weight:600; color:var(--text-2); margin:2px 0 12px; transition:color .2s ease; }
+  .store-line:hover{ color:var(--green); }
+  .star-input{ display:inline-flex; flex-direction:row-reverse; gap:4px; margin-top:6px; }
+  .star-input input{ display:none; }
+  .star-input label{ cursor:pointer; color:var(--neutral-2); transition:color .15s ease, transform .15s ease; }
+  .star-input label:hover{ transform:scale(1.12); }
+  .star-input label:hover, .star-input label:hover ~ label,
+  .star-input input:checked ~ label{ color:#C9A227; }
+</style>
 </head>
 <body class="bg-background text-foreground font-sans">
 
@@ -171,7 +192,7 @@
 <aside class="sidebar">
     <a class="sidebar-brand" href="${pageContext.request.contextPath}/customer/dashboard">
         <div class="mark"><img src="${pageContext.request.contextPath}/resources/images/herjahub-logo.jpg" alt="HerjaHub" /></div>
-        <div class="name">HerjaHub</div>
+        <div class="name">Herja<span class="hub-accent">Hub</span></div>
     </a>
 
     <div class="side-label">Shop</div>
@@ -206,10 +227,13 @@
     </div>
 </aside>
 
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 <div class="main-area">
 
     <%-- ===================== TOPBAR with breadcrumb ===================== --%>
     <div class="topbar">
+        <button class="menu-btn" id="menuBtn" type="button" aria-label="Open menu"><i data-lucide="menu" width="20" height="20"></i></button>
         <div class="crumb">
             <a href="${pageContext.request.contextPath}/customer/dashboard">Home</a>
             <i data-lucide="chevron-right" width="14" height="14"></i>
@@ -218,7 +242,8 @@
             <span class="current"><c:out value="${product.productName}"/></span>
         </div>
 <div class="topbar-right">
-    <div class="user-chip">
+    <a class="cart-btn" href="${pageContext.request.contextPath}/customer/cart" title="View cart"><i data-lucide="shopping-cart" width="18" height="18"></i><c:if test="${not empty sessionScope.cart}"><span class="cart-count">${fn:length(sessionScope.cart)}</span></c:if></a>
+        <div class="user-chip">
         <div class="user-avatar"><c:out value="${fn:substring(customer.firstName, 0, 1)}" /></div>
         <span class="u-name"><c:out value="${customer.firstName}" /></span>
     </div>
@@ -243,12 +268,22 @@
                         </c:otherwise>
                     </c:choose>
                 </div>
-                <div class="price-tag"><span class="cur">$</span><c:out value="${product.price}"/></div>
+                <div class="price-tag"><span class="cur">$</span><fmt:formatNumber value="${product.price}" minFractionDigits="2" maxFractionDigits="2" /></div>
             </div>
 
             <div class="info">
-                <div class="stock-pill"><i data-lucide="check-circle-2" width="13" height="13"></i> In Stock</div>
+                <c:choose>
+                    <c:when test="${product.quantity == null || product.quantity <= 0}">
+                        <div class="stock-pill out"><i data-lucide="x-circle" width="13" height="13"></i> Out of Stock</div>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="stock-pill"><i data-lucide="check-circle-2" width="13" height="13"></i> In Stock</div>
+                    </c:otherwise>
+                </c:choose>
                 <h1><c:out value="${product.productName}"/></h1>
+                <a class="store-line" href="${pageContext.request.contextPath}/customer/stores/${product.store.id}">
+                    <i data-lucide="store" width="13" height="13"></i> by <c:out value="${product.store.storeName}"/>
+                </a>
 
                 <c:if test="${reviewCount > 0}">
                 <div class="rating-row">
@@ -270,29 +305,47 @@
 
                 <p class="desc"><c:out value="${product.description}"/></p>
 
-                <div class="qty-row">
-                    <label>Quantity</label>
-                    <div class="qty-stepper">
-                        <button type="button" id="qtyDec" class="qty-btn">&minus;</button>
-                        <span class="qty-val" id="qtyVal">1</span>
-                        <button type="button" id="qtyInc" class="qty-btn">+</button>
-                    </div>
-                </div>
+                <c:choose>
+                    <c:when test="${product.quantity == null || product.quantity <= 0}">
+                        <div class="unavailable-notice">
+                            <i data-lucide="alert-circle" width="18" height="18"></i>
+                            This item is not available
+                        </div>
+                        <div class="action-row">
+                            <button type="button" class="icon-btn" title="Save for later">
+                                <i data-lucide="heart" width="18" height="18"></i>
+                            </button>
+                            <button type="button" class="icon-btn" title="Share">
+                                <i data-lucide="share-2" width="18" height="18"></i>
+                            </button>
+                        </div>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="qty-row">
+                            <label>Quantity</label>
+                            <div class="qty-stepper">
+                                <button type="button" id="qtyDec" class="qty-btn">&minus;</button>
+                                <span class="qty-val" id="qtyVal">1</span>
+                                <button type="button" id="qtyInc" class="qty-btn">+</button>
+                            </div>
+                        </div>
 
-                <div class="action-row">
-                    <form action="${pageContext.request.contextPath}/customer/cart/add/${product.id}" method="post" style="flex:1; display:flex;">
-                        <input type="hidden" name="quantity" id="cartQty" value="1"/>
-                        <button type="submit" class="btn-add">
-                            <i data-lucide="shopping-cart" width="17" height="17"></i> Add to Cart
-                        </button>
-                    </form>
-                    <button type="button" class="icon-btn" title="Save for later">
-                        <i data-lucide="heart" width="18" height="18"></i>
-                    </button>
-                    <button type="button" class="icon-btn" title="Share">
-                        <i data-lucide="share-2" width="18" height="18"></i>
-                    </button>
-                </div>
+                        <div class="action-row">
+                            <form action="${pageContext.request.contextPath}/customer/cart/add/${product.id}" method="post" style="flex:1; display:flex;">
+                                <input type="hidden" name="quantity" id="cartQty" value="1"/>
+                                <button type="submit" class="btn-add">
+                                    <i data-lucide="shopping-cart" width="17" height="17"></i> Add to Cart
+                                </button>
+                            </form>
+                            <button type="button" class="icon-btn" title="Save for later">
+                                <i data-lucide="heart" width="18" height="18"></i>
+                            </button>
+                            <button type="button" class="icon-btn" title="Share">
+                                <i data-lucide="share-2" width="18" height="18"></i>
+                            </button>
+                        </div>
+                    </c:otherwise>
+                </c:choose>
 
                 <div class="assurance">
                     <div class="assurance-row"><span class="check"><i data-lucide="check" width="14" height="14"></i></span> Free shipping on orders over $50</div>
@@ -343,22 +396,38 @@
                 </div>
             </c:if>
 
-            <div class="review-form-card">
-                <h3>Leave a Review</h3>
-                <form:form action="${pageContext.request.contextPath}/customer/products/${product.id}/reviews" method="post" modelAttribute="reviewForm">
-                    <form:label path="rating" cssClass="field-label">Rating (1-5)</form:label>
-                    <form:input path="rating" type="number" min="1" max="5" cssClass="field-input"/>
-                    <form:errors path="rating" cssClass="error-text"/>
+            <c:choose>
+                <c:when test="${alreadyReviewed}">
+                    <div class="review-form-card">
+                        <h3>Leave a Review</h3>
+                        <p class="muted" style="margin:0;"><i data-lucide="check-circle-2" width="14" height="14" style="vertical-align:-2px; color:var(--green);"></i> You've already reviewed this product - each customer can leave one review.</p>
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <div class="review-form-card">
+                        <h3>Leave a Review</h3>
+                        <form:form action="${pageContext.request.contextPath}/customer/products/${product.id}/reviews" method="post" modelAttribute="reviewForm">
+                            <span class="field-label">Rating</span>
+                            <div class="star-input">
+                                <input type="radio" id="star5" name="rating" value="5" /><label for="star5" title="5 stars"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></label>
+                                <input type="radio" id="star4" name="rating" value="4" /><label for="star4" title="4 stars"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></label>
+                                <input type="radio" id="star3" name="rating" value="3" /><label for="star3" title="3 stars"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></label>
+                                <input type="radio" id="star2" name="rating" value="2" /><label for="star2" title="2 stars"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></label>
+                                <input type="radio" id="star1" name="rating" value="1" /><label for="star1" title="1 star"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></label>
+                            </div>
+                            <form:errors path="rating" cssClass="error-text"/>
 
-                    <div style="height:16px;"></div>
+                            <div style="height:16px;"></div>
 
-                    <form:label path="comment" cssClass="field-label">Review</form:label>
-                    <form:textarea path="comment" rows="4" cssClass="field-input" style="resize:vertical;"/>
-                    <form:errors path="comment" cssClass="error-text"/>
+                            <form:label path="comment" cssClass="field-label">Review</form:label>
+                            <form:textarea path="comment" rows="4" cssClass="field-input" style="resize:vertical;"/>
+                            <form:errors path="comment" cssClass="error-text"/>
 
-                    <button type="submit" class="submit-review">Post Review</button>
-                </form:form>
-            </div>
+                            <button type="submit" class="submit-review">Post Review</button>
+                        </form:form>
+                    </div>
+                </c:otherwise>
+            </c:choose>
         </div>
     </div>
 </div>
@@ -367,13 +436,25 @@
 
 <script>
     (function() {
-        var qty = 1;
+        var qtyDec = document.getElementById('qtyDec');
+        var qtyInc = document.getElementById('qtyInc');
         var qtyVal = document.getElementById('qtyVal');
         var cartQty = document.getElementById('cartQty');
-        document.getElementById('qtyDec').addEventListener('click', function() { if (qty > 1) { qty--; qtyVal.textContent = qty; cartQty.value = qty; } });
-        document.getElementById('qtyInc').addEventListener('click', function() { qty++; qtyVal.textContent = qty; cartQty.value = qty; });
+        if (!qtyDec || !qtyInc || !qtyVal || !cartQty) { return; } // out of stock - no stepper on the page
+        var qty = 1;
+        qtyDec.addEventListener('click', function() { if (qty > 1) { qty--; qtyVal.textContent = qty; cartQty.value = qty; } });
+        qtyInc.addEventListener('click', function() { qty++; qtyVal.textContent = qty; cartQty.value = qty; });
     })();
 </script>
 
+
+<script>
+  (function(){
+    var b=document.getElementById('menuBtn'), s=document.querySelector('.sidebar'), o=document.getElementById('sidebarOverlay');
+    if(!b||!s||!o) return;
+    b.addEventListener('click', function(){ s.classList.add('open'); o.classList.add('show'); });
+    o.addEventListener('click', function(){ s.classList.remove('open'); o.classList.remove('show'); });
+  })();
+</script>
 </body>
 </html>
