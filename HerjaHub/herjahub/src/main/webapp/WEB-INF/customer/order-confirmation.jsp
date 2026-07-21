@@ -1,97 +1,163 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Confirmation — HerjaHub</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,500&family=Inter:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        background: '#FAF8F3', foreground: '#1F2937', card: '#FFFFFF',
-                        primary: '#198754', 'primary-foreground': '#FFFFFF', secondary: '#F8F9FA',
-                        muted: '#F1F1EE', 'muted-foreground': '#6B7280', border: '#E5E5E2',
-                        destructive: '#D72638',
-                    },
-                    fontFamily: { serif: ['Newsreader','serif'], sans: ['Inter','sans-serif'], ar: ['Tajawal','sans-serif'] },
-                    borderRadius: { DEFAULT: '1.75rem' },
-                },
-            },
-        };
-    </script>
-    <style>
-        .keffiyeh-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0;
-            background-image: repeating-linear-gradient(45deg,currentColor 0,currentColor 1px,transparent 1px,transparent 14px),
-            repeating-linear-gradient(-45deg,currentColor 0,currentColor 1px,transparent 1px,transparent 14px); opacity: 0.05; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order Confirmation — HerjaHub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<style>
+  :root{
+    --red:#CE1126; --green:#007A3D; --white:#FFFFFF; --neutral-1:#F8F9FA; --neutral-2:#E9ECEF;
+    --text-1:#1F2937; --text-2:#6B7280;
+    --radius-lg:24px; --radius-md:18px; --radius-sm:12px;
+    --shadow-sm:0 4px 16px rgba(31,41,55,0.06); --shadow-md:0 18px 40px -16px rgba(31,41,55,0.18);
+    --ease:cubic-bezier(.4,0,.2,1); --sidebar-w:250px; --topbar-h:68px;
+  }
+  *{box-sizing:border-box;}
+  html,body{ height:100%; }
+  body{
+    margin:0; font-family:'Inter',sans-serif; color:var(--text-1); background:var(--neutral-1);
+    background-image:
+      radial-gradient(700px 480px at -10% -10%, rgba(206,17,38,0.05), transparent 60%),
+      radial-gradient(700px 480px at 110% 0%, rgba(0,122,61,0.06), transparent 60%);
+    background-attachment:fixed;
+  }
+  a{ text-decoration:none; color:inherit; }
+  @keyframes fadeInUp{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+  @keyframes popIn{ from{opacity:0; transform:scale(.85);} to{opacity:1; transform:scale(1);} }
+
+  .sidebar{ position:fixed; top:0; left:0; bottom:0; width:var(--sidebar-w); z-index:30; background:rgba(255,255,255,0.7); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-right:1px solid rgba(255,255,255,0.6); display:flex; flex-direction:column; padding:22px 16px; }
+  .sidebar-brand{ display:flex; align-items:center; gap:10px; padding:6px 10px 26px; }
+  .sidebar-brand .mark{ width:38px; height:38px; border-radius:12px; flex-shrink:0; overflow:hidden; background:linear-gradient(135deg, var(--red), var(--green)); display:flex; align-items:center; justify-content:center; color:var(--white); font-family:'Poppins',sans-serif; font-weight:800; }
+  .sidebar-brand .mark img{ width:100%; height:100%; object-fit:cover; }
+  .sidebar-brand .name{ font-family:'Poppins',sans-serif; font-weight:800; font-size:17px; }
+  .side-label{ font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--text-2); padding:14px 12px 8px; }
+  .side-link{ display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:var(--radius-sm); font-weight:600; font-size:14px; color:var(--text-1); margin-bottom:3px; transition:all .22s var(--ease); position:relative; }
+  .side-link svg{ flex-shrink:0; opacity:.8; }
+  .side-link:hover{ background:var(--neutral-2); }
+  .side-link.active{ background:linear-gradient(90deg, rgba(206,17,38,0.1), rgba(0,122,61,0.1)); box-shadow:inset 0 0 0 1px rgba(0,122,61,0.15); }
+  .side-link.active svg{ opacity:1; color:var(--green); }
+  .side-link.active::before{ content:""; position:absolute; left:-16px; top:8px; bottom:8px; width:4px; border-radius:4px; background:linear-gradient(180deg, var(--red), var(--green)); }
+  .sidebar-footer{ margin-top:auto; padding-top:14px; border-top:1px solid var(--neutral-2); }
+
+  .main-area{ margin-left:var(--sidebar-w); min-height:100%; position:relative; z-index:1; }
+  .topbar{ position:sticky; top:0; z-index:20; height:var(--topbar-h); display:flex; align-items:center; justify-content:space-between; gap:16px; padding:0 28px; background:rgba(255,255,255,0.65); backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px); border-bottom:1px solid rgba(255,255,255,0.5); }
+  .topbar-title{ font-family:'Poppins',sans-serif; font-weight:700; font-size:16px; }
+  .user-chip{ display:flex; align-items:center; gap:10px; padding:6px 14px 6px 6px; border-radius:999px; background:var(--white); border:1px solid var(--neutral-2); }
+  .user-avatar{ width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, var(--red), var(--green)); color:#fff; font-weight:700; font-size:13px; flex-shrink:0; }
+  .u-name{ font-size:13px; font-weight:600; }
+
+  .keffiyeh-corner-bg{ position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image:url('${pageContext.request.contextPath}/resources/images/keffiyeh-pattern.png');
+    background-repeat:no-repeat; background-position:bottom right; background-size:min(70vw, 900px); opacity:0.06;
+    -webkit-mask-image:radial-gradient(circle at bottom right, black 0%, black 15%, transparent 65%);
+    mask-image:radial-gradient(circle at bottom right, black 0%, black 15%, transparent 65%); }
+
+  /* ===================== SIGNATURE: centered celebratory receipt, no sidebar-width page shell ===================== */
+  .stage{ min-height:calc(100% - var(--topbar-h)); display:flex; align-items:center; justify-content:center; padding:40px 24px; }
+
+  .receipt-card{
+    width:100%; max-width:480px; background:var(--white); border:1px solid var(--neutral-2);
+    border-radius:var(--radius-lg); padding:40px 34px 34px; text-align:center;
+    box-shadow:var(--shadow-md); animation:fadeInUp .5s var(--ease);
+  }
+  .success-orb{
+    width:76px; height:76px; margin:0 auto 20px; border-radius:50%;
+    background:linear-gradient(135deg,var(--red),var(--green)); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 16px 30px -12px rgba(0,122,61,0.45);
+    animation:popIn .4s var(--ease) .1s backwards;
+  }
+  .receipt-card h1{ font-family:'Poppins',sans-serif; font-weight:800; font-size:24px; margin:0 0 8px; }
+  .receipt-card .sub{ color:var(--text-2); font-size:14px; margin:0 0 28px; }
+
+  .receipt-box{ background:var(--neutral-1); border-radius:var(--radius-md); padding:20px 22px; text-align:left; margin-bottom:26px; }
+  .receipt-line{ display:flex; justify-content:space-between; align-items:center; font-size:13.5px; padding:7px 0; }
+  .receipt-line span:first-child{ color:var(--text-2); }
+  .receipt-line span:last-child{ font-weight:700; }
+  .receipt-total{ border-top:1px solid var(--neutral-2); margin-top:6px; padding-top:14px; }
+  .receipt-total span:last-child{ font-family:'Poppins',sans-serif; font-weight:800; font-size:19px; background:linear-gradient(90deg,var(--red),var(--green)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+
+  .receipt-actions{ display:flex; flex-direction:column; gap:10px; }
+  .btn-primary{ display:flex; align-items:center; justify-content:center; gap:8px; padding:14px; border:none; border-radius:999px; background:linear-gradient(135deg,var(--red),var(--green)); color:#fff; font-weight:700; font-size:14px; transition:all .2s var(--ease); }
+  .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 16px 30px -14px rgba(0,122,61,0.5); }
+  .btn-secondary{ display:flex; align-items:center; justify-content:center; gap:8px; padding:14px; border-radius:999px; border:1.5px solid var(--neutral-2); font-weight:700; font-size:14px; color:var(--text-1); transition:all .2s var(--ease); }
+  .btn-secondary:hover{ background:var(--neutral-1); }
+
+  @media (max-width: 900px){
+    .sidebar{ transform:translateX(-100%); }
+    .main-area{ margin-left:0; }
+  }
+</style>
 </head>
-<body class="bg-background text-foreground font-sans min-h-screen relative text-[#1F2937]">
+<body>
 
-<div class="keffiyeh-bg"></div>
+<div class="keffiyeh-corner-bg"></div>
 
-<%-- Navbar --%>
-<nav class="sticky top-0 z-50 bg-card/80 backdrop-blur-lg border-b border-border">
-    <div class="w-full max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-        <a href="${pageContext.request.contextPath}/customer/dashboard" class="flex items-center gap-3">
-            <div class="flex items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/80 text-white font-serif font-bold w-7 h-7" style="font-size:1.05rem;">ه</div>
-            <div><div class="font-serif font-bold text-lg leading-tight">HerjaHub</div><div class="text-xs text-muted-foreground">Palestinian Crafts</div></div>
-        </a>
-        <div class="flex items-center gap-4">
-            <a href="${pageContext.request.contextPath}/customer/cart" class="w-10 h-10 rounded-full bg-secondary hover:bg-primary/10 flex items-center justify-center transition-colors">
-                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-            </a>
-            <a href="${pageContext.request.contextPath}/customer/profile/edit" class="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-semibold">A</a>
+<aside class="sidebar">
+    <a class="sidebar-brand" href="${pageContext.request.contextPath}/customer/dashboard">
+        <div class="mark"><img src="${pageContext.request.contextPath}/resources/images/herjahub-logo.jpg" alt="HerjaHub" /></div>
+        <div class="name">HerjaHub</div>
+    </a>
+    <div class="side-label">Shop</div>
+    <a class="side-link" href="${pageContext.request.contextPath}/customer/dashboard"><i data-lucide="layout-dashboard" width="18" height="18"></i> Dashboard</a>
+    <a class="side-link" href="${pageContext.request.contextPath}/customer/products"><i data-lucide="shopping-bag" width="18" height="18"></i> Products</a>
+    <a class="side-link" href="${pageContext.request.contextPath}/customer/stores"><i data-lucide="store" width="18" height="18"></i> Stores</a>
+    <a class="side-link" href="${pageContext.request.contextPath}/customer/ai"><i data-lucide="sparkles" width="18" height="18"></i> AI Assistant</a>
+    <a class="side-link" href="${pageContext.request.contextPath}/customer/cart"><i data-lucide="shopping-cart" width="18" height="18"></i> Cart</a>
+    <a class="side-link active" href="${pageContext.request.contextPath}/customer/orders"><i data-lucide="package" width="18" height="18"></i> My Orders</a>
+    <div class="side-label">Account</div>
+    <a class="side-link" href="${pageContext.request.contextPath}/customer/profile/edit"><i data-lucide="user" width="18" height="18"></i> Edit Profile</a>
+    <div class="sidebar-footer">
+        <a class="side-link" href="${pageContext.request.contextPath}/logout" style="color:var(--red);"><i data-lucide="log-out" width="18" height="18"></i> Log out</a>
+    </div>
+</aside>
+
+<div class="main-area">
+    <div class="topbar">
+        <div class="topbar-title">Order Confirmation</div>
+        <div class="user-chip">
+            <div class="user-avatar"><c:out value="${fn:substring(customer.firstName, 0, 1)}" /></div>
+            <span class="u-name"><c:out value="${customer.firstName}" /></span>
         </div>
     </div>
-</nav>
 
-<div class="w-full max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
-    <div class="max-w-lg mx-auto">
-        <div class="bg-card rounded-[28px] p-8 border border-border text-center">
-            <%-- Success Icon --%>
-            <div class="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-6">
-                <svg class="w-10 h-10 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    <div class="stage">
+        <div class="receipt-card">
+            <div class="success-orb">
+                <i data-lucide="check" width="34" height="34"></i>
             </div>
+            <h1>Order placed successfully!</h1>
+            <p class="sub">Thank you for supporting Palestinian artisans.</p>
 
-            <h1 class="text-3xl font-serif font-semibold mb-2">Order Placed Successfully!</h1>
-            <p class="text-muted-foreground mb-8">Thank you for supporting Palestinian artisans.</p>
-
-            <%-- Calculate total --%>
             <c:set var="orderTotal" value="0" />
             <c:forEach var="item" items="${order.orderItems}">
                 <c:set var="orderTotal" value="${orderTotal + (item.price * item.quantity)}" />
             </c:forEach>
 
-            <%-- Order Details --%>
-            <div class="bg-secondary rounded-xl p-6 mb-8 space-y-3 text-left">
-                <div class="flex justify-between">
-                    <span class="text-muted-foreground">Order #</span>
-                    <span class="font-semibold">#<c:out value="${order.id}"/></span>
-                </div>
-                <div class="flex justify-between">
-                    <span class="text-muted-foreground">Date</span>
-                    <span class="font-semibold"><c:out value="${order.createdAt}"/></span>
-                </div>
-                <div class="border-t border-border pt-3 flex justify-between">
-                    <span class="text-muted-foreground">Total</span>
-                    <span class="font-semibold text-primary text-lg">$<c:out value="${orderTotal}"/></span>
-                </div>
+            <div class="receipt-box">
+                <div class="receipt-line"><span>Order #</span><span>#<c:out value="${order.id}" /></span></div>
+                <div class="receipt-line"><span>Date</span><span><c:out value="${order.createdAt}" /></span></div>
+                <div class="receipt-line receipt-total"><span>Total</span><span>$<c:out value="${orderTotal}" /></span></div>
             </div>
 
-            <%-- Actions --%>
-            <div class="space-y-3">
-                <a href="${pageContext.request.contextPath}/customer/orders" class="block w-full py-4 bg-primary text-primary-foreground rounded-full font-semibold hover:shadow-lg hover:-translate-y-0.5 transition-all">View My Orders</a>
-                <a href="${pageContext.request.contextPath}/customer/products" class="block w-full py-4 border-2 border-border text-foreground rounded-full font-semibold hover:bg-secondary transition-all">Continue Shopping</a>
+            <div class="receipt-actions">
+                <a class="btn-primary" href="${pageContext.request.contextPath}/customer/orders">
+                    <i data-lucide="package" width="16" height="16"></i> View My Orders
+                </a>
+                <a class="btn-secondary" href="${pageContext.request.contextPath}/customer/products">
+                    <i data-lucide="shopping-bag" width="16" height="16"></i> Continue Shopping
+                </a>
             </div>
         </div>
     </div>
 </div>
 
+<script>lucide.createIcons();</script>
 </body>
 </html>

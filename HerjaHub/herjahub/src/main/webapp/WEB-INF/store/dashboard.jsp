@@ -85,6 +85,14 @@
   .empty-note{ text-align:center; padding:40px 20px; color:var(--text-2); font-size:13.5px; }
   .empty-note svg{ color:var(--green); opacity:.4; margin-bottom:10px; }
 
+  .chart-insight{ display:flex; align-items:center; gap:26px; margin-top:18px; padding-top:18px; border-top:1px solid var(--neutral-2); flex-wrap:wrap; }
+  .insight-stat{ display:flex; flex-direction:column; gap:3px; }
+  .insight-label{ font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--text-2); }
+  .insight-value{ font-family:'Poppins',sans-serif; font-weight:800; font-size:17px; }
+  .insight-badge{ display:inline-flex; align-items:center; gap:5px; padding:6px 12px; border-radius:999px; font-size:12px; font-weight:700; }
+  .insight-badge.up{ background:rgba(0,122,61,0.1); color:var(--green); }
+  .insight-badge.down{ background:rgba(206,17,38,0.08); color:var(--red); }
+
   .qa-link{ display:flex; align-items:center; gap:13px; padding:14px; border-radius:var(--radius-sm); border:1px solid var(--neutral-2); margin-bottom:10px; transition:all .2s var(--ease); }
   .qa-link:last-child{ margin-bottom:0; }
   .qa-link:hover{ border-color:var(--green); background:rgba(0,122,61,0.05); transform:translateX(3px); }
@@ -202,7 +210,40 @@
                 <p class="sub">Monthly revenue across all of your products.</p>
                 <c:choose>
                     <c:when test="${not empty sales.chart}">
-                        <div style="height:270px"><canvas id="salesChart"></canvas></div>
+                        <div style="height:270px; position:relative;"><canvas id="salesChart"></canvas></div>
+
+                        <c:set var="chartSum" value="${0}" />
+                        <c:forEach var="p" items="${sales.chart}">
+                            <c:set var="chartSum" value="${chartSum + p.total}" />
+                        </c:forEach>
+                        <c:set var="chartCount" value="${fn:length(sales.chart)}" />
+                        <c:set var="avgPerMonth" value="${chartCount > 0 ? (chartSum / chartCount) : 0}" />
+                        <c:set var="latestTotal" value="${sales.chart[chartCount - 1].total}" />
+
+                        <div class="chart-insight">
+                            <div class="insight-stat">
+                                <span class="insight-label">Total Revenue</span>
+                                <span class="insight-value">$<fmt:formatNumber value="${sales.totalRevenue}" minFractionDigits="2" maxFractionDigits="2" /></span>
+                            </div>
+                            <div class="insight-stat">
+                                <span class="insight-label">Avg / Month</span>
+                                <span class="insight-value">$<fmt:formatNumber value="${avgPerMonth}" minFractionDigits="2" maxFractionDigits="2" /></span>
+                            </div>
+                            <div class="insight-stat">
+                                <span class="insight-label">Latest Month</span>
+                                <c:choose>
+                                    <c:when test="${avgPerMonth == 0}">
+                                        <span class="insight-badge up"><i data-lucide="minus" width="12" height="12"></i> No baseline yet</span>
+                                    </c:when>
+                                    <c:when test="${latestTotal >= avgPerMonth}">
+                                        <span class="insight-badge up"><i data-lucide="trending-up" width="12" height="12"></i> <fmt:formatNumber value="${((latestTotal - avgPerMonth) / avgPerMonth) * 100}" maxFractionDigits="0" />% above avg</span>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <span class="insight-badge down"><i data-lucide="trending-down" width="12" height="12"></i> <fmt:formatNumber value="${((avgPerMonth - latestTotal) / avgPerMonth) * 100}" maxFractionDigits="0" />% below avg</span>
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
+                        </div>
                     </c:when>
                     <c:otherwise>
                         <div class="empty-note">

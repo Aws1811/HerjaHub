@@ -7,181 +7,280 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Product Details — HerjaHub</title>
+<title><c:out value="${product.productName}" /> — HerjaHub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        colors: {
-          background: '#FAF8F3', foreground: '#1F2937', card: '#FFFFFF',
-          primary: '#198754', 'primary-foreground': '#FFFFFF', secondary: '#F8F9FA',
-          muted: '#F1F1EE', 'muted-foreground': '#6B7280', border: '#E5E5E2',
-          destructive: '#D72638',
-        },
-        fontFamily: { serif: ['Newsreader','serif'], sans: ['Inter','sans-serif'], ar: ['Tajawal','sans-serif'] },
-        borderRadius: { DEFAULT: '1.75rem' },
-      },
-    },
-  };
-</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <style>
-  .keffiyeh-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0;
-    background-image: repeating-linear-gradient(45deg,currentColor 0,currentColor 1px,transparent 1px,transparent 14px),
-    repeating-linear-gradient(-45deg,currentColor 0,currentColor 1px,transparent 1px,transparent 14px); opacity: 0.05; }
+  :root{
+    --red:#CE1126; --green:#007A3D; --white:#FFFFFF; --neutral-1:#F8F9FA; --neutral-2:#E9ECEF;
+    --text-1:#1F2937; --text-2:#6B7280; --amber:#B45309; --amber-bg:#FEF3E2; --gold:#C9A227;
+    --radius-lg:24px; --radius-md:18px; --radius-sm:12px;
+    --shadow-sm:0 4px 16px rgba(31,41,55,0.06); --shadow-md:0 18px 40px -16px rgba(31,41,55,0.18);
+    --ease:cubic-bezier(.4,0,.2,1); --sidebar-w:250px; --topbar-h:68px;
+  }
+  *{box-sizing:border-box;}
+  html,body{ height:100%; }
+  body{
+    margin:0; font-family:'Inter',sans-serif; color:var(--text-1); background:var(--neutral-1);
+    background-image:
+      radial-gradient(700px 480px at -10% -10%, rgba(206,17,38,0.05), transparent 60%),
+      radial-gradient(700px 480px at 110% 0%, rgba(0,122,61,0.06), transparent 60%);
+    background-attachment:fixed;
+  }
+  a{ text-decoration:none; color:inherit; }
+  @keyframes fadeInUp{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+
+  .sidebar{ position:fixed; top:0; left:0; bottom:0; width:var(--sidebar-w); z-index:30; background:rgba(255,255,255,0.7); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-right:1px solid rgba(255,255,255,0.6); display:flex; flex-direction:column; padding:22px 16px; }
+  .sidebar-brand{ display:flex; align-items:center; gap:10px; padding:6px 10px 26px; }
+  .sidebar-brand .mark{ width:38px; height:38px; border-radius:12px; flex-shrink:0; overflow:hidden; background:linear-gradient(135deg, var(--red), var(--green)); display:flex; align-items:center; justify-content:center; color:var(--white); font-family:'Poppins',sans-serif; font-weight:800; }
+  .sidebar-brand .mark img{ width:100%; height:100%; object-fit:cover; }
+  .sidebar-brand .name{ font-family:'Poppins',sans-serif; font-weight:800; font-size:17px; }
+  .side-label{ font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--text-2); padding:14px 12px 8px; }
+  .side-link{ display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:var(--radius-sm); font-weight:600; font-size:14px; color:var(--text-1); margin-bottom:3px; transition:all .22s var(--ease); position:relative; }
+  .side-link svg{ flex-shrink:0; opacity:.8; }
+  .side-link:hover{ background:var(--neutral-2); }
+  .side-link.active{ background:linear-gradient(90deg, rgba(206,17,38,0.1), rgba(0,122,61,0.1)); box-shadow:inset 0 0 0 1px rgba(0,122,61,0.15); }
+  .side-link.active svg{ opacity:1; color:var(--green); }
+  .side-link.active::before{ content:""; position:absolute; left:-16px; top:8px; bottom:8px; width:4px; border-radius:4px; background:linear-gradient(180deg, var(--red), var(--green)); }
+  .sidebar-footer{ margin-top:auto; padding-top:14px; border-top:1px solid var(--neutral-2); }
+
+  .main-area{ margin-left:var(--sidebar-w); min-height:100%; position:relative; z-index:1; }
+  .topbar{ position:sticky; top:0; z-index:20; height:var(--topbar-h); display:flex; align-items:center; justify-content:space-between; gap:16px; padding:0 28px; background:rgba(255,255,255,0.65); backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px); border-bottom:1px solid rgba(255,255,255,0.5); }
+  .topbar-title{ font-family:'Poppins',sans-serif; font-weight:700; font-size:16px; }
+  .user-chip{ display:flex; align-items:center; gap:10px; padding:6px 14px 6px 6px; border-radius:999px; background:var(--white); border:1px solid var(--neutral-2); }
+  .user-avatar{ width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, var(--red), var(--green)); color:#fff; font-weight:700; font-size:13px; flex-shrink:0; }
+  .u-name{ font-size:13px; font-weight:600; }
+
+  .keffiyeh-corner-bg{ position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image:url('${pageContext.request.contextPath}/resources/images/keffiyeh-pattern.png');
+    background-repeat:no-repeat; background-position:bottom right; background-size:min(70vw, 900px); opacity:0.06;
+    -webkit-mask-image:radial-gradient(circle at bottom right, black 0%, black 15%, transparent 65%);
+    mask-image:radial-gradient(circle at bottom right, black 0%, black 15%, transparent 65%); }
+
+  .page{ max-width:1000px; margin:0 auto; padding:32px 32px 60px; }
+
+  .page-header{ display:flex; align-items:center; gap:16px; margin-bottom:18px; animation:fadeInUp .4s var(--ease); }
+  .back-btn{ width:42px; height:42px; border-radius:14px; border:1px solid var(--neutral-2); background:var(--white); display:flex; align-items:center; justify-content:center; color:var(--text-2); transition:all .2s var(--ease); flex-shrink:0; }
+  .back-btn:hover{ border-color:var(--green); color:var(--green); }
+  .page-title{ font-family:'Poppins',sans-serif; font-weight:800; font-size:24px; margin:0; }
+  .page-sub{ color:var(--text-2); font-size:13.5px; margin:2px 0 0; }
+
+  /* ===================== SIGNATURE: read-only glance layout - image + stat blocks, no forms ===================== */
+  .meta-bar{ display:flex; gap:22px; flex-wrap:wrap; margin-bottom:22px; padding:16px 20px; background:var(--white); border:1px solid var(--neutral-2); border-radius:var(--radius-md); animation:fadeInUp .4s var(--ease) .05s backwards; }
+  .meta-item{ display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text-2); }
+  .meta-item svg{ flex-shrink:0; }
+  .meta-item strong{ color:var(--text-1); }
+  .meta-item .star{ color:var(--gold); }
+
+  .view-grid{ display:grid; grid-template-columns:340px 1fr; gap:22px; align-items:start; margin-bottom:20px; }
+
+  .image-panel{ background:var(--white); border:1px solid var(--neutral-2); border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-sm); animation:fadeInUp .4s var(--ease) backwards; position:relative; }
+  .image-panel .img-wrap{ aspect-ratio:1/1; background:var(--neutral-1); display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  .image-panel img{ width:100%; height:100%; object-fit:cover; }
+  .stock-badge{ position:absolute; top:12px; right:12px; padding:5px 12px; border-radius:999px; font-size:11.5px; font-weight:700; }
+  .stock-badge.ok{ background:rgba(0,122,61,0.1); color:var(--green); }
+  .stock-badge.low{ background:var(--amber-bg); color:var(--amber); }
+  .stock-badge.out{ background:#FBEAEA; color:var(--red); }
+
+  .info-panel{ background:var(--white); border:1px solid var(--neutral-2); border-radius:var(--radius-lg); padding:26px; box-shadow:var(--shadow-sm); animation:fadeInUp .4s var(--ease) .05s backwards; }
+  .info-name{ font-family:'Poppins',sans-serif; font-weight:800; font-size:22px; margin:0 0 10px; }
+  .info-price{ font-family:'Poppins',sans-serif; font-weight:800; font-size:26px; background:linear-gradient(90deg,var(--red),var(--green)); -webkit-background-clip:text; background-clip:text; color:transparent; margin:0 0 18px; }
+  .info-desc{ color:var(--text-2); font-size:14px; line-height:1.7; margin:0 0 22px; white-space:pre-line; }
+  .info-desc.empty{ font-style:italic; color:var(--text-2); opacity:.7; }
+
+  .stat-row{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:22px; }
+  .stat-block{ background:var(--neutral-1); border-radius:var(--radius-md); padding:14px 16px; }
+  .stat-block-label{ font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--text-2); margin-bottom:4px; }
+  .stat-block-value{ font-family:'Poppins',sans-serif; font-weight:800; font-size:18px; }
+
+  .actions-row{ display:flex; gap:12px; flex-wrap:wrap; }
+  .btn-cancel{ padding:13px 24px; border-radius:999px; border:1.5px solid var(--neutral-2); font-weight:700; font-size:13.5px; color:var(--text-1); transition:all .2s var(--ease); }
+  .btn-cancel:hover{ background:var(--neutral-1); }
+  .btn-submit{ display:flex; align-items:center; gap:8px; padding:13px 26px; border-radius:999px; border:none; background:linear-gradient(135deg,var(--red),var(--green)); color:#fff; font-weight:700; font-size:13.5px; cursor:pointer; transition:all .2s var(--ease); }
+  .btn-submit:hover{ transform:translateY(-2px); box-shadow:0 14px 26px -14px rgba(0,122,61,0.5); }
+
+  .comments-panel{ margin-top:24px; background:var(--white); border:1px solid var(--neutral-2); border-radius:var(--radius-lg); padding:24px; box-shadow:var(--shadow-sm); }
+  .panel-head{ display:flex; align-items:center; gap:12px; margin-bottom:20px; }
+  .panel-icon{ width:36px; height:36px; border-radius:11px; background:rgba(0,122,61,0.1); color:var(--green); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .panel-head h2{ font-family:'Poppins',sans-serif; font-weight:700; font-size:16px; margin:0; }
+  .comment-row{ padding:14px 0; border-bottom:1px solid var(--neutral-2); }
+  .comment-row:last-child{ border-bottom:none; padding-bottom:0; }
+  .comment-top{ display:flex; align-items:center; justify-content:space-between; font-size:13.5px; margin-bottom:5px; }
+  .comment-rating{ display:flex; align-items:center; gap:4px; color:var(--gold); font-weight:700; }
+  .comment-text{ color:var(--text-2); font-size:13px; margin:0; }
+  .empty-note{ text-align:center; padding:24px; color:var(--text-2); font-size:13.5px; }
+
+  @media (max-width: 900px){
+    .sidebar{ transform:translateX(-100%); }
+    .main-area{ margin-left:0; }
+    .view-grid{ grid-template-columns:1fr; }
+  }
+  @media (max-width: 480px){
+    .stat-row{ grid-template-columns:1fr; }
+  }
 </style>
 </head>
-<body class="bg-background text-foreground font-sans min-h-screen relative text-[#1F2937]">
+<body>
 
-<div class="keffiyeh-bg"></div>
+<div class="keffiyeh-corner-bg"></div>
 
-<%-- Navbar --%>
-<nav class="sticky top-0 z-50 bg-card/80 backdrop-blur-lg border-b border-border">
-  <div class="w-full max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-    <div class="flex items-center gap-3">
-      <div class="flex items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/80 text-white font-serif font-bold w-7 h-7" style="font-size:1.05rem;">ه</div>
-      <div><div class="font-serif font-bold text-lg leading-tight">HerjaHub</div><div class="text-xs text-muted-foreground">Store Dashboard</div></div>
-    </div>
-    <div class="flex items-center gap-3">
-      <a href="${pageContext.request.contextPath}/store/edit" class="w-10 h-10 rounded-full bg-secondary hover:bg-primary/10 flex items-center justify-center transition-colors">
-        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      </a>
-      <a href="${pageContext.request.contextPath}/logout" class="text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors">Log out</a>
-    </div>
-  </div>
-</nav>
-
-<c:set var="mn" value="${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']}"/>
-<c:set var="ratingSum" value="${0}"/>
-<c:forEach var="cm" items="${comments}"><c:set var="ratingSum" value="${ratingSum + cm.rating}"/></c:forEach>
-
-<div class="w-full max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
-
-  <%-- Page Header --%>
-  <div class="flex items-center gap-4 mb-8 flex-wrap">
-    <a href="${pageContext.request.contextPath}/store/products" class="w-10 h-10 rounded-xl border border-border bg-card flex items-center justify-center hover:bg-secondary transition-colors">
-      <svg class="w-5 h-5 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+<aside class="sidebar">
+    <a class="sidebar-brand" href="${pageContext.request.contextPath}/store/dashboard">
+        <div class="mark"><img src="${pageContext.request.contextPath}/resources/images/herjahub-logo.jpg" alt="HerjaHub" /></div>
+        <div class="name">HerjaHub</div>
     </a>
-    <div class="flex-1">
-      <h1 class="text-3xl font-serif font-semibold">Product Details</h1>
-      <p class="text-muted-foreground text-sm">Everything about this listing at a glance.</p>
+    <div class="side-label">Overview</div>
+    <a class="side-link" href="${pageContext.request.contextPath}/store/dashboard">
+        <i data-lucide="layout-dashboard" width="18" height="18"></i> Dashboard
+    </a>
+    <div class="side-label">Manage</div>
+    <a class="side-link active" href="${pageContext.request.contextPath}/store/products">
+        <i data-lucide="shopping-bag" width="18" height="18"></i> Products
+    </a>
+    <a class="side-link" href="${pageContext.request.contextPath}/store/edit">
+        <i data-lucide="store" width="18" height="18"></i> Store Profile
+    </a>
+    <div class="sidebar-footer">
+        <a class="side-link" href="${pageContext.request.contextPath}/logout" style="color:var(--red);">
+            <i data-lucide="log-out" width="18" height="18"></i> Log out
+        </a>
     </div>
-    <div class="flex gap-3">
-      <a href="${pageContext.request.contextPath}/store/products" class="px-5 py-2.5 rounded-full border-2 border-border font-semibold hover:bg-secondary transition-all text-sm inline-flex items-center gap-2">
-        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-        All Products
-      </a>
-      <a href="${pageContext.request.contextPath}/store/products/${product.id}/edit" class="px-5 py-2.5 rounded-full bg-primary text-primary-foreground font-semibold hover:shadow-lg hover:-translate-y-0.5 transition-all text-sm inline-flex items-center gap-2">
-        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        Edit Product
-      </a>
-    </div>
-  </div>
+</aside>
 
-  <%-- Detail Card --%>
-  <div class="bg-card rounded-[28px] border border-border overflow-hidden mb-8 flex flex-col lg:flex-row">
-    <div class="w-full lg:w-72 h-64 lg:h-auto bg-secondary flex items-center justify-center flex-shrink-0 overflow-hidden">
-      <c:choose>
-        <c:when test="${not empty product.image}">
-          <img src="${product.image}" alt="${product.productName}" class="w-full h-full object-cover"/>
-        </c:when>
-        <c:otherwise>
-          <svg class="w-10 h-10 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-        </c:otherwise>
-      </c:choose>
+<div class="main-area">
+    <div class="topbar">
+        <div class="topbar-title">Product Details</div>
+        <div class="user-chip">
+            <div class="user-avatar"><c:out value="${fn:substring(store.storeName, 0, 1)}" /></div>
+            <span class="u-name"><c:out value="${store.storeName}" /></span>
+        </div>
     </div>
 
-    <div class="p-8 flex-1 min-w-0">
-      <div class="flex items-start justify-between gap-4 mb-3">
-        <h2 class="text-2xl font-serif font-semibold"><c:out value="${product.productName}"/></h2>
-        <div class="text-2xl font-serif font-semibold text-primary whitespace-nowrap">$<fmt:formatNumber value="${product.price}" minFractionDigits="2" maxFractionDigits="2"/></div>
-      </div>
+    <div class="page">
 
-      <div class="mb-4">
-        <c:choose>
-          <c:when test="${product.quantity == 0}">
-            <span class="px-3 py-1 rounded-full text-xs font-semibold bg-red-50 text-destructive">Out of Stock</span>
-          </c:when>
-          <c:when test="${product.quantity lt 5}">
-            <span class="px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700">Low Stock — ${product.quantity} left</span>
-          </c:when>
-          <c:otherwise>
-            <span class="px-3 py-1 rounded-full text-xs font-semibold bg-green-50 text-green-700">In Stock — ${product.quantity} available</span>
-          </c:otherwise>
-        </c:choose>
-      </div>
+        <div class="page-header">
+            <a class="back-btn" href="${pageContext.request.contextPath}/store/products">
+                <i data-lucide="arrow-left" width="18" height="18"></i>
+            </a>
+            <div>
+                <h1 class="page-title"><c:out value="${product.productName}" /></h1>
+                <p class="page-sub">How this product looks, plus what customers are saying.</p>
+            </div>
+        </div>
 
-      <p class="text-muted-foreground text-sm leading-relaxed mb-6">
-        <c:choose>
-          <c:when test="${not empty product.description}"><c:out value="${product.description}"/></c:when>
-          <c:otherwise>No description provided.</c:otherwise>
-        </c:choose>
-      </p>
+        <c:set var="mn" value="${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']}"/>
+        <c:set var="ratingSum" value="${0}" />
+        <c:forEach var="cm" items="${comments}"><c:set var="ratingSum" value="${ratingSum + cm.rating}" /></c:forEach>
 
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div class="text-center p-4 rounded-xl bg-secondary border border-border">
-          <div class="text-xl font-serif font-semibold">${stats.unitsSold}</div>
-          <div class="text-xs text-muted-foreground font-semibold mt-1">Units Sold</div>
+        <%-- ===== Meta stats bar ===== --%>
+        <div class="meta-bar">
+            <div class="meta-item">
+                <i data-lucide="calendar" width="15" height="15"></i>
+                Created <strong>${mn[product.createdAt.monthValue - 1]} ${product.createdAt.dayOfMonth}, ${product.createdAt.year}</strong>
+            </div>
+            <c:if test="${not empty product.updatedAt}">
+                <div class="meta-item">
+                    <i data-lucide="clock" width="15" height="15"></i>
+                    Updated <strong>${mn[product.updatedAt.monthValue - 1]} ${product.updatedAt.dayOfMonth}, ${product.updatedAt.year}</strong>
+                </div>
+            </c:if>
+            <div class="meta-item">
+                <i data-lucide="star" width="15" height="15" class="star"></i>
+                <c:choose>
+                    <c:when test="${not empty comments}">
+                        <strong><fmt:formatNumber value="${ratingSum / fn:length(comments)}" maxFractionDigits="1" /> / 5</strong>&nbsp;(${fn:length(comments)} review<c:if test="${fn:length(comments) != 1}">s</c:if>)
+                    </c:when>
+                    <c:otherwise>No reviews yet</c:otherwise>
+                </c:choose>
+            </div>
         </div>
-        <div class="text-center p-4 rounded-xl bg-secondary border border-border">
-          <div class="text-xl font-serif font-semibold">$<fmt:formatNumber value="${stats.revenue}" minFractionDigits="2" maxFractionDigits="2"/></div>
-          <div class="text-xs text-muted-foreground font-semibold mt-1">Revenue</div>
-        </div>
-        <div class="text-center p-4 rounded-xl bg-secondary border border-border">
-          <c:choose>
-            <c:when test="${not empty comments}">
-              <div class="text-xl font-serif font-semibold"><fmt:formatNumber value="${ratingSum / fn:length(comments)}" maxFractionDigits="1"/>/5</div>
-            </c:when>
-            <c:otherwise><div class="text-xl font-serif font-semibold">—</div></c:otherwise>
-          </c:choose>
-          <div class="text-xs text-muted-foreground font-semibold mt-1">Avg. Rating</div>
-        </div>
-        <div class="text-center p-4 rounded-xl bg-secondary border border-border">
-          <div class="text-xl font-serif font-semibold">${fn:length(comments)}</div>
-          <div class="text-xs text-muted-foreground font-semibold mt-1">Reviews</div>
-        </div>
-      </div>
 
-      <div class="flex gap-6 flex-wrap mt-6 text-sm text-muted-foreground">
-        <span class="flex items-center gap-2">
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          Created <strong class="text-foreground">${mn[product.createdAt.monthValue - 1]} ${product.createdAt.dayOfMonth}, ${product.createdAt.year}</strong>
-        </span>
-        <span class="flex items-center gap-2">
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          Updated <strong class="text-foreground">${mn[product.updatedAt.monthValue - 1]} ${product.updatedAt.dayOfMonth}, ${product.updatedAt.year}</strong>
-        </span>
-      </div>
+        <%-- ===== Image + info ===== --%>
+        <div class="view-grid">
+            <div class="image-panel">
+                <div class="img-wrap">
+                    <c:choose>
+                        <c:when test="${not empty product.image}">
+                            <img src="${pageContext.request.contextPath}${product.image}" alt="${product.productName}"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                            <img src="${pageContext.request.contextPath}/resources/images/product-placeholder.jpg" alt="No image available" style="display:none;" />
+                        </c:when>
+                        <c:otherwise>
+                            <img src="${pageContext.request.contextPath}/resources/images/product-placeholder.jpg" alt="No image available" />
+                        </c:otherwise>
+                    </c:choose>
+                </div>
+                <c:if test="${product.quantity == 0}">
+                    <span class="stock-badge out">Out of stock</span>
+                </c:if>
+                <c:if test="${product.quantity > 0 && product.quantity <= 5}">
+                    <span class="stock-badge low">Low stock</span>
+                </c:if>
+                <c:if test="${product.quantity > 5}">
+                    <span class="stock-badge ok">In stock</span>
+                </c:if>
+            </div>
+
+            <div class="info-panel">
+                <h2 class="info-name"><c:out value="${product.productName}" /></h2>
+                <p class="info-price">$<c:out value="${product.price}" /></p>
+
+                <c:choose>
+                    <c:when test="${not empty product.description}">
+                        <p class="info-desc"><c:out value="${product.description}" /></p>
+                    </c:when>
+                    <c:otherwise>
+                        <p class="info-desc empty">No description added yet.</p>
+                    </c:otherwise>
+                </c:choose>
+
+                <div class="stat-row">
+                    <div class="stat-block">
+                        <div class="stat-block-label">Quantity in Stock</div>
+                        <div class="stat-block-value">${product.quantity}</div>
+                    </div>
+                    <div class="stat-block">
+                        <div class="stat-block-label">Reviews</div>
+                        <div class="stat-block-value">${fn:length(comments)}</div>
+                    </div>
+                </div>
+
+                <div class="actions-row">
+                    <a class="btn-submit" href="${pageContext.request.contextPath}/store/products/${product.id}/edit">
+                        <i data-lucide="pencil" width="16" height="16"></i> Edit Product
+                    </a>
+                    <a class="btn-cancel" href="${pageContext.request.contextPath}/store/products">Back to Products</a>
+                </div>
+            </div>
+        </div>
+
+        <%-- ===== Comments ===== --%>
+        <div class="comments-panel">
+            <div class="panel-head">
+                <div class="panel-icon"><i data-lucide="message-square" width="17" height="17"></i></div>
+                <h2>Comments</h2>
+            </div>
+            <c:choose>
+                <c:when test="${not empty comments}">
+                    <c:forEach var="cm" items="${comments}">
+                        <div class="comment-row">
+                            <div class="comment-top">
+                                <strong><c:out value="${cm.customerName}" /></strong>
+                                <span class="comment-rating">${cm.rating}/5 <i data-lucide="star" width="12" height="12"></i></span>
+                            </div>
+                            <p class="comment-text"><c:out value="${cm.comment}" /></p>
+                        </div>
+                    </c:forEach>
+                </c:when>
+                <c:otherwise>
+                    <div class="empty-note">No comments on this product yet.</div>
+                </c:otherwise>
+            </c:choose>
+        </div>
     </div>
-  </div>
-
-  <%-- Comments --%>
-  <div class="bg-card rounded-[28px] p-6 border border-border">
-    <div class="flex items-center gap-3 mb-6">
-      <div class="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
-        <svg class="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-      </div>
-      <h2 class="text-xl font-serif font-semibold">Comments</h2>
-    </div>
-    <c:forEach var="cm" items="${comments}">
-      <div class="py-4 border-b border-border last:border-0">
-        <div class="flex items-center justify-between text-sm mb-2">
-          <span class="font-semibold"><c:out value="${cm.customerName}"/></span>
-          <span class="flex items-center gap-1 text-sm">
-            ${cm.rating}/5
-            <svg class="w-3 h-3 text-amber-500 fill-amber-500" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-          </span>
-        </div>
-        <p class="text-sm text-muted-foreground"><c:out value="${cm.comment}"/></p>
-      </div>
-    </c:forEach>
-    <c:if test="${empty comments}">
-      <div class="text-center py-6 text-muted-foreground text-sm">No comments on this product yet.</div>
-    </c:if>
-  </div>
 </div>
 
+<script>lucide.createIcons();</script>
 </body>
 </html>
