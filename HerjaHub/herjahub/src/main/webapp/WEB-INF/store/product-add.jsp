@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,162 +8,240 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Add Product — HerjaHub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        colors: {
-          background: '#FAF8F3', foreground: '#1F2937', card: '#FFFFFF',
-          primary: '#198754', 'primary-foreground': '#FFFFFF', secondary: '#F8F9FA',
-          muted: '#F1F1EE', 'muted-foreground': '#6B7280', border: '#E5E5E2',
-          destructive: '#D72638',
-        },
-        fontFamily: { serif: ['Newsreader','serif'], sans: ['Inter','sans-serif'], ar: ['Tajawal','sans-serif'] },
-        borderRadius: { DEFAULT: '1.75rem' },
-      },
-    },
-  };
-</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <style>
-  .keffiyeh-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0;
-    background-image: repeating-linear-gradient(45deg,currentColor 0,currentColor 1px,transparent 1px,transparent 14px),
-    repeating-linear-gradient(-45deg,currentColor 0,currentColor 1px,transparent 1px,transparent 14px); opacity: 0.05; }
+  :root{
+    --red:#CE1126; --green:#007A3D; --white:#FFFFFF; --neutral-1:#F8F9FA; --neutral-2:#E9ECEF;
+    --text-1:#1F2937; --text-2:#6B7280; --error-bg:#FBEAEA;
+    --radius-lg:24px; --radius-md:18px; --radius-sm:12px;
+    --shadow-sm:0 4px 16px rgba(31,41,55,0.06); --shadow-md:0 18px 40px -16px rgba(31,41,55,0.18);
+    --ease:cubic-bezier(.4,0,.2,1); --sidebar-w:250px; --topbar-h:68px;
+  }
+  *{box-sizing:border-box;}
+  html,body{ height:100%; }
+  body{
+    margin:0; font-family:'Inter',sans-serif; color:var(--text-1); background:var(--neutral-1);
+    background-image:
+      radial-gradient(700px 480px at -10% -10%, rgba(206,17,38,0.05), transparent 60%),
+      radial-gradient(700px 480px at 110% 0%, rgba(0,122,61,0.06), transparent 60%);
+    background-attachment:fixed;
+  }
+  a{ text-decoration:none; color:inherit; }
+  @keyframes fadeInUp{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+
+  .sidebar{ position:fixed; top:0; left:0; bottom:0; width:var(--sidebar-w); z-index:30; background:rgba(255,255,255,0.7); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-right:1px solid rgba(255,255,255,0.6); display:flex; flex-direction:column; padding:22px 16px; }
+  .sidebar-brand{ display:flex; align-items:center; gap:10px; padding:6px 10px 26px; }
+  .sidebar-brand .mark{ width:38px; height:38px; border-radius:12px; flex-shrink:0; background:linear-gradient(135deg, var(--red), var(--green)); display:flex; align-items:center; justify-content:center; color:var(--white); font-family:'Poppins',sans-serif; font-weight:800; }
+  .sidebar-brand .name{ font-family:'Poppins',sans-serif; font-weight:800; font-size:17px; }
+  .side-label{ font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--text-2); padding:14px 12px 8px; }
+  .side-link{ display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:var(--radius-sm); font-weight:600; font-size:14px; color:var(--text-1); margin-bottom:3px; transition:all .22s var(--ease); position:relative; }
+  .side-link svg{ flex-shrink:0; opacity:.8; }
+  .side-link:hover{ background:var(--neutral-2); }
+  .side-link.active{ background:linear-gradient(90deg, rgba(206,17,38,0.1), rgba(0,122,61,0.1)); box-shadow:inset 0 0 0 1px rgba(0,122,61,0.15); }
+  .side-link.active svg{ opacity:1; color:var(--green); }
+  .side-link.active::before{ content:""; position:absolute; left:-16px; top:8px; bottom:8px; width:4px; border-radius:4px; background:linear-gradient(180deg, var(--red), var(--green)); }
+  .sidebar-footer{ margin-top:auto; padding-top:14px; border-top:1px solid var(--neutral-2); }
+
+  .main-area{ margin-left:var(--sidebar-w); min-height:100%; position:relative; z-index:1; }
+  .topbar{ position:sticky; top:0; z-index:20; height:var(--topbar-h); display:flex; align-items:center; justify-content:space-between; gap:16px; padding:0 28px; background:rgba(255,255,255,0.65); backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px); border-bottom:1px solid rgba(255,255,255,0.5); }
+  .topbar-title{ font-family:'Poppins',sans-serif; font-weight:700; font-size:16px; }
+  .user-chip{ display:flex; align-items:center; gap:10px; padding:6px 14px 6px 6px; border-radius:999px; background:var(--white); border:1px solid var(--neutral-2); }
+  .user-avatar{ width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, var(--red), var(--green)); color:#fff; font-weight:700; font-size:13px; flex-shrink:0; }
+  .u-name{ font-size:13px; font-weight:600; }
+
+  .keffiyeh-corner-bg{ position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image:url('${pageContext.request.contextPath}/resources/images/keffiyeh-pattern.png');
+    background-repeat:no-repeat; background-position:bottom right; background-size:min(70vw, 900px); opacity:0.06;
+    -webkit-mask-image:radial-gradient(circle at bottom right, black 0%, black 15%, transparent 65%);
+    mask-image:radial-gradient(circle at bottom right, black 0%, black 15%, transparent 65%); }
+
+  .page{ max-width:1000px; padding:32px 32px 60px; }
+
+  /* ===================== SIGNATURE: back-link header + sectioned two-column form ===================== */
+  .page-header{ display:flex; align-items:center; gap:16px; margin-bottom:26px; animation:fadeInUp .4s var(--ease); }
+  .back-btn{ width:42px; height:42px; border-radius:14px; border:1px solid var(--neutral-2); background:var(--white); display:flex; align-items:center; justify-content:center; color:var(--text-2); transition:all .2s var(--ease); flex-shrink:0; }
+  .back-btn:hover{ border-color:var(--green); color:var(--green); }
+  .page-title{ font-family:'Poppins',sans-serif; font-weight:800; font-size:26px; margin:0; }
+  .page-sub{ color:var(--text-2); font-size:13.5px; margin:2px 0 0; }
+
+  .error-banner{ display:flex; align-items:center; gap:10px; padding:14px 18px; border-radius:14px; background:var(--error-bg); border:1px solid #F3CACA; color:var(--red); font-size:13.5px; margin-bottom:20px; }
+
+  .form-grid{ display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:start; }
+  .form-panel{ background:var(--white); border:1px solid var(--neutral-2); border-radius:var(--radius-lg); padding:24px; margin-bottom:20px; box-shadow:var(--shadow-sm); animation:fadeInUp .4s var(--ease) backwards; }
+  .form-panel:last-child{ margin-bottom:0; }
+  .panel-head{ display:flex; align-items:center; gap:12px; margin-bottom:20px; }
+  .panel-icon{ width:36px; height:36px; border-radius:11px; background:rgba(0,122,61,0.1); color:var(--green); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .panel-head h2{ font-family:'Poppins',sans-serif; font-weight:700; font-size:16px; margin:0; }
+
+  .field{ margin-bottom:18px; }
+  .field:last-child{ margin-bottom:0; }
+  .field label{ display:block; font-size:12.5px; font-weight:700; margin-bottom:8px; }
+  .field input, .field textarea{ width:100%; padding:12px 16px; border:1px solid var(--neutral-2); border-radius:14px; background:var(--neutral-1); font-size:14px; font-family:'Inter',sans-serif; transition:all .2s var(--ease); }
+  .field input:focus, .field textarea:focus{ outline:none; border-color:var(--green); background:var(--white); box-shadow:0 0 0 3px rgba(0,122,61,0.12); }
+  .field textarea{ resize:vertical; min-height:100px; }
+  .price-field{ position:relative; }
+  .price-field .dollar{ position:absolute; left:16px; top:50%; transform:translateY(-50%); color:var(--text-2); font-weight:700; }
+  .price-field input{ padding-left:30px; }
+
+  .dropzone{ display:flex; flex-direction:column; align-items:center; justify-content:center; border:2px dashed rgba(0,122,61,0.3); border-radius:var(--radius-md); background:rgba(0,122,61,0.04); padding:34px 20px; text-align:center; cursor:pointer; transition:all .2s var(--ease); }
+  .dropzone:hover, .dropzone.dragover{ background:rgba(0,122,61,0.08); border-color:var(--green); }
+  .dropzone svg{ color:var(--green); opacity:.5; margin-bottom:10px; }
+  .dz-title{ font-weight:700; font-size:13.5px; }
+  .dz-sub{ font-size:12px; color:var(--text-2); margin-top:4px; }
+  #preview-wrap{ display:none; align-items:center; gap:14px; margin-top:16px; }
+  #preview-img{ width:76px; height:76px; object-fit:contain; border-radius:14px; border:1px solid var(--neutral-2); background:#fff; }
+  #preview-name{ font-weight:700; font-size:13.5px; }
+  #preview-remove{ font-size:12.5px; color:var(--red); font-weight:700; background:none; border:none; cursor:pointer; padding:0; margin-top:4px; }
+
+  .actions-row{ display:flex; justify-content:flex-end; gap:12px; }
+  .btn-cancel{ padding:13px 24px; border-radius:999px; border:1.5px solid var(--neutral-2); font-weight:700; font-size:13.5px; color:var(--text-1); transition:all .2s var(--ease); }
+  .btn-cancel:hover{ background:var(--neutral-1); }
+  .btn-submit{ display:flex; align-items:center; gap:8px; padding:13px 26px; border-radius:999px; border:none; background:linear-gradient(135deg,var(--red),var(--green)); color:#fff; font-weight:700; font-size:13.5px; cursor:pointer; transition:all .2s var(--ease); }
+  .btn-submit:hover{ transform:translateY(-2px); box-shadow:0 14px 26px -14px rgba(0,122,61,0.5); }
+
+  @media (max-width: 900px){
+    .sidebar{ transform:translateX(-100%); }
+    .main-area{ margin-left:0; }
+    .form-grid{ grid-template-columns:1fr; }
+  }
 </style>
 </head>
-<body class="bg-background text-foreground font-sans min-h-screen relative text-[#1F2937]">
+<body>
 
-<div class="keffiyeh-bg"></div>
+<div class="keffiyeh-corner-bg"></div>
 
-<%-- Navbar --%>
-<nav class="sticky top-0 z-50 bg-card/80 backdrop-blur-lg border-b border-border">
-  <div class="w-full max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-    <div class="flex items-center gap-3">
-      <div class="flex items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/80 text-white font-serif font-bold w-7 h-7" style="font-size:1.05rem;">ه</div>
-      <div><div class="font-serif font-bold text-lg leading-tight">HerjaHub</div><div class="text-xs text-muted-foreground">Store Dashboard</div></div>
-    </div>
-    <div class="flex items-center gap-3">
-      <a href="${pageContext.request.contextPath}/store/edit" class="w-10 h-10 rounded-full bg-secondary hover:bg-primary/10 flex items-center justify-center transition-colors">
-        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      </a>
-      <a href="${pageContext.request.contextPath}/logout" class="text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors">Log out</a>
-    </div>
-  </div>
-</nav>
-
-<div class="w-full max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
-
-  <%-- Page Header --%>
-  <div class="flex items-center gap-4 mb-8">
-    <a href="${pageContext.request.contextPath}/store/products" class="w-10 h-10 rounded-xl border border-border bg-card flex items-center justify-center hover:bg-secondary transition-colors">
-      <svg class="w-5 h-5 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+<aside class="sidebar">
+    <a class="sidebar-brand" href="${pageContext.request.contextPath}/store/dashboard">
+        <div class="mark">ه</div><div class="name">HerjaHub</div>
     </a>
-    <div>
-      <h1 class="text-3xl font-serif font-semibold">Add Product</h1>
-      <p class="text-muted-foreground text-sm">List a new handmade item in your store.</p>
+    <div class="side-label">Overview</div>
+    <a class="side-link" href="${pageContext.request.contextPath}/store/dashboard">
+        <i data-lucide="layout-dashboard" width="18" height="18"></i> Dashboard
+    </a>
+    <div class="side-label">Manage</div>
+    <a class="side-link active" href="${pageContext.request.contextPath}/store/products">
+        <i data-lucide="shopping-bag" width="18" height="18"></i> Products
+    </a>
+    <a class="side-link" href="${pageContext.request.contextPath}/store/edit">
+        <i data-lucide="store" width="18" height="18"></i> Store Profile
+    </a>
+    <div class="sidebar-footer">
+        <a class="side-link" href="${pageContext.request.contextPath}/logout" style="color:var(--red);">
+            <i data-lucide="log-out" width="18" height="18"></i> Log out
+        </a>
     </div>
-  </div>
+</aside>
 
-  <c:if test="${not empty errorMessage}">
-    <div class="flex items-center gap-3 p-4 rounded-xl bg-red-50 border border-red-200 text-destructive text-sm mb-6">
-      <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      <span>${errorMessage}</span>
-    </div>
-  </c:if>
-
-  <form method="post" action="${pageContext.request.contextPath}/store/products/add" enctype="multipart/form-data" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-
-    <%-- Left Column --%>
-    <div class="space-y-6">
-      <%-- Product Information --%>
-      <div class="bg-card rounded-[28px] p-6 border border-border">
-        <div class="flex items-center gap-3 mb-6">
-          <div class="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
-            <svg class="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-          </div>
-          <h2 class="text-xl font-serif font-semibold">Product Information</h2>
+<div class="main-area">
+    <div class="topbar">
+        <div class="topbar-title">Add Product</div>
+        <div class="user-chip">
+            <div class="user-avatar"><c:out value="${fn:substring(store.storeName, 0, 1)}" /></div>
+            <span class="u-name"><c:out value="${store.storeName}" /></span>
         </div>
-        <div class="space-y-5">
-          <div>
-            <label class="block text-sm font-semibold mb-2">Product Name</label>
-            <input type="text" name="productName" value="${productForm.productName}" placeholder="e.g. Hand-carved Olive Wood Bowl" required class="w-full px-4 py-3 rounded-xl border border-border bg-secondary focus:bg-card focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"/>
-          </div>
-          <div>
-            <label class="block text-sm font-semibold mb-2">Description</label>
-            <textarea name="description" rows="4" placeholder="Describe what makes this piece special..." class="w-full px-4 py-3 rounded-xl border border-border bg-secondary focus:bg-card focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all resize-none">${productForm.description}</textarea>
-          </div>
-        </div>
-      </div>
-
-      <%-- Pricing --%>
-      <div class="bg-card rounded-[28px] p-6 border border-border">
-        <div class="flex items-center gap-3 mb-6">
-          <div class="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
-            <svg class="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
-          </div>
-          <h2 class="text-xl font-serif font-semibold">Pricing</h2>
-        </div>
-        <div>
-          <label class="block text-sm font-semibold mb-2">Price (USD)</label>
-          <div class="relative">
-            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-semibold">$</span>
-            <input type="number" step="0.01" min="0.01" name="price" value="${productForm.price}" placeholder="0.00" required class="w-full pl-8 pr-4 py-3 rounded-xl border border-border bg-secondary focus:bg-card focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"/>
-          </div>
-        </div>
-      </div>
-
-      <%-- Inventory --%>
-      <div class="bg-card rounded-[28px] p-6 border border-border">
-        <div class="flex items-center gap-3 mb-6">
-          <div class="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
-            <svg class="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-          </div>
-          <h2 class="text-xl font-serif font-semibold">Inventory</h2>
-        </div>
-        <div>
-          <label class="block text-sm font-semibold mb-2">Quantity in Stock</label>
-          <input type="number" step="1" min="0" name="quantity" value="${productForm.quantity}" placeholder="0" required class="w-full px-4 py-3 rounded-xl border border-border bg-secondary focus:bg-card focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"/>
-        </div>
-      </div>
     </div>
 
-    <%-- Right Column --%>
-    <div class="space-y-6">
-      <%-- Image --%>
-      <div class="bg-card rounded-[28px] p-6 border border-border">
-        <div class="flex items-center gap-3 mb-6">
-          <div class="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
-            <svg class="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-          </div>
-          <h2 class="text-xl font-serif font-semibold">Image</h2>
-        </div>
-        <label class="border-2 border-dashed border-primary/30 rounded-xl bg-primary/5 p-8 text-center cursor-pointer hover:bg-primary/10 hover:border-primary transition-all" id="dropzone" for="file-input">
-          <svg class="w-10 h-10 text-primary/40 mx-auto mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          <div class="dz-title font-semibold text-sm">Drag & drop a photo, or click to browse</div>
-          <div class="dz-sub text-xs text-muted-foreground mt-1">PNG or JPG, up to 25MB</div>
-          <input type="file" id="file-input" name="imageFile" accept="image/*" class="hidden">
-        </label>
-        <div class="flex items-center gap-4 mt-4 hidden" id="preview-wrap">
-          <img id="preview-img" src="" alt="Preview" class="w-20 h-20 object-contain rounded-xl border border-border bg-white"/>
-          <div>
-            <div class="font-semibold text-sm" id="preview-name"></div>
-            <button type="button" class="text-sm text-destructive font-semibold hover:underline mt-1" id="preview-remove">Remove</button>
-          </div>
-        </div>
-      </div>
+    <div class="page">
 
-      <%-- Actions --%>
-      <div class="flex justify-end gap-3">
-        <a href="${pageContext.request.contextPath}/store/products" class="px-6 py-3 rounded-full border-2 border-border font-semibold hover:bg-secondary transition-all">Cancel</a>
-        <button type="submit" class="px-6 py-3 rounded-full bg-primary text-primary-foreground font-semibold hover:shadow-lg hover:-translate-y-0.5 active:scale-95 transition-all flex items-center gap-2">
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-          Publish Product
-        </button>
-      </div>
+        <div class="page-header">
+            <a class="back-btn" href="${pageContext.request.contextPath}/store/products">
+                <i data-lucide="arrow-left" width="18" height="18"></i>
+            </a>
+            <div>
+                <h1 class="page-title">Add Product</h1>
+                <p class="page-sub">List a new handmade item in your store.</p>
+            </div>
+        </div>
+
+        <c:if test="${not empty errorMessage}">
+            <div class="error-banner">
+                <i data-lucide="alert-circle" width="18" height="18"></i>
+                <span><c:out value="${errorMessage}" /></span>
+            </div>
+        </c:if>
+
+        <form method="post" action="${pageContext.request.contextPath}/store/products/add" enctype="multipart/form-data">
+            <div class="form-grid">
+
+                <%-- Left column --%>
+                <div>
+                    <div class="form-panel">
+                        <div class="panel-head">
+                            <div class="panel-icon"><i data-lucide="file-text" width="17" height="17"></i></div>
+                            <h2>Product Information</h2>
+                        </div>
+                        <div class="field">
+                            <label>Product Name</label>
+                            <input type="text" name="productName" value="${productForm.productName}" placeholder="e.g. Hand-carved Olive Wood Bowl" required />
+                        </div>
+                        <div class="field">
+                            <label>Description</label>
+                            <textarea name="description" rows="4" placeholder="Describe what makes this piece special...">${productForm.description}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-panel">
+                        <div class="panel-head">
+                            <div class="panel-icon"><i data-lucide="dollar-sign" width="17" height="17"></i></div>
+                            <h2>Pricing</h2>
+                        </div>
+                        <div class="field">
+                            <label>Price (USD)</label>
+                            <div class="price-field">
+                                <span class="dollar">$</span>
+                                <input type="number" step="0.01" min="0.01" name="price" value="${productForm.price}" placeholder="0.00" required />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-panel">
+                        <div class="panel-head">
+                            <div class="panel-icon"><i data-lucide="shopping-bag" width="17" height="17"></i></div>
+                            <h2>Inventory</h2>
+                        </div>
+                        <div class="field">
+                            <label>Quantity in Stock</label>
+                            <input type="number" step="1" min="0" name="quantity" value="${productForm.quantity}" placeholder="0" required />
+                        </div>
+                    </div>
+                </div>
+
+                <%-- Right column --%>
+                <div>
+                    <div class="form-panel">
+                        <div class="panel-head">
+                            <div class="panel-icon"><i data-lucide="image" width="17" height="17"></i></div>
+                            <h2>Image</h2>
+                        </div>
+                        <label class="dropzone" id="dropzone" for="file-input">
+                            <i data-lucide="upload-cloud" width="34" height="34"></i>
+                            <div class="dz-title">Drag & drop a photo, or click to browse</div>
+                            <div class="dz-sub">PNG or JPG, up to 25MB</div>
+                            <input type="file" id="file-input" name="imageFile" accept="image/*" style="display:none;">
+                        </label>
+                        <div id="preview-wrap">
+                            <img id="preview-img" src="" alt="Preview" />
+                            <div>
+                                <div id="preview-name"></div>
+                                <button type="button" id="preview-remove">Remove</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="actions-row">
+                        <a class="btn-cancel" href="${pageContext.request.contextPath}/store/products">Cancel</a>
+                        <button type="submit" class="btn-submit">
+                            <i data-lucide="check" width="16" height="16"></i> Publish Product
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
-  </form>
 </div>
+
+<script>lucide.createIcons();</script>
 
 <script>
   var dropzone = document.getElementById('dropzone');
@@ -178,8 +257,7 @@
     reader.onload = function(e) {
       previewImg.src = e.target.result;
       previewName.textContent = file.name;
-      previewWrap.classList.remove('hidden');
-      previewWrap.classList.add('flex');
+      previewWrap.style.display = 'flex';
     };
     reader.readAsDataURL(file);
   }
@@ -205,8 +283,7 @@
   previewRemove.addEventListener('click', function(e) {
     e.preventDefault();
     fileInput.value = '';
-    previewWrap.classList.add('hidden');
-    previewWrap.classList.remove('flex');
+    previewWrap.style.display = 'none';
   });
 </script>
 

@@ -1,249 +1,291 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard — HerjaHub</title>
+<title>Store Dashboard — HerjaHub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        colors: {
-          background: '#FAF8F3', foreground: '#1F2937', card: '#FFFFFF',
-          primary: '#198754', 'primary-foreground': '#FFFFFF', secondary: '#F8F9FA',
-          muted: '#F1F1EE', 'muted-foreground': '#6B7280', border: '#E5E5E2',
-          destructive: '#D72638',
-        },
-        fontFamily: { serif: ['Newsreader','serif'], sans: ['Inter','sans-serif'], ar: ['Tajawal','sans-serif'] },
-        borderRadius: { DEFAULT: '1.75rem' },
-      },
-    },
-  };
-</script>
 <style>
-  .keffiyeh-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0;
-    background-image: repeating-linear-gradient(45deg,currentColor 0,currentColor 1px,transparent 1px,transparent 14px),
-    repeating-linear-gradient(-45deg,currentColor 0,currentColor 1px,transparent 1px,transparent 14px); opacity: 0.05; }
+  :root{
+    --red:#CE1126; --green:#007A3D; --white:#FFFFFF; --neutral-1:#F8F9FA; --neutral-2:#E9ECEF;
+    --text-1:#1F2937; --text-2:#6B7280;
+    --radius-lg:24px; --radius-md:18px; --radius-sm:12px;
+    --shadow-sm:0 4px 16px rgba(31,41,55,0.06); --shadow-md:0 18px 40px -16px rgba(31,41,55,0.18);
+    --ease:cubic-bezier(.4,0,.2,1); --sidebar-w:250px; --topbar-h:68px;
+  }
+  *{box-sizing:border-box;}
+  html,body{ height:100%; }
+  body{
+    margin:0; font-family:'Inter',sans-serif; color:var(--text-1); background:var(--neutral-1);
+    background-image:
+      radial-gradient(700px 480px at -10% -10%, rgba(206,17,38,0.05), transparent 60%),
+      radial-gradient(700px 480px at 110% 0%, rgba(0,122,61,0.06), transparent 60%);
+    background-attachment:fixed;
+  }
+  a{ text-decoration:none; color:inherit; }
+  @keyframes fadeInUp{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+
+  /* ===== App shell ===== */
+  .sidebar{ position:fixed; top:0; left:0; bottom:0; width:var(--sidebar-w); z-index:30; background:rgba(255,255,255,0.7); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-right:1px solid rgba(255,255,255,0.6); display:flex; flex-direction:column; padding:22px 16px; }
+  .sidebar-brand{ display:flex; align-items:center; gap:10px; padding:6px 10px 26px; }
+  .sidebar-brand .mark{ width:38px; height:38px; border-radius:12px; flex-shrink:0; background:linear-gradient(135deg, var(--red), var(--green)); display:flex; align-items:center; justify-content:center; color:var(--white); font-family:'Poppins',sans-serif; font-weight:800; }
+  .sidebar-brand .name{ font-family:'Poppins',sans-serif; font-weight:800; font-size:17px; }
+  .side-label{ font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--text-2); padding:14px 12px 8px; }
+  .side-link{ display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:var(--radius-sm); font-weight:600; font-size:14px; color:var(--text-1); margin-bottom:3px; transition:all .22s var(--ease); position:relative; }
+  .side-link svg{ flex-shrink:0; opacity:.8; }
+  .side-link:hover{ background:var(--neutral-2); }
+  .side-link.active{ background:linear-gradient(90deg, rgba(206,17,38,0.1), rgba(0,122,61,0.1)); box-shadow:inset 0 0 0 1px rgba(0,122,61,0.15); }
+  .side-link.active svg{ opacity:1; color:var(--green); }
+  .side-link.active::before{ content:""; position:absolute; left:-16px; top:8px; bottom:8px; width:4px; border-radius:4px; background:linear-gradient(180deg, var(--red), var(--green)); }
+  .sidebar-footer{ margin-top:auto; padding-top:14px; border-top:1px solid var(--neutral-2); }
+
+  .main-area{ margin-left:var(--sidebar-w); min-height:100%; position:relative; z-index:1; }
+  .topbar{ position:sticky; top:0; z-index:20; height:var(--topbar-h); display:flex; align-items:center; justify-content:space-between; gap:16px; padding:0 28px; background:rgba(255,255,255,0.65); backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px); border-bottom:1px solid rgba(255,255,255,0.5); }
+  .topbar-title{ font-family:'Poppins',sans-serif; font-weight:700; font-size:16px; }
+  .user-chip{ display:flex; align-items:center; gap:10px; padding:6px 14px 6px 6px; border-radius:999px; background:var(--white); border:1px solid var(--neutral-2); }
+  .user-avatar{ width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, var(--red), var(--green)); color:#fff; font-weight:700; font-size:13px; flex-shrink:0; }
+  .u-name{ font-size:13px; font-weight:600; }
+
+  .keffiyeh-corner-bg{ position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image:url('${pageContext.request.contextPath}/resources/images/keffiyeh-pattern.png');
+    background-repeat:no-repeat; background-position:bottom right; background-size:min(70vw, 900px); opacity:0.06;
+    -webkit-mask-image:radial-gradient(circle at bottom right, black 0%, black 15%, transparent 65%);
+    mask-image:radial-gradient(circle at bottom right, black 0%, black 15%, transparent 65%); }
+
+  .page{ max-width:1200px; padding:32px 32px 60px; }
+
+  /* ===================== SIGNATURE: real analytics dashboard - hero + KPI row + chart ===================== */
+  .hero{ position:relative; overflow:hidden; border-radius:var(--radius-lg); padding:34px 38px; margin-bottom:24px; background:linear-gradient(120deg,var(--red),var(--green)); color:#fff; box-shadow:var(--shadow-md); animation:fadeInUp .5s var(--ease); }
+  .hero::after{ content:""; position:absolute; right:-40px; top:-40px; width:220px; height:220px; border-radius:50%; background:rgba(255,255,255,0.08); }
+  .hero-eyebrow{ font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:rgba(255,255,255,0.85); margin:0 0 6px; position:relative; z-index:1; }
+  .hero h1{ font-family:'Poppins',sans-serif; font-weight:800; font-size:27px; margin:0 0 8px; position:relative; z-index:1; }
+  .hero p{ margin:0; color:rgba(255,255,255,0.88); font-size:14px; max-width:520px; position:relative; z-index:1; }
+
+  .kpi-row{ display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:16px; margin-bottom:24px; }
+  .kpi-card{ background:var(--white); border:1px solid var(--neutral-2); border-radius:var(--radius-md); padding:20px 22px; transition:all .22s var(--ease); animation:fadeInUp .4s var(--ease) backwards; }
+  .kpi-card:hover{ transform:translateY(-4px); box-shadow:var(--shadow-md); }
+  .kpi-card.hero-metric{ background:linear-gradient(135deg, rgba(206,17,38,0.06), rgba(0,122,61,0.08)); border-color:rgba(0,122,61,0.2); }
+  .kpi-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+  .kpi-label{ font-size:12px; font-weight:700; color:var(--text-2); }
+  .kpi-icon{ width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; background:rgba(0,122,61,0.1); color:var(--green); }
+  .kpi-value{ font-family:'Poppins',sans-serif; font-weight:800; font-size:24px; }
+  .kpi-card.hero-metric .kpi-value{ background:linear-gradient(90deg,var(--red),var(--green)); -webkit-background-clip:text; background-clip:text; color:transparent; font-size:28px; }
+
+  .content-row{ display:grid; grid-template-columns:2fr 1fr; gap:18px; margin-bottom:18px; }
+  .panel{ background:var(--white); border:1px solid var(--neutral-2); border-radius:var(--radius-lg); padding:24px 26px; box-shadow:var(--shadow-sm); animation:fadeInUp .4s var(--ease) .08s backwards; }
+  .panel h2{ font-family:'Poppins',sans-serif; font-weight:700; font-size:17px; margin:0 0 4px; }
+  .panel .sub{ color:var(--text-2); font-size:13px; margin:0 0 18px; }
+  .empty-note{ text-align:center; padding:40px 20px; color:var(--text-2); font-size:13.5px; }
+  .empty-note svg{ color:var(--green); opacity:.4; margin-bottom:10px; }
+
+  .qa-link{ display:flex; align-items:center; gap:13px; padding:14px; border-radius:var(--radius-sm); border:1px solid var(--neutral-2); margin-bottom:10px; transition:all .2s var(--ease); }
+  .qa-link:last-child{ margin-bottom:0; }
+  .qa-link:hover{ border-color:var(--green); background:rgba(0,122,61,0.05); transform:translateX(3px); }
+  .qa-icon{ width:38px; height:38px; border-radius:11px; background:linear-gradient(135deg,var(--red),var(--green)); color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .qa-text .t1{ font-weight:700; font-size:13.5px; }
+  .qa-text .t2{ font-size:12px; color:var(--text-2); }
+
+  .bottom-row{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  .review-row{ padding:14px 0; border-bottom:1px solid var(--neutral-2); }
+  .review-row:last-child{ border-bottom:none; padding-bottom:0; }
+  .review-meta{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; font-size:12.5px; margin-bottom:4px; }
+  .review-meta strong{ font-size:13.5px; }
+  .review-meta .sep{ color:var(--neutral-2); }
+  .review-meta .rating{ color:var(--green); font-weight:700; }
+  .review-text{ color:var(--text-2); font-size:13px; margin:0; }
+
+  .stock-row{ display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--neutral-2); }
+  .stock-row:last-child{ border-bottom:none; }
+  .stock-name{ font-weight:600; font-size:13.5px; }
+  .stock-qty{ font-weight:800; font-size:13px; color:var(--red); background:rgba(206,17,38,0.08); padding:4px 11px; border-radius:999px; }
+
+  @media (max-width: 1000px){
+    .sidebar{ transform:translateX(-100%); }
+    .main-area{ margin-left:0; }
+    .kpi-row{ grid-template-columns:1fr 1fr; }
+    .content-row, .bottom-row{ grid-template-columns:1fr; }
+  }
 </style>
 </head>
-<body class="bg-background text-foreground font-sans min-h-screen relative text-[#1F2937]">
+<body>
 
-<div class="keffiyeh-bg"></div>
+<div class="keffiyeh-corner-bg"></div>
 
-<%-- Navbar --%>
-<nav class="sticky top-0 z-50 bg-card/80 backdrop-blur-lg border-b border-border">
-  <div class="w-full max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-    <div class="flex items-center gap-3">
-      <div class="flex items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/80 text-white font-serif font-bold w-7 h-7" style="font-size:1.05rem;">ه</div>
-      <div><div class="font-serif font-bold text-lg leading-tight">HerjaHub</div><div class="text-xs text-muted-foreground">Store Dashboard</div></div>
-    </div>
-    <div class="flex items-center gap-3">
-      <a href="${pageContext.request.contextPath}/store/edit" class="w-10 h-10 rounded-full bg-secondary hover:bg-primary/10 flex items-center justify-center transition-colors">
-        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      </a>
-      <a href="${pageContext.request.contextPath}/logout" class="text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors">Log out</a>
-    </div>
-  </div>
-</nav>
-
-<div class="w-full max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-8 flex gap-8 relative z-10">
-
-  <%-- Sidebar --%>
-  <div class="w-56 flex-shrink-0 hidden lg:block">
-    <div class="sticky top-20 space-y-6">
-      <div>
-        <div class="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3 px-3">Overview</div>
-        <a href="${pageContext.request.contextPath}/store/dashboard" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary text-primary-foreground font-semibold text-sm transition-all">
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-          Dashboard
+<aside class="sidebar">
+    <a class="sidebar-brand" href="${pageContext.request.contextPath}/store/dashboard">
+        <div class="mark">ه</div><div class="name">HerjaHub</div>
+    </a>
+    <div class="side-label">Overview</div>
+    <a class="side-link active" href="${pageContext.request.contextPath}/store/dashboard">
+        <i data-lucide="layout-dashboard" width="18" height="18"></i> Dashboard
+    </a>
+    <div class="side-label">Manage</div>
+    <a class="side-link" href="${pageContext.request.contextPath}/store/products">
+        <i data-lucide="shopping-bag" width="18" height="18"></i> Products
+    </a>
+    <a class="side-link" href="${pageContext.request.contextPath}/store/edit">
+        <i data-lucide="store" width="18" height="18"></i> Store Profile
+    </a>
+    <div class="sidebar-footer">
+        <a class="side-link" href="${pageContext.request.contextPath}/logout" style="color:var(--red);">
+            <i data-lucide="log-out" width="18" height="18"></i> Log out
         </a>
-      </div>
-      <div>
-        <div class="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3 px-3">Manage</div>
-        <a href="${pageContext.request.contextPath}/store/products" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-foreground hover:bg-secondary font-semibold text-sm transition-all">
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-          Products
-        </a>
-        <a href="${pageContext.request.contextPath}/store/edit" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-foreground hover:bg-secondary font-semibold text-sm transition-all">
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h18v18H3zM3 9h18M9 21V9"/></svg>
-          Store Profile
-        </a>
-      </div>
-      <div>
-        <a href="${pageContext.request.contextPath}/logout" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-destructive hover:bg-red-50 font-semibold text-sm transition-all">
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-          Logout
-        </a>
-      </div>
     </div>
-  </div>
+</aside>
 
-  <%-- Main Content --%>
-  <div class="flex-1 min-w-0">
-
-    <%-- Hero --%>
-    <div class="bg-gradient-to-r from-primary to-primary/80 rounded-[28px] p-8 lg:p-10 text-white mb-8 shadow-xl relative overflow-hidden">
-      <div class="absolute right-[-40px] top-[-40px] w-52 h-52 rounded-full bg-white/10"></div>
-      <div class="relative z-10">
-        <div class="text-sm font-bold uppercase tracking-wider text-white/80 mb-2">Store Owner Dashboard</div>
-        <h1 class="text-3xl font-serif font-semibold mb-3">Welcome back, <c:out value="${store.storeName}"/></h1>
-        <p class="text-white/80 max-w-xl">Here's how your handmade goods are doing today. Track sales, manage your catalog, and keep your storefront looking its best.</p>
-      </div>
+<div class="main-area">
+    <div class="topbar">
+        <div class="topbar-title">Dashboard</div>
+        <div class="user-chip">
+            <div class="user-avatar"><c:out value="${fn:substring(store.storeName, 0, 1)}" /></div>
+            <span class="u-name"><c:out value="${store.storeName}" /></span>
+        </div>
     </div>
 
-    <%-- KPI Cards --%>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-      <div class="bg-card rounded-[28px] p-6 border border-border hover:shadow-lg hover:-translate-y-1 transition-all">
-        <div class="flex items-center justify-between mb-4">
-          <span class="text-sm text-muted-foreground font-semibold">Total Products</span>
-          <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-            <svg class="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-          </div>
-        </div>
-        <div class="text-3xl font-serif font-semibold">${sales.totalProducts}</div>
-      </div>
-      <div class="bg-card rounded-[28px] p-6 border border-border hover:shadow-lg hover:-translate-y-1 transition-all">
-        <div class="flex items-center justify-between mb-4">
-          <span class="text-sm text-muted-foreground font-semibold">Units Sold</span>
-          <div class="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
-            <svg class="w-5 h-5 text-green-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-          </div>
-        </div>
-        <div class="text-3xl font-serif font-semibold">${sales.totalUnitsSold}</div>
-      </div>
-      <div class="bg-card rounded-[28px] p-6 border border-border hover:shadow-lg hover:-translate-y-1 transition-all">
-        <div class="flex items-center justify-between mb-4">
-          <span class="text-sm text-muted-foreground font-semibold">Total Revenue</span>
-          <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
-            <svg class="w-5 h-5 text-amber-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 10h20"/></svg>
-          </div>
-        </div>
-        <div class="text-3xl font-serif font-semibold">$<fmt:formatNumber value="${sales.totalRevenue}" minFractionDigits="2" maxFractionDigits="2"/></div>
-      </div>
-      <div class="bg-card rounded-[28px] p-6 border border-border hover:shadow-lg hover:-translate-y-1 transition-all">
-        <div class="flex items-center justify-between mb-4">
-          <span class="text-sm text-muted-foreground font-semibold">Avg. Revenue/Product</span>
-          <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-            <svg class="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-          </div>
-        </div>
-        <c:choose>
-          <c:when test="${sales.totalProducts > 0}">
-            <div class="text-3xl font-serif font-semibold">$<fmt:formatNumber value="${sales.totalRevenue / sales.totalProducts}" minFractionDigits="2" maxFractionDigits="2"/></div>
-          </c:when>
-          <c:otherwise><div class="text-3xl font-serif font-semibold">$0.00</div></c:otherwise>
-        </c:choose>
-      </div>
-    </div>
+    <div class="page">
 
-    <%-- Chart + Quick Actions --%>
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-      <div class="lg:col-span-2 bg-card rounded-[28px] p-6 border border-border">
-        <h2 class="text-xl font-serif font-semibold mb-1">Sales Over Time</h2>
-        <p class="text-sm text-muted-foreground mb-6">Monthly revenue across all of your products.</p>
-        <c:choose>
-          <c:when test="${not empty sales.chart}">
-            <div style="height:280px"><canvas id="salesChart"></canvas></div>
-          </c:when>
-          <c:otherwise>
-            <div class="text-center py-10 text-muted-foreground text-sm">
-              <svg class="w-8 h-8 mx-auto mb-3 text-primary/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-              <div>No sales yet — once orders come in, your trend will show up here.</div>
-            </div>
-          </c:otherwise>
-        </c:choose>
-      </div>
-
-      <div class="bg-card rounded-[28px] p-6 border border-border">
-        <h2 class="text-xl font-serif font-semibold mb-1">Quick Actions</h2>
-        <p class="text-sm text-muted-foreground mb-6">Jump right into managing your store.</p>
-        <div class="space-y-3">
-          <a href="${pageContext.request.contextPath}/store/products/add" class="flex items-center gap-3 p-4 rounded-xl border border-border hover:border-primary hover:bg-primary/5 transition-all">
-            <div class="w-10 h-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center flex-shrink-0">
-              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            </div>
-            <div><div class="font-semibold text-sm">Add a Product</div><div class="text-xs text-muted-foreground">List something new for sale</div></div>
-          </a>
-          <a href="${pageContext.request.contextPath}/store/products" class="flex items-center gap-3 p-4 rounded-xl border border-border hover:border-primary hover:bg-primary/5 transition-all">
-            <div class="w-10 h-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center flex-shrink-0">
-              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-            </div>
-            <div><div class="font-semibold text-sm">Manage Products</div><div class="text-xs text-muted-foreground">Edit, restock, or remove items</div></div>
-          </a>
-          <a href="${pageContext.request.contextPath}/store/edit" class="flex items-center gap-3 p-4 rounded-xl border border-border hover:border-primary hover:bg-primary/5 transition-all">
-            <div class="w-10 h-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center flex-shrink-0">
-              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h18v18H3zM3 9h18M9 21V9"/></svg>
-            </div>
-            <div><div class="font-semibold text-sm">Store Profile</div><div class="text-xs text-muted-foreground">Update your info and logo</div></div>
-          </a>
+        <%-- ===== Hero ===== --%>
+        <div class="hero">
+            <p class="hero-eyebrow">Store Owner Dashboard</p>
+            <h1>Welcome back, <c:out value="${store.storeName}" /></h1>
+            <p>Here's how your handmade goods are doing today. Track sales, manage your catalog, and keep your storefront looking its best.</p>
         </div>
-      </div>
-    </div>
 
-    <%-- Reviews + Low Stock --%>
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div class="bg-card rounded-[28px] p-6 border border-border">
-        <h2 class="text-xl font-serif font-semibold mb-1">Recent Reviews</h2>
-        <p class="text-sm text-muted-foreground mb-6">What customers are saying about your products.</p>
-        <c:choose>
-          <c:when test="${not empty recentReviews}">
-            <div class="space-y-4">
-              <c:forEach var="rv" items="${recentReviews}">
-                <div class="border-b border-border pb-4 last:border-0 last:pb-0">
-                  <div class="flex items-center gap-2 mb-1">
-                    <strong class="text-sm"><c:out value="${rv.customerName}"/></strong>
-                    <span class="text-sm text-muted-foreground">&middot;</span>
-                    <span class="text-sm text-muted-foreground"><c:out value="${rv.productName}"/></span>
-                    <span class="text-sm text-muted-foreground">&middot;</span>
-                    <span class="text-sm">${rv.rating}/5</span>
-                  </div>
-                  <p class="text-sm text-muted-foreground"><c:out value="${rv.comment}"/></p>
+        <%-- ===== KPI row - revenue highlighted as the hero metric ===== --%>
+        <div class="kpi-row">
+            <div class="kpi-card hero-metric">
+                <div class="kpi-top">
+                    <span class="kpi-label">Total Revenue</span>
+                    <div class="kpi-icon"><i data-lucide="banknote" width="17" height="17"></i></div>
                 </div>
-              </c:forEach>
+                <div class="kpi-value">$<fmt:formatNumber value="${sales.totalRevenue}" minFractionDigits="2" maxFractionDigits="2" /></div>
             </div>
-          </c:when>
-          <c:otherwise>
-            <div class="text-center py-10 text-muted-foreground text-sm">
-              <svg class="w-8 h-8 mx-auto mb-3 text-primary/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-              <div>No reviews yet across your products.</div>
-            </div>
-          </c:otherwise>
-        </c:choose>
-      </div>
-
-      <div class="bg-card rounded-[28px] p-6 border border-border">
-        <h2 class="text-xl font-serif font-semibold mb-1">Low Stock</h2>
-        <p class="text-sm text-muted-foreground mb-6">Products running low on inventory.</p>
-        <c:choose>
-          <c:when test="${not empty lowStockProducts}">
-            <div class="space-y-3">
-              <c:forEach var="lp" items="${lowStockProducts}">
-                <div class="flex items-center justify-between py-3 border-b border-border last:border-0">
-                  <span class="text-sm font-medium"><c:out value="${lp.productName}"/></span>
-                  <span class="text-sm font-bold text-destructive">${lp.quantity} left</span>
+            <div class="kpi-card">
+                <div class="kpi-top">
+                    <span class="kpi-label">Total Products</span>
+                    <div class="kpi-icon"><i data-lucide="shopping-bag" width="16" height="16"></i></div>
                 </div>
-              </c:forEach>
+                <div class="kpi-value">${sales.totalProducts}</div>
             </div>
-          </c:when>
-          <c:otherwise>
-            <div class="text-center py-10 text-muted-foreground text-sm">
-              <svg class="w-8 h-8 mx-auto mb-3 text-primary/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-              <div>Nothing running low right now.</div>
+            <div class="kpi-card">
+                <div class="kpi-top">
+                    <span class="kpi-label">Units Sold</span>
+                    <div class="kpi-icon"><i data-lucide="package-check" width="16" height="16"></i></div>
+                </div>
+                <div class="kpi-value">${sales.totalUnitsSold}</div>
             </div>
-          </c:otherwise>
-        </c:choose>
-      </div>
-    </div>
+            <div class="kpi-card">
+                <div class="kpi-top">
+                    <span class="kpi-label">Avg. Rev / Product</span>
+                    <div class="kpi-icon"><i data-lucide="trending-up" width="16" height="16"></i></div>
+                </div>
+                <c:choose>
+                    <c:when test="${sales.totalProducts > 0}">
+                        <div class="kpi-value">$<fmt:formatNumber value="${sales.totalRevenue / sales.totalProducts}" minFractionDigits="2" maxFractionDigits="2" /></div>
+                    </c:when>
+                    <c:otherwise><div class="kpi-value">$0.00</div></c:otherwise>
+                </c:choose>
+            </div>
+        </div>
 
-  </div>
+        <%-- ===== Chart + Quick Actions ===== --%>
+        <div class="content-row">
+            <div class="panel">
+                <h2>Sales Over Time</h2>
+                <p class="sub">Monthly revenue across all of your products.</p>
+                <c:choose>
+                    <c:when test="${not empty sales.chart}">
+                        <div style="height:270px"><canvas id="salesChart"></canvas></div>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="empty-note">
+                            <i data-lucide="bar-chart-3" width="30" height="30"></i>
+                            <div>No sales yet — once orders come in, your trend will show up here.</div>
+                        </div>
+                    </c:otherwise>
+                </c:choose>
+            </div>
+
+            <div class="panel">
+                <h2>Quick Actions</h2>
+                <p class="sub">Jump right into managing your store.</p>
+                <a class="qa-link" href="${pageContext.request.contextPath}/store/products/add">
+                    <div class="qa-icon"><i data-lucide="plus" width="17" height="17"></i></div>
+                    <div class="qa-text"><div class="t1">Add a Product</div><div class="t2">List something new for sale</div></div>
+                </a>
+                <a class="qa-link" href="${pageContext.request.contextPath}/store/products">
+                    <div class="qa-icon"><i data-lucide="shopping-bag" width="17" height="17"></i></div>
+                    <div class="qa-text"><div class="t1">Manage Products</div><div class="t2">Edit, restock, or remove items</div></div>
+                </a>
+                <a class="qa-link" href="${pageContext.request.contextPath}/store/edit">
+                    <div class="qa-icon"><i data-lucide="store" width="17" height="17"></i></div>
+                    <div class="qa-text"><div class="t1">Store Profile</div><div class="t2">Update your info and logo</div></div>
+                </a>
+            </div>
+        </div>
+
+        <%-- ===== Reviews + Low Stock ===== --%>
+        <div class="bottom-row">
+            <div class="panel">
+                <h2>Recent Reviews</h2>
+                <p class="sub">What customers are saying about your products.</p>
+                <c:choose>
+                    <c:when test="${not empty recentReviews}">
+                        <c:forEach var="rv" items="${recentReviews}">
+                            <div class="review-row">
+                                <div class="review-meta">
+                                    <strong><c:out value="${rv.customerName}" /></strong>
+                                    <span class="sep">&middot;</span>
+                                    <span style="color:var(--text-2);"><c:out value="${rv.productName}" /></span>
+                                    <span class="sep">&middot;</span>
+                                    <span class="rating">${rv.rating}/5</span>
+                                </div>
+                                <p class="review-text"><c:out value="${rv.comment}" /></p>
+                            </div>
+                        </c:forEach>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="empty-note">
+                            <i data-lucide="message-square" width="28" height="28"></i>
+                            <div>No reviews yet across your products.</div>
+                        </div>
+                    </c:otherwise>
+                </c:choose>
+            </div>
+
+            <div class="panel">
+                <h2>Low Stock</h2>
+                <p class="sub">Products running low on inventory.</p>
+                <c:choose>
+                    <c:when test="${not empty lowStockProducts}">
+                        <c:forEach var="lp" items="${lowStockProducts}">
+                            <div class="stock-row">
+                                <span class="stock-name"><c:out value="${lp.productName}" /></span>
+                                <span class="stock-qty">${lp.quantity} left</span>
+                            </div>
+                        </c:forEach>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="empty-note">
+                            <i data-lucide="check-circle-2" width="28" height="28"></i>
+                            <div>Nothing running low right now.</div>
+                        </div>
+                    </c:otherwise>
+                </c:choose>
+            </div>
+        </div>
+
+    </div>
 </div>
+
+<script>lucide.createIcons();</script>
 
 <script>
   var labels = [
@@ -255,19 +297,25 @@
   var canvas = document.getElementById('salesChart');
   if (canvas) {
     try {
-      new Chart(canvas.getContext('2d'), {
+      var ctx = canvas.getContext('2d');
+      var gradient = ctx.createLinearGradient(0, 0, 0, 270);
+      gradient.addColorStop(0, 'rgba(0,122,61,0.22)');
+      gradient.addColorStop(1, 'rgba(0,122,61,0.02)');
+      new Chart(ctx, {
         type: 'line',
         data: {
           labels: labels,
           datasets: [{
             label: 'Revenue',
             data: data,
-            borderColor: '#198754',
-            backgroundColor: 'rgba(25,135,84,0.10)',
+            borderColor: '#007A3D',
+            backgroundColor: gradient,
             fill: true,
             tension: 0.35,
             pointRadius: 4,
-            pointBackgroundColor: '#198754'
+            pointBackgroundColor: '#CE1126',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2
           }]
         },
         options: {
@@ -275,7 +323,7 @@
           maintainAspectRatio: false,
           plugins: { legend: { display: false } },
           scales: {
-            y: { beginAtZero: true, ticks: { callback: function(v) { return '$' + v; } }, grid:{ color:'#EEEAE0' } },
+            y: { beginAtZero: true, ticks: { callback: function(v) { return '$' + v; } }, grid:{ color:'#E9ECEF' } },
             x: { grid:{ display:false } }
           }
         }
