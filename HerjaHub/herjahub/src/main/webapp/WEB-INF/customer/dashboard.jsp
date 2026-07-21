@@ -116,6 +116,10 @@
     .main-area{ margin-left:0; }
     .product-rail, .store-rail{ grid-template-columns:repeat(2, 1fr); }
   }
+    .topbar-right{ display:flex; align-items:center; gap:12px; }
+    .user-chip{ display:flex; align-items:center; gap:10px; padding:6px 14px 6px 6px; border-radius:999px; background:var(--white); border:1px solid var(--neutral-2); }
+    .user-avatar{ width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, var(--red), var(--green)); color:#fff; font-weight:700; font-size:13px; flex-shrink:0; }
+    .u-name{ font-size:13px; font-weight:600; }
 </style>
 </head>
 <body>
@@ -166,9 +170,12 @@
     <%-- ===================== TOPBAR ===================== --%>
     <div class="topbar">
         <div class="topbar-title">Dashboard</div>
-        <a class="logout-btn" href="${pageContext.request.contextPath}/logout">
-            <i data-lucide="log-out" width="14" height="14"></i> Log out
-        </a>
+<div class="topbar-right">
+    <div class="user-chip">
+        <div class="user-avatar"><c:out value="${fn:substring(customer.firstName, 0, 1)}" /></div>
+        <span class="u-name"><c:out value="${customer.firstName}" /></span>
+    </div>
+</div>
     </div>
 
     <div class="page">

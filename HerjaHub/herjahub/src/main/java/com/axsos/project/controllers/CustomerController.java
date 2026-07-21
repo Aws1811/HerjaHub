@@ -48,28 +48,28 @@ public class CustomerController {
 	private static final int DASHBOARD_PREVIEW_SIZE = 4;
 
 	@GetMapping("/customer/dashboard")
-    public String dashboard(HttpSession session, Model model) {
+	public String dashboard(HttpSession session, Model model) {
 
-        // check if a customer is logged in by looking at the session
-        Customer customer = (Customer) session.getAttribute("loggedInCustomer");
+		// check if a customer is logged in by looking at the session
+		Customer customer = (Customer) session.getAttribute("loggedInCustomer");
 
-        if (customer == null) {
-            return "redirect:/auth";
-        }
+		if (customer == null) {
+			return "redirect:/auth";
+		}
 
-        model.addAttribute("customer", customer);
+		model.addAttribute("customer", customer);
 
-        // a small preview row of products, newest first - same source list the
-        // Products page uses, just capped to the first few for this page
-        List<Product> allProducts = productService.getMarketplaceProducts();
-        model.addAttribute("recentProducts", capList(allProducts, DASHBOARD_PREVIEW_SIZE));
+		// a small preview row of products, newest first - same source list the
+		// Products page uses, just capped to the first few for this page
+		List<Product> allProducts = productService.getMarketplaceProducts();
+		model.addAttribute("recentProducts", capList(allProducts, DASHBOARD_PREVIEW_SIZE));
 
-        // a small preview row of stores
-        List<Store> allStores = storeService.getAllStores();
-        model.addAttribute("featuredStores", capList(allStores, DASHBOARD_PREVIEW_SIZE));
+		// a small preview row of stores
+		List<Store> allStores = storeService.getAllStores();
+		model.addAttribute("featuredStores", capList(allStores, DASHBOARD_PREVIEW_SIZE));
 
-        return "customer/dashboard";
-    }
+		return "customer/dashboard";
+	}
 
 	// shows every store on the platform - this is what the sidebar's "Stores"
 	// link and the dashboard's "Show more" button both point to
@@ -95,8 +95,8 @@ public class CustomerController {
 	// adds one product to the logged-in customer's cart (the cart lives in the session for now)
 	@PostMapping("/customer/cart/add/{productId}")
 	public String addToCart(@PathVariable("productId") Long productId,
-							 @RequestParam(value = "quantity", defaultValue = "1") int quantity,
-							 HttpSession session) {
+	                        @RequestParam(value = "quantity", defaultValue = "1") int quantity,
+	                        HttpSession session) {
 
 		Customer customer = (Customer) session.getAttribute("loggedInCustomer");
 		if (customer == null) {
@@ -136,6 +136,7 @@ public class CustomerController {
 			return "redirect:/auth";
 		}
 
+		model.addAttribute("customer", customer);
 		model.addAttribute("cartItems", getCartFromSession(session));
 		return "customer/cart";
 	}
@@ -171,6 +172,7 @@ public class CustomerController {
 			return "redirect:/auth";
 		}
 
+		model.addAttribute("customer", customer);
 		model.addAttribute("orders", orderService.getOrdersForCustomer(customer));
 		return "customer/orders";
 	}
@@ -191,6 +193,7 @@ public class CustomerController {
 			return "redirect:/customer/orders";
 		}
 
+		model.addAttribute("customer", customer);
 		model.addAttribute("order", orderOpt.get());
 		return "customer/order-confirmation";
 	}
@@ -209,6 +212,7 @@ public class CustomerController {
 		form.setLastName(customer.getLastName());
 		form.setEmail(customer.getEmail());
 
+		model.addAttribute("customer", customer);
 		model.addAttribute("editProfileForm", form);
 		return "customer/edit-profile";
 	}
@@ -216,9 +220,9 @@ public class CustomerController {
 	// handles the Edit Profile form submit
 	@PostMapping("/customer/profile/edit")
 	public String editProfile(@Valid @ModelAttribute("editProfileForm") EditProfileForm form,
-							   BindingResult bindingResult,
-							   HttpSession session,
-							   Model model) {
+	                          BindingResult bindingResult,
+	                          HttpSession session,
+	                          Model model) {
 
 		Customer customer = (Customer) session.getAttribute("loggedInCustomer");
 		if (customer == null) {

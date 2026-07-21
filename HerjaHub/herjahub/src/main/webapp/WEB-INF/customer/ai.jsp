@@ -1,4 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -206,9 +209,12 @@
     <%-- ===================== TOPBAR ===================== --%>
     <div class="topbar">
         <div class="topbar-title">AI Assistant</div>
-        <a class="logout-btn" href="${pageContext.request.contextPath}/logout">
-            <i data-lucide="log-out" width="14" height="14"></i> Log out
-        </a>
+<div class="topbar-right">
+    <div class="user-chip">
+        <div class="user-avatar"><c:out value="${fn:substring(customer.firstName, 0, 1)}" /></div>
+        <span class="u-name"><c:out value="${customer.firstName}" /></span>
+    </div>
+</div>
     </div>
 
     <%-- ===================== IMMERSIVE CHAT STAGE ===================== --%>

@@ -234,9 +234,7 @@
                 <div class="user-avatar"><c:out value="${fn:substring(customer.firstName, 0, 1)}" /></div>
                 <span class="u-name"><c:out value="${customer.firstName}" /></span>
             </div>
-            <a class="logout-btn" href="${pageContext.request.contextPath}/logout">
-                <i data-lucide="log-out" width="14" height="14"></i> Log out
-            </a>
+
         </div>
     </div>
 

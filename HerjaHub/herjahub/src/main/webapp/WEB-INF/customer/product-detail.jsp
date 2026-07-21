@@ -215,9 +215,12 @@
             <i data-lucide="chevron-right" width="14" height="14"></i>
             <span class="current"><c:out value="${product.productName}"/></span>
         </div>
-        <a class="logout-btn" href="${pageContext.request.contextPath}/logout">
-            <i data-lucide="log-out" width="14" height="14"></i> Log out
-        </a>
+<div class="topbar-right">
+    <div class="user-chip">
+        <div class="user-avatar"><c:out value="${fn:substring(customer.firstName, 0, 1)}" /></div>
+        <span class="u-name"><c:out value="${customer.firstName}" /></span>
+    </div>
+</div>
     </div>
 
     <div class="stage">
