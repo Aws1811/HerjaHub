@@ -32,7 +32,8 @@
 
   .sidebar{ position:fixed; top:0; left:0; bottom:0; width:var(--sidebar-w); z-index:30; background:rgba(255,255,255,0.7); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-right:1px solid rgba(255,255,255,0.6); display:flex; flex-direction:column; padding:22px 16px; }
   .sidebar-brand{ display:flex; align-items:center; gap:10px; padding:6px 10px 26px; }
-  .sidebar-brand .mark{ width:38px; height:38px; border-radius:12px; flex-shrink:0; background:linear-gradient(135deg, var(--red), var(--green)); display:flex; align-items:center; justify-content:center; color:var(--white); font-family:'Poppins',sans-serif; font-weight:800; }
+  .sidebar-brand .mark{ width:38px; height:38px; border-radius:12px; flex-shrink:0; overflow:hidden; background:linear-gradient(135deg, var(--red), var(--green)); display:flex; align-items:center; justify-content:center; color:var(--white); font-family:'Poppins',sans-serif; font-weight:800; }
+  .sidebar-brand .mark img{ width:100%; height:100%; object-fit:cover; }
   .sidebar-brand .name{ font-family:'Poppins',sans-serif; font-weight:800; font-size:17px; }
   .side-label{ font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--text-2); padding:14px 12px 8px; }
   .side-link{ display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:var(--radius-sm); font-weight:600; font-size:14px; color:var(--text-1); margin-bottom:3px; transition:all .22s var(--ease); position:relative; }
@@ -101,7 +102,7 @@
 
 <aside class="sidebar">
     <a class="sidebar-brand" href="${pageContext.request.contextPath}/customer/dashboard">
-        <div class="mark">ه</div><div class="name">HerjaHub</div>
+        <div class="mark"><img src="${pageContext.request.contextPath}/resources/images/herjahub-logo.jpg" alt="HerjaHub" /></div><div class="name">HerjaHub</div>
     </a>
     <div class="side-label">Shop</div>
     <a class="side-link" href="${pageContext.request.contextPath}/customer/dashboard"><i data-lucide="layout-dashboard" width="18" height="18"></i> Dashboard</a>
