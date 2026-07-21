@@ -50,32 +50,15 @@ public class ProductPageController {
 		return "store/products";
 	}
 
-	// GET /store/products/{id} - read-only "Product Details" page
-	@GetMapping("/{id}")
-	public String showProductDetails(@PathVariable Long id, HttpSession session, Model model) {
+	// GET /store/products/add - blank "Add Product" form
+	@GetMapping("/add")
+	public String showAddForm(HttpSession session, Model model) {
 		Store store = requireStore(session);
 		if (store == null) {
 			return "redirect:/auth";
 		}
-		Optional<Product> ownedProduct = productService.getOwnedProduct(id, store.getId());
-		if (ownedProduct.isEmpty()) {
-			return "redirect:/store/products";
-		}
-		Product product = ownedProduct.get();
-		ProductDTO stats = productService.toDTO(product); // adds unitsSold / revenue
-
-		model.addAttribute("product", product);
-		model.addAttribute("stats", stats);
-		model.addAttribute("comments", commentService.getCommentsForProduct(id));
-		return "store/product-details";
-	}
-
-	// GET /store/products/add - blank "Add Product" form
-	@GetMapping("/add")
-	public String showAddForm(HttpSession session, Model model) {
-		if (requireStore(session) == null) {
-			return "redirect:/auth";
-		}
+		// needed by the page's topbar (store name/avatar), not just the form itself
+		model.addAttribute("store", store);
 		model.addAttribute("productForm", new ProductPageForm());
 		return "store/product-add";
 	}
@@ -89,6 +72,8 @@ public class ProductPageController {
 			return "redirect:/auth";
 		}
 		if (bindingResult.hasErrors()) {
+			// re-add store too - the page needs it again since we're re-rendering, not redirecting
+			model.addAttribute("store", store);
 			model.addAttribute("errorMessage", firstError(bindingResult));
 			return "store/product-add";
 		}
@@ -116,6 +101,7 @@ public class ProductPageController {
 		form.setPrice(product.getPrice());
 		form.setQuantity(product.getQuantity());
 
+		model.addAttribute("store", store);
 		model.addAttribute("product", product);
 		model.addAttribute("productForm", form);
 		model.addAttribute("comments", commentService.getCommentsForProduct(id));
@@ -136,6 +122,7 @@ public class ProductPageController {
 			if (ownedProduct.isEmpty()) {
 				return "redirect:/store/products";
 			}
+			model.addAttribute("store", store);
 			model.addAttribute("product", ownedProduct.get());
 			model.addAttribute("comments", commentService.getCommentsForProduct(id));
 			model.addAttribute("errorMessage", firstError(bindingResult));

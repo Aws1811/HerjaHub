@@ -69,7 +69,7 @@ public class AuthController {
 
             if (customerOpt.isPresent()) {
                 session.setAttribute("loggedInCustomer", customerOpt.get());
-                return "redirect:/customer/products";
+                return "redirect:/customer/dashboard";
             } else {
                 model.addAttribute("loginError", "Invalid email or password");
             }
@@ -131,7 +131,7 @@ public class AuthController {
         } else {
             Customer customer = customerService.registerCustomer(form);
             session.setAttribute("loggedInCustomer", customer);
-            return "redirect:/customer/products";
+            return "redirect:/customer/dashboard";
         }
     }
 

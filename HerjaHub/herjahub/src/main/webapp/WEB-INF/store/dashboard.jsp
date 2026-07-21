@@ -1,281 +1,336 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard — HerjaHub</title>
+<title>Store Dashboard — HerjaHub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
 <style>
   :root{
-    --olive:#4B5D3A; --olive-dark:#39492B; --olive-light:#EEF1E6;
-    --sage:#93A57F; --ivory:#FBF8F0; --white:#FFFFFF;
-    --gold:#C9A227; --gold-light:#F8F0DA;
-    --charcoal:#2B2A24; --muted:#7C7969;
-    --border:#E9E4D6; --error:#B3483F; --error-bg:#FBEAE8;
-    --success:#4F7A3D; --success-bg:#EAF2E1;
-    --radius-lg:20px; --radius-md:14px; --radius-sm:10px;
-    --shadow-sm:0 2px 10px rgba(43,41,35,0.05);
-    --shadow-md:0 16px 40px -18px rgba(43,41,35,0.22);
+    --red:#CE1126; --green:#007A3D; --white:#FFFFFF; --neutral-1:#F8F9FA; --neutral-2:#E9ECEF;
+    --text-1:#1F2937; --text-2:#6B7280;
+    --radius-lg:24px; --radius-md:18px; --radius-sm:12px;
+    --shadow-sm:0 4px 16px rgba(31,41,55,0.06); --shadow-md:0 18px 40px -16px rgba(31,41,55,0.18);
+    --ease:cubic-bezier(.4,0,.2,1); --sidebar-w:250px; --topbar-h:68px;
   }
   *{box-sizing:border-box;}
-  body{ margin:0; font-family:'Inter',sans-serif; background:var(--ivory); color:var(--charcoal); }
-  a{ color:inherit; }
-  svg{ vertical-align:middle; }
-
-  .topbar{ display:flex; align-items:center; justify-content:space-between; padding:16px 32px; background:var(--white); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:20; }
-  .brand{ display:flex; align-items:center; gap:10px; font-family:'Newsreader',serif; font-weight:600; font-size:20px; color:var(--olive-dark); }
-  .brand .mark{ width:36px; height:36px; border-radius:11px; background:linear-gradient(155deg,var(--olive),var(--olive-dark)); color:var(--gold-light); display:flex; align-items:center; justify-content:center; }
-  .topbar-actions{ display:flex; align-items:center; gap:10px; }
-  .icon-btn{ width:38px; height:38px; border-radius:12px; border:1px solid var(--border); background:var(--white); display:flex; align-items:center; justify-content:center; color:var(--muted); cursor:pointer; transition:all .18s ease; }
-  .icon-btn:hover{ background:var(--olive-light); color:var(--olive-dark); transform:translateY(-1px); }
-
-  .shell{ display:flex; max-width:1360px; margin:0 auto; }
-
-  .sidebar{ width:236px; flex-shrink:0; padding:28px 16px; position:sticky; top:69px; align-self:flex-start; height:calc(100vh - 69px); }
-  .side-section{ margin-bottom:22px; }
-  .side-label{ font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); font-weight:700; padding:0 12px 8px; }
-  .nav-link{ display:flex; align-items:center; gap:11px; padding:11px 12px; margin-bottom:3px; border-radius:var(--radius-sm); text-decoration:none; font-weight:600; font-size:14px; color:var(--charcoal); cursor:pointer; transition:all .16s ease; }
-  .nav-link:hover{ background:var(--olive-light); }
-  .nav-link.active{ background:var(--olive); color:var(--white); box-shadow:var(--shadow-sm); }
-  .nav-link.logout{ color:var(--error); }
-  .nav-link.logout:hover{ background:var(--error-bg); }
-
-  .main{ flex:1; min-width:0; padding:28px 32px 56px; }
-
-  .hero{ background:linear-gradient(120deg,var(--olive-dark), var(--olive) 65%); border-radius:var(--radius-lg); padding:34px 38px; color:var(--white); margin-bottom:26px; box-shadow:var(--shadow-md); position:relative; overflow:hidden; }
-  .hero::after{ content:""; position:absolute; right:-40px; top:-40px; width:220px; height:220px; border-radius:50%; background:rgba(255,255,255,0.06); }
-  .hero-eyebrow{ font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:var(--gold-light); font-weight:700; margin-bottom:6px; }
-  .hero h1{ font-family:'Newsreader',serif; font-weight:600; font-size:32px; margin:0 0 8px; }
-  .hero p{ margin:0; color:rgba(255,255,255,0.82); font-size:15px; max-width:520px; }
-
-  .kpi-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-bottom:26px; }
-  .kpi-card{ background:var(--white); border:1px solid var(--border); border-radius:var(--radius-lg); padding:22px 22px; box-shadow:var(--shadow-sm); transition:transform .2s ease, box-shadow .2s ease; }
-  .kpi-card:hover{ transform:translateY(-3px); box-shadow:var(--shadow-md); }
-  .kpi-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
-  .kpi-icon{ width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; }
-  .kpi-icon.olive{ background:var(--olive-light); color:var(--olive-dark); }
-  .kpi-icon.gold{ background:var(--gold-light); color:#8a6d13; }
-  .kpi-icon.sage{ background:#EEF2E9; color:#5c6f4c; }
-  .kpi-label{ font-size:13px; color:var(--muted); font-weight:600; }
-  .kpi-value{ font-family:'Newsreader',serif; font-size:30px; font-weight:600; }
-
-  .grid-2{ display:grid; grid-template-columns:2fr 1fr; gap:20px; margin-bottom:26px; align-items:start; }
-
-  .panel{ background:var(--white); border:1px solid var(--border); border-radius:var(--radius-lg); padding:24px; box-shadow:var(--shadow-sm); }
-  .panel h2{ font-family:'Newsreader',serif; font-weight:600; font-size:19px; margin:0 0 4px; }
-  .panel .sub{ margin:0 0 16px; color:var(--muted); font-size:13px; }
-  .chart-wrap{ height:280px; }
-
-  .quick-actions{ display:flex; flex-direction:column; gap:10px; }
-  .qa-card{ display:flex; align-items:center; gap:12px; padding:14px 16px; border-radius:var(--radius-md); border:1px solid var(--border); text-decoration:none; color:var(--charcoal); transition:all .18s ease; }
-  .qa-card:hover{ border-color:var(--olive); background:var(--olive-light); transform:translateX(2px); }
-  .qa-icon{ width:38px; height:38px; border-radius:11px; background:var(--olive); color:var(--white); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-  .qa-text .t1{ font-weight:700; font-size:14px; }
-  .qa-text .t2{ font-size:12.5px; color:var(--muted); }
-
-  .empty-mini{ text-align:center; padding:28px 12px; color:var(--muted); font-size:13.5px; }
-  .empty-mini svg{ margin-bottom:8px; color:var(--sage); }
-
-  @media (max-width: 1080px){
-    .kpi-grid{ grid-template-columns:repeat(2,1fr); }
-    .grid-2{ grid-template-columns:1fr; }
+  html,body{ height:100%; }
+  body{
+    margin:0; font-family:'Inter',sans-serif; color:var(--text-1); background:var(--neutral-1);
+    background-image:
+      radial-gradient(700px 480px at -10% -10%, rgba(206,17,38,0.05), transparent 60%),
+      radial-gradient(700px 480px at 110% 0%, rgba(0,122,61,0.06), transparent 60%);
+    background-attachment:fixed;
   }
-  @media (max-width: 760px){
-    .shell{ flex-direction:column; }
-    .sidebar{ width:100%; height:auto; position:static; padding:14px 16px 0; }
-    .main{ padding:20px 16px 40px; }
-    .kpi-grid{ grid-template-columns:1fr 1fr; }
-    .hero h1{ font-size:26px; }
+  a{ text-decoration:none; color:inherit; }
+  @keyframes fadeInUp{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+
+  /* ===== App shell ===== */
+  .sidebar{ position:fixed; top:0; left:0; bottom:0; width:var(--sidebar-w); z-index:30; background:rgba(255,255,255,0.7); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-right:1px solid rgba(255,255,255,0.6); display:flex; flex-direction:column; padding:22px 16px; }
+  .sidebar-brand{ display:flex; align-items:center; gap:10px; padding:6px 10px 26px; }
+  .sidebar-brand .mark{ width:38px; height:38px; border-radius:12px; flex-shrink:0; background:linear-gradient(135deg, var(--red), var(--green)); display:flex; align-items:center; justify-content:center; color:var(--white); font-family:'Poppins',sans-serif; font-weight:800; }
+  .sidebar-brand .name{ font-family:'Poppins',sans-serif; font-weight:800; font-size:17px; }
+  .side-label{ font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--text-2); padding:14px 12px 8px; }
+  .side-link{ display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:var(--radius-sm); font-weight:600; font-size:14px; color:var(--text-1); margin-bottom:3px; transition:all .22s var(--ease); position:relative; }
+  .side-link svg{ flex-shrink:0; opacity:.8; }
+  .side-link:hover{ background:var(--neutral-2); }
+  .side-link.active{ background:linear-gradient(90deg, rgba(206,17,38,0.1), rgba(0,122,61,0.1)); box-shadow:inset 0 0 0 1px rgba(0,122,61,0.15); }
+  .side-link.active svg{ opacity:1; color:var(--green); }
+  .side-link.active::before{ content:""; position:absolute; left:-16px; top:8px; bottom:8px; width:4px; border-radius:4px; background:linear-gradient(180deg, var(--red), var(--green)); }
+  .sidebar-footer{ margin-top:auto; padding-top:14px; border-top:1px solid var(--neutral-2); }
+
+  .main-area{ margin-left:var(--sidebar-w); min-height:100%; position:relative; z-index:1; }
+  .topbar{ position:sticky; top:0; z-index:20; height:var(--topbar-h); display:flex; align-items:center; justify-content:space-between; gap:16px; padding:0 28px; background:rgba(255,255,255,0.65); backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px); border-bottom:1px solid rgba(255,255,255,0.5); }
+  .topbar-title{ font-family:'Poppins',sans-serif; font-weight:700; font-size:16px; }
+  .user-chip{ display:flex; align-items:center; gap:10px; padding:6px 14px 6px 6px; border-radius:999px; background:var(--white); border:1px solid var(--neutral-2); }
+  .user-avatar{ width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, var(--red), var(--green)); color:#fff; font-weight:700; font-size:13px; flex-shrink:0; }
+  .u-name{ font-size:13px; font-weight:600; }
+
+  .keffiyeh-corner-bg{ position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image:url('${pageContext.request.contextPath}/resources/images/keffiyeh-pattern.png');
+    background-repeat:no-repeat; background-position:bottom right; background-size:min(70vw, 900px); opacity:0.06;
+    -webkit-mask-image:radial-gradient(circle at bottom right, black 0%, black 15%, transparent 65%);
+    mask-image:radial-gradient(circle at bottom right, black 0%, black 15%, transparent 65%); }
+
+  .page{ max-width:1200px; padding:32px 32px 60px; }
+
+  /* ===================== SIGNATURE: real analytics dashboard - hero + KPI row + chart ===================== */
+  .hero{ position:relative; overflow:hidden; border-radius:var(--radius-lg); padding:34px 38px; margin-bottom:24px; background:linear-gradient(120deg,var(--red),var(--green)); color:#fff; box-shadow:var(--shadow-md); animation:fadeInUp .5s var(--ease); }
+  .hero::after{ content:""; position:absolute; right:-40px; top:-40px; width:220px; height:220px; border-radius:50%; background:rgba(255,255,255,0.08); }
+  .hero-eyebrow{ font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:rgba(255,255,255,0.85); margin:0 0 6px; position:relative; z-index:1; }
+  .hero h1{ font-family:'Poppins',sans-serif; font-weight:800; font-size:27px; margin:0 0 8px; position:relative; z-index:1; }
+  .hero p{ margin:0; color:rgba(255,255,255,0.88); font-size:14px; max-width:520px; position:relative; z-index:1; }
+
+  .kpi-row{ display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:16px; margin-bottom:24px; }
+  .kpi-card{ background:var(--white); border:1px solid var(--neutral-2); border-radius:var(--radius-md); padding:20px 22px; transition:all .22s var(--ease); animation:fadeInUp .4s var(--ease) backwards; }
+  .kpi-card:hover{ transform:translateY(-4px); box-shadow:var(--shadow-md); }
+  .kpi-card.hero-metric{ background:linear-gradient(135deg, rgba(206,17,38,0.06), rgba(0,122,61,0.08)); border-color:rgba(0,122,61,0.2); }
+  .kpi-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+  .kpi-label{ font-size:12px; font-weight:700; color:var(--text-2); }
+  .kpi-icon{ width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; background:rgba(0,122,61,0.1); color:var(--green); }
+  .kpi-value{ font-family:'Poppins',sans-serif; font-weight:800; font-size:24px; }
+  .kpi-card.hero-metric .kpi-value{ background:linear-gradient(90deg,var(--red),var(--green)); -webkit-background-clip:text; background-clip:text; color:transparent; font-size:28px; }
+
+  .content-row{ display:grid; grid-template-columns:2fr 1fr; gap:18px; margin-bottom:18px; }
+  .panel{ background:var(--white); border:1px solid var(--neutral-2); border-radius:var(--radius-lg); padding:24px 26px; box-shadow:var(--shadow-sm); animation:fadeInUp .4s var(--ease) .08s backwards; }
+  .panel h2{ font-family:'Poppins',sans-serif; font-weight:700; font-size:17px; margin:0 0 4px; }
+  .panel .sub{ color:var(--text-2); font-size:13px; margin:0 0 18px; }
+  .empty-note{ text-align:center; padding:40px 20px; color:var(--text-2); font-size:13.5px; }
+  .empty-note svg{ color:var(--green); opacity:.4; margin-bottom:10px; }
+
+  .qa-link{ display:flex; align-items:center; gap:13px; padding:14px; border-radius:var(--radius-sm); border:1px solid var(--neutral-2); margin-bottom:10px; transition:all .2s var(--ease); }
+  .qa-link:last-child{ margin-bottom:0; }
+  .qa-link:hover{ border-color:var(--green); background:rgba(0,122,61,0.05); transform:translateX(3px); }
+  .qa-icon{ width:38px; height:38px; border-radius:11px; background:linear-gradient(135deg,var(--red),var(--green)); color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .qa-text .t1{ font-weight:700; font-size:13.5px; }
+  .qa-text .t2{ font-size:12px; color:var(--text-2); }
+
+  .bottom-row{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  .review-row{ padding:14px 0; border-bottom:1px solid var(--neutral-2); }
+  .review-row:last-child{ border-bottom:none; padding-bottom:0; }
+  .review-meta{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; font-size:12.5px; margin-bottom:4px; }
+  .review-meta strong{ font-size:13.5px; }
+  .review-meta .sep{ color:var(--neutral-2); }
+  .review-meta .rating{ color:var(--green); font-weight:700; }
+  .review-text{ color:var(--text-2); font-size:13px; margin:0; }
+
+  .stock-row{ display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--neutral-2); }
+  .stock-row:last-child{ border-bottom:none; }
+  .stock-name{ font-weight:600; font-size:13.5px; }
+  .stock-qty{ font-weight:800; font-size:13px; color:var(--red); background:rgba(206,17,38,0.08); padding:4px 11px; border-radius:999px; }
+
+  @media (max-width: 1000px){
+    .sidebar{ transform:translateX(-100%); }
+    .main-area{ margin-left:0; }
+    .kpi-row{ grid-template-columns:1fr 1fr; }
+    .content-row, .bottom-row{ grid-template-columns:1fr; }
   }
 </style>
 </head>
 <body>
-  <div class="topbar">
-    <div class="brand"><div class="mark"><i data-lucide="leaf" style="width:19px;height:19px;"></i></div> HerjaHub</div>
-    <div class="topbar-actions">
-      <a class="icon-btn" href="${pageContext.request.contextPath}/store/edit" title="Store Profile"><i data-lucide="user" style="width:17px;height:17px;"></i></a>
-      <a class="icon-btn" href="${pageContext.request.contextPath}/logout" title="Log out"><i data-lucide="log-out" style="width:17px;height:17px;"></i></a>
+
+<div class="keffiyeh-corner-bg"></div>
+
+<aside class="sidebar">
+    <a class="sidebar-brand" href="${pageContext.request.contextPath}/store/dashboard">
+        <div class="mark">ه</div><div class="name">HerjaHub</div>
+    </a>
+    <div class="side-label">Overview</div>
+    <a class="side-link active" href="${pageContext.request.contextPath}/store/dashboard">
+        <i data-lucide="layout-dashboard" width="18" height="18"></i> Dashboard
+    </a>
+    <div class="side-label">Manage</div>
+    <a class="side-link" href="${pageContext.request.contextPath}/store/products">
+        <i data-lucide="shopping-bag" width="18" height="18"></i> Products
+    </a>
+    <a class="side-link" href="${pageContext.request.contextPath}/store/edit">
+        <i data-lucide="store" width="18" height="18"></i> Store Profile
+    </a>
+    <div class="sidebar-footer">
+        <a class="side-link" href="${pageContext.request.contextPath}/logout" style="color:var(--red);">
+            <i data-lucide="log-out" width="18" height="18"></i> Log out
+        </a>
     </div>
-  </div>
+</aside>
 
-  <div class="shell">
-    <div class="sidebar">
-      <div class="side-section">
-        <div class="side-label">Overview</div>
-        <a class="nav-link active" href="${pageContext.request.contextPath}/store/dashboard"><i data-lucide="layout-dashboard" style="width:17px;height:17px;"></i> Dashboard</a>
-      </div>
-      <div class="side-section">
-        <div class="side-label">Manage</div>
-        <a class="nav-link" href="${pageContext.request.contextPath}/store/products"><i data-lucide="package" style="width:17px;height:17px;"></i> Products</a>
-        <a class="nav-link" href="${pageContext.request.contextPath}/store/edit"><i data-lucide="store" style="width:17px;height:17px;"></i> Store Profile</a>
-      </div>
-      <div class="side-section">
-        <a class="nav-link logout" href="${pageContext.request.contextPath}/logout"><i data-lucide="log-out" style="width:17px;height:17px;"></i> Logout</a>
-      </div>
+<div class="main-area">
+    <div class="topbar">
+        <div class="topbar-title">Dashboard</div>
+        <div class="user-chip">
+            <div class="user-avatar"><c:out value="${fn:substring(store.storeName, 0, 1)}" /></div>
+            <span class="u-name"><c:out value="${store.storeName}" /></span>
+        </div>
     </div>
 
-    <div class="main">
+    <div class="page">
 
-      <div class="hero">
-        <div class="hero-eyebrow">Store Owner Dashboard</div>
-        <h1>Welcome back, ${store.storeName}</h1>
-        <p>Here's how your handmade goods are doing today. Track sales, manage your catalog, and keep your storefront looking its best.</p>
-      </div>
-
-      <div class="kpi-grid">
-        <div class="kpi-card">
-          <div class="kpi-top"><span class="kpi-label">Total Products</span><div class="kpi-icon olive"><i data-lucide="package" style="width:19px;height:19px;"></i></div></div>
-          <div class="kpi-value">${sales.totalProducts}</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-top"><span class="kpi-label">Units Sold</span><div class="kpi-icon sage"><i data-lucide="shopping-bag" style="width:19px;height:19px;"></i></div></div>
-          <div class="kpi-value">${sales.totalUnitsSold}</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-top"><span class="kpi-label">Total Revenue</span><div class="kpi-icon gold"><i data-lucide="wallet" style="width:19px;height:19px;"></i></div></div>
-          <div class="kpi-value">$<fmt:formatNumber value="${sales.totalRevenue}" minFractionDigits="2" maxFractionDigits="2"/></div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-top"><span class="kpi-label">Avg. Revenue / Product</span><div class="kpi-icon olive"><i data-lucide="trending-up" style="width:19px;height:19px;"></i></div></div>
-          <c:choose>
-            <c:when test="${sales.totalProducts > 0}">
-              <div class="kpi-value">$<fmt:formatNumber value="${sales.totalRevenue / sales.totalProducts}" minFractionDigits="2" maxFractionDigits="2"/></div>
-            </c:when>
-            <c:otherwise><div class="kpi-value">$0.00</div></c:otherwise>
-          </c:choose>
-        </div>
-      </div>
-
-      <div class="grid-2">
-        <div class="panel">
-          <h2>Sales Over Time</h2>
-          <p class="sub">Monthly revenue across all of your products.</p>
-          <c:choose>
-            <c:when test="${not empty sales.chart}">
-              <div class="chart-wrap"><canvas id="salesChart"></canvas></div>
-            </c:when>
-            <c:otherwise>
-              <div class="empty-mini">
-                <i data-lucide="bar-chart-3" style="width:30px;height:30px;"></i>
-                <div>No sales yet — once orders come in, your trend will show up here.</div>
-              </div>
-            </c:otherwise>
-          </c:choose>
+        <%-- ===== Hero ===== --%>
+        <div class="hero">
+            <p class="hero-eyebrow">Store Owner Dashboard</p>
+            <h1>Welcome back, <c:out value="${store.storeName}" /></h1>
+            <p>Here's how your handmade goods are doing today. Track sales, manage your catalog, and keep your storefront looking its best.</p>
         </div>
 
-        <div class="panel">
-          <h2>Quick Actions</h2>
-          <p class="sub">Jump right into managing your store.</p>
-          <div class="quick-actions">
-            <a class="qa-card" href="${pageContext.request.contextPath}/store/products/add">
-              <div class="qa-icon"><i data-lucide="plus" style="width:18px;height:18px;"></i></div>
-              <div class="qa-text"><div class="t1">Add a Product</div><div class="t2">List something new for sale</div></div>
-            </a>
-            <a class="qa-card" href="${pageContext.request.contextPath}/store/products">
-              <div class="qa-icon"><i data-lucide="package" style="width:18px;height:18px;"></i></div>
-              <div class="qa-text"><div class="t1">Manage Products</div><div class="t2">Edit, restock, or remove items</div></div>
-            </a>
-            <a class="qa-card" href="${pageContext.request.contextPath}/store/edit">
-              <div class="qa-icon"><i data-lucide="store" style="width:18px;height:18px;"></i></div>
-              <div class="qa-text"><div class="t1">Store Profile</div><div class="t2">Update your info and logo</div></div>
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <div class="grid-2">
-        <div class="panel">
-          <h2>Recent Reviews</h2>
-          <p class="sub">What customers are saying about your products.</p>
-          <c:choose>
-            <c:when test="${not empty recentReviews}">
-              <c:forEach var="rv" items="${recentReviews}">
-                <div style="padding:12px 0; border-bottom:1px solid var(--border); font-size:13.5px;">
-                  <strong><c:out value="${rv.customerName}"/></strong> &middot; <c:out value="${rv.productName}"/> &middot; ${rv.rating}/5<br>
-                  <span style="color:var(--muted);"><c:out value="${rv.comment}"/></span>
+        <%-- ===== KPI row - revenue highlighted as the hero metric ===== --%>
+        <div class="kpi-row">
+            <div class="kpi-card hero-metric">
+                <div class="kpi-top">
+                    <span class="kpi-label">Total Revenue</span>
+                    <div class="kpi-icon"><i data-lucide="banknote" width="17" height="17"></i></div>
                 </div>
-              </c:forEach>
-            </c:when>
-            <c:otherwise>
-              <div class="empty-mini">
-                <i data-lucide="message-square" style="width:28px;height:28px;"></i>
-                <div>No reviews yet across your products.</div>
-              </div>
-            </c:otherwise>
-          </c:choose>
+                <div class="kpi-value">$<fmt:formatNumber value="${sales.totalRevenue}" minFractionDigits="2" maxFractionDigits="2" /></div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-top">
+                    <span class="kpi-label">Total Products</span>
+                    <div class="kpi-icon"><i data-lucide="shopping-bag" width="16" height="16"></i></div>
+                </div>
+                <div class="kpi-value">${sales.totalProducts}</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-top">
+                    <span class="kpi-label">Units Sold</span>
+                    <div class="kpi-icon"><i data-lucide="package-check" width="16" height="16"></i></div>
+                </div>
+                <div class="kpi-value">${sales.totalUnitsSold}</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-top">
+                    <span class="kpi-label">Avg. Rev / Product</span>
+                    <div class="kpi-icon"><i data-lucide="trending-up" width="16" height="16"></i></div>
+                </div>
+                <c:choose>
+                    <c:when test="${sales.totalProducts > 0}">
+                        <div class="kpi-value">$<fmt:formatNumber value="${sales.totalRevenue / sales.totalProducts}" minFractionDigits="2" maxFractionDigits="2" /></div>
+                    </c:when>
+                    <c:otherwise><div class="kpi-value">$0.00</div></c:otherwise>
+                </c:choose>
+            </div>
         </div>
 
-        <div class="panel">
-          <h2>Low Stock</h2>
-          <p class="sub">Products running low on inventory.</p>
-          <c:choose>
-            <c:when test="${not empty lowStockProducts}">
-              <c:forEach var="lp" items="${lowStockProducts}">
-                <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border); font-size:13.5px;">
-                  <span><c:out value="${lp.productName}"/></span>
-                  <span style="color:var(--error); font-weight:700;">${lp.quantity} left</span>
-                </div>
-              </c:forEach>
-            </c:when>
-            <c:otherwise>
-              <div class="empty-mini">
-                <i data-lucide="check-circle-2" style="width:28px;height:28px;"></i>
-                <div>Nothing running low right now.</div>
-              </div>
-            </c:otherwise>
-          </c:choose>
+        <%-- ===== Chart + Quick Actions ===== --%>
+        <div class="content-row">
+            <div class="panel">
+                <h2>Sales Over Time</h2>
+                <p class="sub">Monthly revenue across all of your products.</p>
+                <c:choose>
+                    <c:when test="${not empty sales.chart}">
+                        <div style="height:270px"><canvas id="salesChart"></canvas></div>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="empty-note">
+                            <i data-lucide="bar-chart-3" width="30" height="30"></i>
+                            <div>No sales yet — once orders come in, your trend will show up here.</div>
+                        </div>
+                    </c:otherwise>
+                </c:choose>
+            </div>
+
+            <div class="panel">
+                <h2>Quick Actions</h2>
+                <p class="sub">Jump right into managing your store.</p>
+                <a class="qa-link" href="${pageContext.request.contextPath}/store/products/add">
+                    <div class="qa-icon"><i data-lucide="plus" width="17" height="17"></i></div>
+                    <div class="qa-text"><div class="t1">Add a Product</div><div class="t2">List something new for sale</div></div>
+                </a>
+                <a class="qa-link" href="${pageContext.request.contextPath}/store/products">
+                    <div class="qa-icon"><i data-lucide="shopping-bag" width="17" height="17"></i></div>
+                    <div class="qa-text"><div class="t1">Manage Products</div><div class="t2">Edit, restock, or remove items</div></div>
+                </a>
+                <a class="qa-link" href="${pageContext.request.contextPath}/store/edit">
+                    <div class="qa-icon"><i data-lucide="store" width="17" height="17"></i></div>
+                    <div class="qa-text"><div class="t1">Store Profile</div><div class="t2">Update your info and logo</div></div>
+                </a>
+            </div>
         </div>
-      </div>
+
+        <%-- ===== Reviews + Low Stock ===== --%>
+        <div class="bottom-row">
+            <div class="panel">
+                <h2>Recent Reviews</h2>
+                <p class="sub">What customers are saying about your products.</p>
+                <c:choose>
+                    <c:when test="${not empty recentReviews}">
+                        <c:forEach var="rv" items="${recentReviews}">
+                            <div class="review-row">
+                                <div class="review-meta">
+                                    <strong><c:out value="${rv.customerName}" /></strong>
+                                    <span class="sep">&middot;</span>
+                                    <span style="color:var(--text-2);"><c:out value="${rv.productName}" /></span>
+                                    <span class="sep">&middot;</span>
+                                    <span class="rating">${rv.rating}/5</span>
+                                </div>
+                                <p class="review-text"><c:out value="${rv.comment}" /></p>
+                            </div>
+                        </c:forEach>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="empty-note">
+                            <i data-lucide="message-square" width="28" height="28"></i>
+                            <div>No reviews yet across your products.</div>
+                        </div>
+                    </c:otherwise>
+                </c:choose>
+            </div>
+
+            <div class="panel">
+                <h2>Low Stock</h2>
+                <p class="sub">Products running low on inventory.</p>
+                <c:choose>
+                    <c:when test="${not empty lowStockProducts}">
+                        <c:forEach var="lp" items="${lowStockProducts}">
+                            <div class="stock-row">
+                                <span class="stock-name"><c:out value="${lp.productName}" /></span>
+                                <span class="stock-qty">${lp.quantity} left</span>
+                            </div>
+                        </c:forEach>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="empty-note">
+                            <i data-lucide="check-circle-2" width="28" height="28"></i>
+                            <div>Nothing running low right now.</div>
+                        </div>
+                    </c:otherwise>
+                </c:choose>
+            </div>
+        </div>
 
     </div>
-  </div>
+</div>
+
+<script>lucide.createIcons();</script>
 
 <script>
-  try { if (window.lucide) { lucide.createIcons(); } } catch (e) { console.warn("Icon rendering failed:", e); }
-
   var labels = [
     <c:forEach var="p" items="${sales.chart}" varStatus="s">"${p.label}"<c:if test="${!s.last}">,</c:if></c:forEach>
   ];
   var data = [
     <c:forEach var="p" items="${sales.chart}" varStatus="s">${p.total}<c:if test="${!s.last}">,</c:if></c:forEach>
   ];
-
   var canvas = document.getElementById('salesChart');
   if (canvas) {
     try {
-      new Chart(canvas.getContext('2d'), {
-      type: 'line',
-      data: {
-        labels: labels,
-        datasets: [{
-          label: 'Revenue',
-          data: data,
-          borderColor: '#4B5D3A',
-          backgroundColor: 'rgba(75,93,58,0.10)',
-          fill: true,
-          tension: 0.35,
-          pointRadius: 4,
-          pointBackgroundColor: '#4B5D3A'
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: {
-          y: { beginAtZero: true, ticks: { callback: function (v) { return '$' + v; } }, grid:{ color:'#EEEAE0' } },
-          x: { grid:{ display:false } }
+      var ctx = canvas.getContext('2d');
+      var gradient = ctx.createLinearGradient(0, 0, 0, 270);
+      gradient.addColorStop(0, 'rgba(0,122,61,0.22)');
+      gradient.addColorStop(1, 'rgba(0,122,61,0.02)');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Revenue',
+            data: data,
+            borderColor: '#007A3D',
+            backgroundColor: gradient,
+            fill: true,
+            tension: 0.35,
+            pointRadius: 4,
+            pointBackgroundColor: '#CE1126',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true, ticks: { callback: function(v) { return '$' + v; } }, grid:{ color:'#E9ECEF' } },
+            x: { grid:{ display:false } }
+          }
         }
-      }
-    });
+      });
     } catch (e) { console.warn("Chart rendering failed:", e); }
   }
 </script>
+
 </body>
 </html>

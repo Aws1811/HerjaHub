@@ -28,4 +28,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
 	// Get products that are still available.
 	List<Product> findByQuantityGreaterThan(Integer quantity);
+
 }

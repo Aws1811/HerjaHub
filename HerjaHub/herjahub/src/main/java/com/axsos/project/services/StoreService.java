@@ -1,5 +1,6 @@
 package com.axsos.project.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.mindrot.jbcrypt.BCrypt;
@@ -15,7 +16,7 @@ import com.axsos.project.repositores.StoreRepository;
 
 @Service
 public class StoreService {
-	@Autowired
+    @Autowired
     private StoreRepository storeRepository;
 
     public boolean emailExists(String email) {
@@ -30,6 +31,13 @@ public class StoreService {
     // use this whenever a view needs to read store.getProducts() (e.g. fn:length(store.products))
     public Store findByIdWithProducts(Long id) {
         return storeRepository.findByIdWithProducts(id).orElse(null);
+    }
+
+    // every store on the platform, used by the customer-facing "All Stores" page
+    // and the dashboard's featured-stores preview. JpaRepository already gives us
+    // findAll(), this just reads more intentionally at the call site.
+    public List<Store> getAllStores() {
+        return storeRepository.findAll();
     }
 
     // Updates the editable profile fields (never touches email or password here)
