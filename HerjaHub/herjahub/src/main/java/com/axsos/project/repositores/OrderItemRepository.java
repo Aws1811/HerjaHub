@@ -7,15 +7,19 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+
 import com.axsos.project.models.OrderItem;
 
 @Repository
 public interface OrderItemRepository extends JpaRepository<OrderItem, Long>{
-	@Query("SELECT FUNCTION('DATE_FORMAT', oi.createdAt, '%Y-%m'), SUM(oi.quantity * oi.price) "
-			+ "FROM OrderItem oi WHERE oi.product.store.id = :storeId "
-			+ "GROUP BY FUNCTION('DATE_FORMAT', oi.createdAt, '%Y-%m') "
-			+ "ORDER BY FUNCTION('DATE_FORMAT', oi.createdAt, '%Y-%m')")
-	List<Object[]> findMonthlySalesByStoreId(@Param("storeId") Long storeId);
+	// one row per calendar day (in "yyyy-MM-dd" form) with that day's revenue,
+	// only for days on/after "since" - used to build the dashboard's daily sales chart
+	@Query("SELECT FUNCTION('DATE_FORMAT', oi.createdAt, '%Y-%m-%d'), SUM(oi.quantity * oi.price) "
+			+ "FROM OrderItem oi WHERE oi.product.store.id = :storeId AND oi.createdAt >= :since "
+			+ "GROUP BY FUNCTION('DATE_FORMAT', oi.createdAt, '%Y-%m-%d') "
+			+ "ORDER BY FUNCTION('DATE_FORMAT', oi.createdAt, '%Y-%m-%d')")
+	List<Object[]> findDailySalesByStoreId(@Param("storeId") Long storeId, @Param("since") LocalDateTime since);
 
 	// units sold for a single product (used on the product cards)
 	@Query("SELECT COALESCE(SUM(oi.quantity), 0) FROM OrderItem oi WHERE oi.product.id = :productId")

@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.min.js"></script>
 <style>
   :root{
     --red:#CE1126; --green:#007A3D; --white:#FFFFFF; --neutral-1:#F8F9FA; --neutral-2:#E9ECEF;
@@ -207,9 +207,9 @@
         <div class="content-row">
             <div class="panel">
                 <h2>Sales Over Time</h2>
-                <p class="sub">Monthly revenue across all of your products.</p>
+                <p class="sub">Daily revenue across all of your products (last 30 days).</p>
                 <c:choose>
-                    <c:when test="${not empty sales.chart}">
+                    <c:when test="${sales.totalRevenue > 0}">
                         <div style="height:270px; position:relative;"><canvas id="salesChart"></canvas></div>
 
                         <c:set var="chartSum" value="${0}" />
@@ -217,7 +217,7 @@
                             <c:set var="chartSum" value="${chartSum + p.total}" />
                         </c:forEach>
                         <c:set var="chartCount" value="${fn:length(sales.chart)}" />
-                        <c:set var="avgPerMonth" value="${chartCount > 0 ? (chartSum / chartCount) : 0}" />
+                        <c:set var="avgPerDay" value="${chartCount > 0 ? (chartSum / chartCount) : 0}" />
                         <c:set var="latestTotal" value="${sales.chart[chartCount - 1].total}" />
 
                         <div class="chart-insight">
@@ -226,20 +226,20 @@
                                 <span class="insight-value">$<fmt:formatNumber value="${sales.totalRevenue}" minFractionDigits="2" maxFractionDigits="2" /></span>
                             </div>
                             <div class="insight-stat">
-                                <span class="insight-label">Avg / Month</span>
-                                <span class="insight-value">$<fmt:formatNumber value="${avgPerMonth}" minFractionDigits="2" maxFractionDigits="2" /></span>
+                                <span class="insight-label">Avg / Day</span>
+                                <span class="insight-value">$<fmt:formatNumber value="${avgPerDay}" minFractionDigits="2" maxFractionDigits="2" /></span>
                             </div>
                             <div class="insight-stat">
-                                <span class="insight-label">Latest Month</span>
+                                <span class="insight-label">Today</span>
                                 <c:choose>
-                                    <c:when test="${avgPerMonth == 0}">
+                                    <c:when test="${avgPerDay == 0}">
                                         <span class="insight-badge up"><i data-lucide="minus" width="12" height="12"></i> No baseline yet</span>
                                     </c:when>
-                                    <c:when test="${latestTotal >= avgPerMonth}">
-                                        <span class="insight-badge up"><i data-lucide="trending-up" width="12" height="12"></i> <fmt:formatNumber value="${((latestTotal - avgPerMonth) / avgPerMonth) * 100}" maxFractionDigits="0" />% above avg</span>
+                                    <c:when test="${latestTotal >= avgPerDay}">
+                                        <span class="insight-badge up"><i data-lucide="trending-up" width="12" height="12"></i> <fmt:formatNumber value="${((latestTotal - avgPerDay) / avgPerDay) * 100}" maxFractionDigits="0" />% above avg</span>
                                     </c:when>
                                     <c:otherwise>
-                                        <span class="insight-badge down"><i data-lucide="trending-down" width="12" height="12"></i> <fmt:formatNumber value="${((avgPerMonth - latestTotal) / avgPerMonth) * 100}" maxFractionDigits="0" />% below avg</span>
+                                        <span class="insight-badge down"><i data-lucide="trending-down" width="12" height="12"></i> <fmt:formatNumber value="${((avgPerDay - latestTotal) / avgPerDay) * 100}" maxFractionDigits="0" />% below avg</span>
                                     </c:otherwise>
                                 </c:choose>
                             </div>
