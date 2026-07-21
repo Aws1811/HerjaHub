@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.axsos.project.dto.ReviewForm;
 import com.axsos.project.models.Customer;
@@ -35,16 +36,43 @@ public class CustomerProductController {
 	@Autowired
 	private CommentService commentService;
 
-	// GET /customer/products - grid of every product from every store
+	// GET /customer/products - grid of every product from every store,
+	// optionally filtered by the search bar's ?q= product-name query and a price range
 	@GetMapping
-	public String list(HttpSession session, Model model) {
+	public String list(@RequestParam(value = "q", required = false) String q,
+			@RequestParam(value = "minPrice", required = false) Double minPrice,
+			@RequestParam(value = "maxPrice", required = false) Double maxPrice,
+			HttpSession session, Model model) {
 		Customer customer = requireCustomer(session);
 		if (customer == null) {
 			return "redirect:/auth";
 		}
 		model.addAttribute("customer", customer);
-		model.addAttribute("products", productService.getMarketplaceProducts());
+		addListAttributes(model, q, minPrice, maxPrice);
 		return "customer/products";
+	}
+
+	// GET /customer/products/grid - same filtering as above, but renders just the
+	// product-grid fragment (no page shell) so the search bar / price filter can
+	// swap it in over AJAX without a full page reload
+	@GetMapping("/grid")
+	public String grid(@RequestParam(value = "q", required = false) String q,
+			@RequestParam(value = "minPrice", required = false) Double minPrice,
+			@RequestParam(value = "maxPrice", required = false) Double maxPrice,
+			HttpSession session, Model model) {
+		Customer customer = requireCustomer(session);
+		if (customer == null) {
+			return "redirect:/auth";
+		}
+		addListAttributes(model, q, minPrice, maxPrice);
+		return "customer/products-grid";
+	}
+
+	private void addListAttributes(Model model, String q, Double minPrice, Double maxPrice) {
+		model.addAttribute("products", productService.getMarketplaceProducts(q, minPrice, maxPrice));
+		model.addAttribute("q", q);
+		model.addAttribute("minPrice", minPrice);
+		model.addAttribute("maxPrice", maxPrice);
 	}
 
 	// GET /customer/products/{id} - product detail + existing reviews + review form
