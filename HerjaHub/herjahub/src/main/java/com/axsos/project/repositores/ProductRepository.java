@@ -28,4 +28,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
 	// Get products that are still available.
 	List<Product> findByQuantityGreaterThan(Integer quantity);
+
+	// customer-facing marketplace search - same eager store fetch as the plain
+	// listing above, filtered by product name (case-insensitive, partial match)
+	@Query("SELECT p FROM Product p JOIN FETCH p.store WHERE LOWER(p.productName) LIKE LOWER(CONCAT('%', :query, '%')) ORDER BY p.createdAt DESC")
+	List<Product> searchByNameWithStore(@Param("query") String query);
+
 }

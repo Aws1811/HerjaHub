@@ -1,5 +1,6 @@
 package com.axsos.project.services;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -42,9 +43,36 @@ public class ProductService {
 				.collect(Collectors.toList());
 	}
 
-	// every product from every store, newest first - the customer-facing marketplace listing
+	// every product from every store, newest first, in-stock items first -
+	// the customer-facing marketplace listing
 	public List<Product> getMarketplaceProducts() {
-		return productRepository.findAllWithStoreOrderByCreatedAtDesc();
+		return getMarketplaceProducts(null, null, null);
+	}
+
+	// same marketplace listing, but filtered by the search bar's "q" param -
+	// blank/missing query just falls back to the full listing above
+	public List<Product> getMarketplaceProducts(String query) {
+		return getMarketplaceProducts(query, null, null);
+	}
+
+	// full marketplace listing used by both the page and its AJAX search/filter
+	// endpoint: optional name search, optional min/max price range, and always
+	// sorted with in-stock items first (out-of-stock ones sink to the bottom)
+	// while keeping newest-first order within each group.
+	public List<Product> getMarketplaceProducts(String query, Double minPrice, Double maxPrice) {
+		List<Product> products = (query == null || query.isBlank())
+				? productRepository.findAllWithStoreOrderByCreatedAtDesc()
+				: productRepository.searchByNameWithStore(query.trim());
+
+		return products.stream()
+				.filter(p -> minPrice == null || (p.getPrice() != null && p.getPrice() >= minPrice))
+				.filter(p -> maxPrice == null || (p.getPrice() != null && p.getPrice() <= maxPrice))
+				.sorted(Comparator.comparing(this::isOutOfStock))
+				.collect(Collectors.toList());
+	}
+
+	private boolean isOutOfStock(Product product) {
+		return product.getQuantity() == null || product.getQuantity() <= 0;
 	}
 
 	// a single product with its store pre-loaded - used by the customer product detail page

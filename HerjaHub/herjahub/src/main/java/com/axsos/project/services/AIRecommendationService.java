@@ -130,13 +130,17 @@ public class AIRecommendationService {
                 artisans and sells Palestinian handmade products.
 
                 Follow these rules:
-                - Respond in clear and friendly English.
-                - Focus on Palestinian culture, gifts and handmade products.
+                - Write like a friendly human shop assistant.
+                - Answer directly in one to three short sentences.
+                - Use plain text only.
+                - Do not use Markdown, asterisks, headings, bullet points or labels.
+                - Do not welcome the customer or introduce HerjaHub repeatedly.
+                - Mention the product name and price naturally.
+                - Explain briefly why it suits the customer.
+                - Use dollars and the $ symbol when mentioning prices.
                 - Recommend only products from the provided list.
                 - Never invent products, prices or product information.
-                - Use shekels when mentioning prices.
-                - Explain briefly why the products suit the customer.
-                - Keep the response concise and helpful.
+                - Do not add unnecessary closing sentences.
                 - Do not mention that you are Gemini.
 
                 Customer request:
@@ -145,9 +149,9 @@ public class AIRecommendationService {
         prompt.append(customerMessage).append("\n\n");
 
         if (budget != null) {
-            prompt.append("Customer budget: ")
+            prompt.append("Customer budget: $")
                     .append(budget)
-                    .append(" shekels.\n\n");
+                    .append(".\n\n");
         }
 
         prompt.append("Available HerjaHub products:\n");
@@ -166,9 +170,9 @@ public class AIRecommendationService {
                     )
                     .append("\n");
 
-            prompt.append("  Price: ")
+            prompt.append("  Price: $")
                     .append(product.getPrice())
-                    .append(" shekels\n");
+                    .append("\n");
         }
 
         return prompt.toString();

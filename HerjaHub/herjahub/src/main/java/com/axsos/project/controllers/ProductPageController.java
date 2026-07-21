@@ -50,9 +50,9 @@ public class ProductPageController {
 		return "store/products";
 	}
 
-	// GET /store/products/{id} - read-only "Product Details" page
+	// GET /store/products/{id} - read-only "Product Details" view: info + comments, links to edit
 	@GetMapping("/{id}")
-	public String showProductDetails(@PathVariable Long id, HttpSession session, Model model) {
+	public String viewProduct(@PathVariable Long id, HttpSession session, Model model) {
 		Store store = requireStore(session);
 		if (store == null) {
 			return "redirect:/auth";
@@ -61,11 +61,8 @@ public class ProductPageController {
 		if (ownedProduct.isEmpty()) {
 			return "redirect:/store/products";
 		}
-		Product product = ownedProduct.get();
-		ProductDTO stats = productService.toDTO(product); // adds unitsSold / revenue
-
-		model.addAttribute("product", product);
-		model.addAttribute("stats", stats);
+		model.addAttribute("store", store);
+		model.addAttribute("product", ownedProduct.get());
 		model.addAttribute("comments", commentService.getCommentsForProduct(id));
 		return "store/product-details";
 	}
@@ -73,9 +70,12 @@ public class ProductPageController {
 	// GET /store/products/add - blank "Add Product" form
 	@GetMapping("/add")
 	public String showAddForm(HttpSession session, Model model) {
-		if (requireStore(session) == null) {
+		Store store = requireStore(session);
+		if (store == null) {
 			return "redirect:/auth";
 		}
+		// needed by the page's topbar (store name/avatar), not just the form itself
+		model.addAttribute("store", store);
 		model.addAttribute("productForm", new ProductPageForm());
 		return "store/product-add";
 	}
@@ -83,12 +83,14 @@ public class ProductPageController {
 	// POST /store/products/add - creates the product, then goes back to the products grid
 	@PostMapping("/add")
 	public String createProduct(@Valid @ModelAttribute("productForm") ProductPageForm form,
-			BindingResult bindingResult, HttpSession session, Model model) {
+	                            BindingResult bindingResult, HttpSession session, Model model) {
 		Store store = requireStore(session);
 		if (store == null) {
 			return "redirect:/auth";
 		}
 		if (bindingResult.hasErrors()) {
+			// re-add store too - the page needs it again since we're re-rendering, not redirecting
+			model.addAttribute("store", store);
 			model.addAttribute("errorMessage", firstError(bindingResult));
 			return "store/product-add";
 		}
@@ -116,6 +118,7 @@ public class ProductPageController {
 		form.setPrice(product.getPrice());
 		form.setQuantity(product.getQuantity());
 
+		model.addAttribute("store", store);
 		model.addAttribute("product", product);
 		model.addAttribute("productForm", form);
 		model.addAttribute("comments", commentService.getCommentsForProduct(id));
@@ -125,7 +128,7 @@ public class ProductPageController {
 	// POST /store/products/{id}/edit - saves the changes
 	@PostMapping("/{id}/edit")
 	public String updateProduct(@PathVariable Long id, @Valid @ModelAttribute("productForm") ProductPageForm form,
-			BindingResult bindingResult, HttpSession session, Model model) {
+	                            BindingResult bindingResult, HttpSession session, Model model) {
 		Store store = requireStore(session);
 		if (store == null) {
 			return "redirect:/auth";
@@ -136,6 +139,7 @@ public class ProductPageController {
 			if (ownedProduct.isEmpty()) {
 				return "redirect:/store/products";
 			}
+			model.addAttribute("store", store);
 			model.addAttribute("product", ownedProduct.get());
 			model.addAttribute("comments", commentService.getCommentsForProduct(id));
 			model.addAttribute("errorMessage", firstError(bindingResult));
