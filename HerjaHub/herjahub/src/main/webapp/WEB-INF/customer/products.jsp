@@ -167,6 +167,16 @@
     .sidebar{ transform:translateX(-100%); }
     .main-area{ margin-left:0; }
   }
+  .search-bar{
+    display:flex; align-items:center; gap:10px; max-width:420px; margin:20px 0 20px;
+    background:rgba(255,255,255,0.8); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+    border:1px solid rgba(255,255,255,0.6); border-radius:999px; padding:11px 18px;
+    box-shadow:var(--shadow-sm); color:var(--text-2);
+  }
+  .search-bar input{ flex:1; border:none; outline:none; background:transparent; font-size:13.5px; font-family:'Inter',sans-serif; color:var(--text-1); }
+  .search-bar input::placeholder{ color:#9CA3AF; }
+  .clear-btn{ color:var(--text-2); display:flex; }
+  .clear-btn:hover{ color:var(--red); }
 </style>
 </head>
 <body style="--keffiyeh-pattern: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22140%22 height=%22140%22><g fill=%22none%22 stroke=%22%23ffffff%22 stroke-width=%222%22 opacity=%220.5%22><path d=%22M0 70 L70 0 L140 70 L70 140 Z%22/><path d=%22M70 0 L70 140%22/><path d=%22M0 70 L140 70%22/></g></svg>')">
@@ -230,16 +240,7 @@
         </div>
     </div>
 
-    <%-- ===== Testing nav: quick links to every customer page ===== --%>
-    <div class="test-nav">
-        <a href="${pageContext.request.contextPath}/customer/dashboard">Dashboard</a> |
-        <a href="${pageContext.request.contextPath}/customer/products">Products</a> |
-        <a href="${pageContext.request.contextPath}/customer/products/1">Product Details</a> |
-        <a href="${pageContext.request.contextPath}/customer/cart">Cart</a> |
-        <a href="${pageContext.request.contextPath}/customer/orders">My Orders</a> |
-        <a href="${pageContext.request.contextPath}/customer/orders/1/confirmation">Order Confirmation</a> |
-        <a href="${pageContext.request.contextPath}/customer/profile/edit">Edit Profile</a>
-    </div>
+
 
     <div class="page">
 
@@ -252,6 +253,16 @@
             </div>
         </div>
 
+ <%-- ===== Search bar ===== --%>
+  <form class="search-bar" action="${pageContext.request.contextPath}/customer/products" method="get">
+      <i data-lucide="search" width="17" height="17"></i>
+      <input type="text" name="q" value="${q}" placeholder="Search products..." autocomplete="off" />
+      <c:if test="${not empty q}">
+          <a class="clear-btn" href="${pageContext.request.contextPath}/customer/products">
+              <i data-lucide="x" width="15" height="15"></i>
+          </a>
+      </c:if>
+  </form>
         <%-- ===== Product grid ===== --%>
         <c:choose>
             <c:when test="${empty products}">
