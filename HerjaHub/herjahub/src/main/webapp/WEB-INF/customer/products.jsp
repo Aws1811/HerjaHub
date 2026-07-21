@@ -62,10 +62,11 @@
   }
   .sidebar-brand{ display:flex; align-items:center; gap:10px; padding:6px 10px 26px; }
   .sidebar-brand .mark{
-    width:38px; height:38px; border-radius:12px; flex-shrink:0;
+    width:38px; height:38px; border-radius:12px; flex-shrink:0; overflow:hidden;
     background:linear-gradient(135deg, var(--red), var(--green));
     display:flex; align-items:center; justify-content:center; color:var(--white); font-family:'Poppins',sans-serif; font-weight:800;
   }
+  .sidebar-brand .mark img{ width:100%; height:100%; object-fit:cover; }
   .sidebar-brand .name{ font-family:'Poppins',sans-serif; font-weight:800; font-size:17px; }
 
   .side-label{ font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--text-2); padding:14px 12px 8px; }
@@ -123,7 +124,7 @@
   .hero::before{
     content:""; position:absolute; inset:-40px; z-index:0;
     background:
-      linear-gradient(120deg, rgba(206,17,38,0.9) 0%, rgba(255,255,255,0.85) 28%, rgba(0,122,61,0.85) 55%, rgba(255,255,255,0.8) 78%, rgba(17,17,17,0.55) 100%),
+      linear-gradient(120deg, rgba(206,17,38,0.9) 0%,  rgba(0,122,61,0.85) 55%, rgba(255,255,255,0.8) 78%, rgba(17,17,17,0.55) 100%),
       var(--keffiyeh-pattern);
     background-size:cover, 140px 140px;
     background-blend-mode:overlay;
@@ -187,7 +188,7 @@
 <%-- ===================== SIDEBAR (reusable shell) ===================== --%>
 <aside class="sidebar">
     <a class="sidebar-brand" href="${pageContext.request.contextPath}/customer/dashboard">
-        <div class="mark">ه</div>
+        <div class="mark"><img src="${pageContext.request.contextPath}/resources/images/herjahub-logo.jpg" alt="HerjaHub" /></div>
         <div class="name">HerjaHub</div>
     </a>
 
@@ -278,13 +279,13 @@
                                     <div class="corner-accent"></div>
                                     <c:choose>
                                         <c:when test="${empty product.image}">
-                                            <p class="image-placeholder">(image placeholder)</p>
+                                            <img src="${pageContext.request.contextPath}/resources/images/product-placeholder.jpg" alt="No image available" />
                                         </c:when>
                                         <c:otherwise>
                                             <img src="${pageContext.request.contextPath}${product.image}"
                                                  alt="${product.productName}"
                                                  onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
-                                            <p class="image-placeholder" style="display:none;">(image failed to load)</p>
+                                            <img src="${pageContext.request.contextPath}/resources/images/product-placeholder.jpg" alt="No image available" style="display:none;" />
                                         </c:otherwise>
                                     </c:choose>
                                 </div>
