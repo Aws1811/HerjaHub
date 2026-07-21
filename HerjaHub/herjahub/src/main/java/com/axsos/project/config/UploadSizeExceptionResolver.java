@@ -27,7 +27,7 @@ public class UploadSizeExceptionResolver implements HandlerExceptionResolver{
 
 		FlashMap flashMap = new FlashMap();
 		flashMap.put("errorMessage",
-				"That image is too large to upload (max 25MB). Please choose a smaller file and try again.");
+				"That image is too large to upload (max 15MB). Please choose a smaller file and try again.");
 
 		FlashMapManager flashMapManager = RequestContextUtils.getFlashMapManager(request);
 		if (flashMapManager != null) {

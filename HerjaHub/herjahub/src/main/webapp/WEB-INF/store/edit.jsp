@@ -10,234 +10,279 @@
 <title>Store Profile — HerjaHub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          background: '#FAF8F3', foreground: '#1F2937', card: '#FFFFFF',
+          primary: '#198754', 'primary-foreground': '#FFFFFF', secondary: '#F8F9FA',
+          muted: '#F1F1EE', 'muted-foreground': '#6B7280', border: '#E5E5E2',
+          destructive: '#D72638',
+        },
+        fontFamily: { serif: ['Newsreader','serif'], sans: ['Inter','sans-serif'], ar: ['Tajawal','sans-serif'] },
+        borderRadius: { DEFAULT: '1.75rem' },
+      },
+    },
+  };
+</script>
 <style>
   :root{
-    --olive:#4B5D3A; --olive-dark:#39492B; --olive-light:#EEF1E6;
-    --sage:#93A57F; --ivory:#FBF8F0; --white:#FFFFFF;
-    --gold:#C9A227; --gold-light:#F8F0DA;
-    --charcoal:#2B2A24; --muted:#7C7969;
-    --border:#E9E4D6; --error:#B3483F; --error-bg:#FBEAE8;
-    --success:#4F7A3D; --success-bg:#EAF2E1;
-    --radius-lg:20px; --radius-md:14px; --radius-sm:10px;
-    --shadow-sm:0 2px 10px rgba(43,41,35,0.05);
-    --shadow-md:0 16px 40px -18px rgba(43,41,35,0.22);
+    --red:#CE1126; --green:#007A3D; --white:#FFFFFF; --neutral-1:#F8F9FA; --neutral-2:#E9ECEF;
+    --text-1:#1F2937; --text-2:#6B7280;
+    --radius-lg:24px; --radius-md:18px; --radius-sm:12px;
+    --shadow-sm:0 4px 16px rgba(31,41,55,0.06); --shadow-md:0 18px 40px -16px rgba(31,41,55,0.18);
+    --ease:cubic-bezier(.4,0,.2,1); --sidebar-w:250px; --topbar-h:68px;
   }
-  *{box-sizing:border-box;}
-  body{ margin:0; font-family:'Inter',sans-serif; background:var(--ivory); color:var(--charcoal); }
-  a{ color:inherit; }
+  .keffiyeh-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image: repeating-linear-gradient(45deg,currentColor 0,currentColor 1px,transparent 1px,transparent 14px),
+    repeating-linear-gradient(-45deg,currentColor 0,currentColor 1px,transparent 1px,transparent 14px); opacity: 0.05; }
+  .field-error-input { border-color: #D72638 !important; background-color: #FFF5F5 !important; }
 
-  .topbar{ display:flex; align-items:center; justify-content:space-between; padding:16px 32px; background:var(--white); border-bottom:1px solid var(--border); }
-  .brand{ display:flex; align-items:center; gap:10px; font-family:'Newsreader',serif; font-weight:600; font-size:20px; color:var(--olive-dark); }
-  .brand .mark{ width:36px; height:36px; border-radius:11px; background:linear-gradient(155deg,var(--olive),var(--olive-dark)); color:var(--gold-light); display:flex; align-items:center; justify-content:center; }
-  .topbar-nav{ display:flex; gap:8px; }
-  .topbar-nav a{ padding:9px 14px; border-radius:var(--radius-sm); text-decoration:none; font-weight:600; font-size:13.5px; color:var(--muted); }
-  .topbar-nav a:hover{ background:var(--olive-light); color:var(--olive-dark); }
-  .topbar-nav a.logout:hover{ background:var(--error-bg); color:var(--error); }
+  .sidebar{ position:fixed; top:0; left:0; bottom:0; width:var(--sidebar-w); z-index:30; background:rgba(255,255,255,0.7); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-right:1px solid rgba(255,255,255,0.6); display:flex; flex-direction:column; padding:22px 16px; }
+  .sidebar-brand{ display:flex; align-items:center; gap:10px; padding:6px 10px 26px; text-decoration:none; color:inherit; }
+  .sidebar-brand .mark{ width:38px; height:38px; border-radius:12px; flex-shrink:0; background:linear-gradient(135deg, var(--red), var(--green)); display:flex; align-items:center; justify-content:center; color:var(--white); font-family:'Newsreader',serif; font-weight:800; }
+  .sidebar-brand .name{ font-family:'Newsreader',serif; font-weight:800; font-size:17px; }
+  .side-label{ font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--text-2); padding:14px 12px 8px; }
+  .side-link{ display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:var(--radius-sm); font-weight:600; font-size:14px; color:var(--text-1); margin-bottom:3px; transition:all .22s var(--ease); position:relative; text-decoration:none; }
+  .side-link svg, .side-link i{ flex-shrink:0; opacity:.8; }
+  .side-link:hover{ background:var(--neutral-2); }
+  .side-link.active{ background:linear-gradient(90deg, rgba(206,17,38,0.1), rgba(0,122,61,0.1)); box-shadow:inset 0 0 0 1px rgba(0,122,61,0.15); }
+  .side-link.active svg, .side-link.active i{ opacity:1; color:var(--green); }
+  .side-link.active::before{ content:""; position:absolute; left:-16px; top:8px; bottom:8px; width:4px; border-radius:4px; background:linear-gradient(180deg, var(--red), var(--green)); }
+  .sidebar-footer{ margin-top:auto; padding-top:14px; border-top:1px solid var(--neutral-2); }
 
-  .page-wrap{ max-width:900px; margin:0 auto; padding:32px 24px 60px; }
+  .main-area{ margin-left:var(--sidebar-w); min-height:100%; position:relative; z-index:1; }
+  .topbar{ position:sticky; top:0; z-index:20; height:var(--topbar-h); display:flex; align-items:center; justify-content:space-between; gap:16px; padding:0 28px; background:rgba(255,255,255,0.65); backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px); border-bottom:1px solid rgba(255,255,255,0.5); }
+  .topbar-title{ font-family:'Newsreader',serif; font-weight:700; font-size:16px; }
+  .user-chip{ display:flex; align-items:center; gap:10px; padding:6px 14px 6px 6px; border-radius:999px; background:var(--white); border:1px solid var(--neutral-2); }
+  .user-avatar{ width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, var(--red), var(--green)); color:#fff; font-weight:700; font-size:13px; flex-shrink:0; }
+  .u-name{ font-size:13px; font-weight:600; }
 
-  .error-banner{ display:flex; align-items:center; gap:10px; color:var(--error); font-size:13.5px; background:var(--error-bg); border:1px solid #f0c9c4; border-radius:var(--radius-md); padding:12px 16px; margin-bottom:18px; }
-
-  .profile-header{ display:flex; align-items:center; gap:20px; background:linear-gradient(120deg,var(--olive-dark), var(--olive) 70%); border-radius:var(--radius-lg); padding:28px 30px; color:var(--white); margin-bottom:22px; box-shadow:var(--shadow-md); }
-  .profile-logo{ width:84px; height:84px; border-radius:20px; background:rgba(255,255,255,0.15) center/contain no-repeat; border:2px solid rgba(255,255,255,0.35); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-  .profile-header h1{ font-family:'Newsreader',serif; font-size:25px; margin:0 0 4px; }
-  .profile-header p{ margin:0; color:rgba(255,255,255,0.8); font-size:14px; }
-
-  .stats-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:22px; }
-  .stat-card{ background:var(--white); border:1px solid var(--border); border-radius:var(--radius-lg); padding:18px; text-align:center; box-shadow:var(--shadow-sm); }
-  .stat-card .num{ font-family:'Newsreader',serif; font-size:26px; font-weight:600; color:var(--olive-dark); }
-  .stat-card .lbl{ font-size:12.5px; color:var(--muted); font-weight:600; margin-top:2px; }
-
-  .card{ background:var(--white); border:1px solid var(--border); border-radius:var(--radius-lg); padding:26px; box-shadow:var(--shadow-sm); margin-bottom:20px; }
-  .card-title{ display:flex; align-items:center; gap:10px; margin-bottom:18px; }
-  .card-title .ic{ width:36px; height:36px; border-radius:10px; background:var(--olive-light); color:var(--olive-dark); display:flex; align-items:center; justify-content:center; }
-  .card-title h2{ font-family:'Newsreader',serif; font-size:18px; margin:0; }
-
-  .field-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-  label{ display:block; font-size:13px; font-weight:700; margin:0 0 6px; }
-  .field{ margin-bottom:16px; }
-  .field.full{ grid-column:1 / -1; }
-  input[type=text], input[type=password], textarea{ width:100%; padding:11px 13px; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:14px; font-family:'Inter',sans-serif; background:var(--ivory); transition:all .15s ease; }
-  input:disabled{ background:#F1EEE5; color:var(--muted); }
-  input[type=text]:focus, input[type=password]:focus, textarea:focus{ outline:none; border-color:var(--olive); background:var(--white); box-shadow:0 0 0 3px var(--olive-light); }
-  textarea{ min-height:80px; resize:vertical; }
-  .hint{ font-size:12.5px; color:var(--muted); margin:2px 0 14px; }
-
-  .dropzone{ border:2px dashed var(--sage); border-radius:var(--radius-md); background:var(--olive-light); padding:20px; text-align:center; cursor:pointer; transition:all .18s ease; display:flex; align-items:center; gap:14px; justify-content:center; }
-  .dropzone:hover, .dropzone.dragover{ background:#E4EBDA; border-color:var(--olive); }
-  .dropzone i{ color:var(--olive); }
-  .dropzone input[type=file]{ display:none; }
-  .dz-text{ text-align:left; }
-  .dz-title{ font-weight:700; font-size:13.5px; }
-  .dz-sub{ font-size:12px; color:var(--muted); }
-
-  .actions-bar{ display:flex; justify-content:flex-end; gap:10px; margin-top:6px; }
-  .btn{ border:none; border-radius:var(--radius-sm); padding:12px 22px; font-weight:700; font-size:14px; cursor:pointer; font-family:'Inter',sans-serif; display:inline-flex; align-items:center; gap:8px; transition:transform .15s ease, box-shadow .15s ease; }
-  .btn-primary{ background:var(--olive); color:#fff; box-shadow:var(--shadow-sm); }
-  .btn-primary:hover{ background:var(--olive-dark); transform:translateY(-1px); box-shadow:var(--shadow-md); }
-  .btn-ghost{ background:var(--white); color:var(--charcoal); border:1px solid var(--border); }
-  .btn-ghost:hover{ background:var(--olive-light); }
-
-  .comment{ padding:14px 0; border-bottom:1px solid var(--border); }
-  .comment:last-child{ border-bottom:none; }
-  .comment-top{ display:flex; justify-content:space-between; font-size:13.5px; margin-bottom:4px; flex-wrap:wrap; gap:4px; }
-  .comment-who{ font-weight:700; }
-  .comment-product{ color:var(--muted); font-style:italic; font-size:12.5px; }
-  .comment-text{ font-size:13.5px; color:var(--muted); }
-  .empty-mini{ text-align:center; padding:20px; color:var(--muted); font-size:13.5px; }
-
-  @media (max-width:700px){
-    .field-grid{ grid-template-columns:1fr; }
-    .stats-grid{ grid-template-columns:1fr; }
-    .profile-header{ flex-direction:column; text-align:center; }
-    .page-wrap{ padding:20px 14px 40px; }
+  @media (max-width: 900px){
+    .sidebar{ transform:translateX(-100%); }
+    .main-area{ margin-left:0; }
   }
 </style>
 </head>
-<body>
-  <c:set var="mn" value="${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']}"/>
+<body class="bg-background text-foreground font-sans min-h-screen relative text-[#1F2937]">
+
+<div class="keffiyeh-bg"></div>
+
+<aside class="sidebar">
+    <a class="sidebar-brand" href="${pageContext.request.contextPath}/store/dashboard">
+        <div class="mark">ه</div><div class="name">HerjaHub</div>
+    </a>
+    <div class="side-label">Overview</div>
+    <a class="side-link" href="${pageContext.request.contextPath}/store/dashboard">
+        <i data-lucide="layout-dashboard" width="18" height="18"></i> Dashboard
+    </a>
+    <div class="side-label">Manage</div>
+    <a class="side-link" href="${pageContext.request.contextPath}/store/products">
+        <i data-lucide="shopping-bag" width="18" height="18"></i> Products
+    </a>
+    <a class="side-link active" href="${pageContext.request.contextPath}/store/edit">
+        <i data-lucide="store" width="18" height="18"></i> Store Profile
+    </a>
+    <div class="sidebar-footer">
+        <a class="side-link" href="${pageContext.request.contextPath}/logout" style="color:var(--red);">
+            <i data-lucide="log-out" width="18" height="18"></i> Log out
+        </a>
+    </div>
+</aside>
+
+<div class="main-area">
   <div class="topbar">
-    <div class="brand"><div class="mark"><i data-lucide="leaf" style="width:19px;height:19px;"></i></div> HerjaHub</div>
-    <div class="topbar-nav">
-      <a href="${pageContext.request.contextPath}/store/dashboard">Dashboard</a>
-      <a href="${pageContext.request.contextPath}/store/products">Products</a>
-      <a class="logout" href="${pageContext.request.contextPath}/logout">Logout</a>
+    <div class="topbar-title">Store Profile</div>
+    <div class="user-chip">
+        <div class="user-avatar"><c:out value="${fn:substring(store.storeName, 0, 1)}" /></div>
+        <span class="u-name"><c:out value="${store.storeName}" /></span>
     </div>
   </div>
 
-  <div class="page-wrap">
+<c:set var="mn" value="${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']}"/>
 
-    <div class="profile-header">
+<div class="w-full max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
+
+  <%-- Profile Header --%>
+  <div class="bg-gradient-to-r from-primary to-primary/80 rounded-[28px] p-8 lg:p-10 text-white mb-8 shadow-xl relative overflow-hidden">
+    <div class="absolute right-[-40px] top-[-40px] w-52 h-52 rounded-full bg-white/10"></div>
+    <div class="relative z-10 flex items-center gap-6">
       <c:choose>
         <c:when test="${not empty store.image}">
-          <div class="profile-logo" style="background-image:url('${store.image}')"></div>
+          <div class="w-20 h-20 rounded-2xl bg-white/20 border-2 border-white/40 overflow-hidden flex-shrink-0">
+            <img src="${pageContext.request.contextPath}${store.image}" alt="Store Logo" class="w-full h-full object-cover"/>
+          </div>
         </c:when>
         <c:otherwise>
-          <div class="profile-logo"><i data-lucide="store" style="width:32px;height:32px;"></i></div>
+          <div class="w-20 h-20 rounded-2xl bg-white/20 border-2 border-white/40 flex items-center justify-center flex-shrink-0">
+            <svg class="w-8 h-8 text-white/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h18v18H3zM3 9h18M9 21V9"/></svg>
+          </div>
         </c:otherwise>
       </c:choose>
       <div>
-        <h1><c:out value="${store.storeName}"/></h1>
-        <p><c:out value="${store.email}"/></p>
+        <h1 class="text-2xl font-serif font-semibold"><c:out value="${store.storeName}"/></h1>
+        <p class="text-white/80"><c:out value="${store.email}"/></p>
       </div>
-    </div>
-
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="num">${fn:length(store.products)}</div>
-        <div class="lbl">Products</div>
-      </div>
-      <div class="stat-card">
-        <div class="num">${fn:length(comments)}</div>
-        <div class="lbl">Reviews</div>
-      </div>
-      <div class="stat-card">
-        <div class="num">${mn[store.createdAt.monthValue - 1]} ${store.createdAt.year}</div>
-        <div class="lbl">Joined</div>
-      </div>
-    </div>
-
-    <c:if test="${not empty errorMessage}">
-      <div class="error-banner"><i data-lucide="alert-circle" style="width:17px;height:17px;"></i> ${errorMessage}</div>
-    </c:if>
-
-    <form method="post" action="${pageContext.request.contextPath}/store/edit" enctype="multipart/form-data">
-
-      <div class="card">
-        <div class="card-title"><div class="ic"><i data-lucide="image-plus" style="width:18px;height:18px;"></i></div><h2>Store Logo</h2></div>
-        <label class="dropzone" for="logo-input">
-          <i data-lucide="upload-cloud" style="width:26px;height:26px;"></i>
-          <div class="dz-text">
-            <div class="dz-title">Click to upload a new logo</div>
-            <div class="dz-sub">PNG or JPG, up to 25MB — optional</div>
-          </div>
-          <input type="file" id="logo-input" name="logoFile" accept="image/*">
-        </label>
-      </div>
-
-      <div class="card">
-        <div class="card-title"><div class="ic"><i data-lucide="user" style="width:18px;height:18px;"></i></div><h2>Personal Information</h2></div>
-        <div class="field-grid">
-          <div class="field">
-            <label>First Name</label>
-            <input type="text" name="firstName" value="${storeForm.firstName}" required>
-          </div>
-          <div class="field">
-            <label>Last Name</label>
-            <input type="text" name="lastName" value="${storeForm.lastName}" required>
-          </div>
-          <div class="field full">
-            <label>Email</label>
-            <input type="text" value="${store.email}" disabled>
-          </div>
-          <div class="field full">
-            <label>Phone (10 digits)</label>
-            <input type="text" name="phone" value="${storeForm.phone}">
-          </div>
-        </div>
-
-        <p class="hint">Leave the password fields blank to keep your current password.</p>
-        <div class="field-grid">
-          <div class="field">
-            <label>Current Password</label>
-            <input type="password" name="currentPassword">
-          </div>
-          <div class="field">
-            <label>New Password</label>
-            <input type="password" name="newPassword">
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title"><div class="ic"><i data-lucide="store" style="width:18px;height:18px;"></i></div><h2>Store Information</h2></div>
-        <div class="field">
-          <label>Store Name</label>
-          <input type="text" name="storeName" value="${storeForm.storeName}" required>
-        </div>
-        <div class="field">
-          <label>Description</label>
-          <textarea name="description">${storeForm.description}</textarea>
-        </div>
-        <div class="field">
-          <label>Address</label>
-          <input type="text" name="address" value="${storeForm.address}">
-        </div>
-      </div>
-
-      <div class="actions-bar">
-        <a class="btn btn-ghost" href="${pageContext.request.contextPath}/store/dashboard">Cancel</a>
-        <button type="submit" class="btn btn-primary"><i data-lucide="check" style="width:16px;height:16px;"></i> Save Changes</button>
-      </div>
-    </form>
-
-    <div class="card">
-      <div class="card-title"><div class="ic"><i data-lucide="message-square" style="width:18px;height:18px;"></i></div><h2>Comments (from Product Details)</h2></div>
-      <c:forEach var="cm" items="${comments}">
-        <div class="comment">
-          <div class="comment-top">
-            <span><span class="comment-who"><c:out value="${cm.customerName}"/></span> &middot; <span class="comment-product"><c:out value="${cm.productName}"/></span></span>
-            <span>${cm.rating}/5 <i data-lucide="star" style="width:12px;height:12px;color:var(--gold);"></i></span>
-          </div>
-          <div class="comment-text"><c:out value="${cm.comment}"/></div>
-        </div>
-      </c:forEach>
-      <c:if test="${empty comments}">
-        <div class="empty-mini">No comments yet across any of your products.</div>
-      </c:if>
     </div>
   </div>
 
+  <%-- Stats --%>
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
+    <div class="bg-card rounded-[28px] p-6 border border-border text-center">
+      <div class="text-3xl font-serif font-semibold text-primary">${fn:length(store.products)}</div>
+      <div class="text-sm text-muted-foreground font-semibold mt-1">Products</div>
+    </div>
+    <div class="bg-card rounded-[28px] p-6 border border-border text-center">
+      <div class="text-3xl font-serif font-semibold text-primary">${fn:length(comments)}</div>
+      <div class="text-sm text-muted-foreground font-semibold mt-1">Reviews</div>
+    </div>
+    <div class="bg-card rounded-[28px] p-6 border border-border text-center">
+      <div class="text-3xl font-serif font-semibold text-primary">${mn[store.createdAt.monthValue - 1]} ${store.createdAt.year}</div>
+      <div class="text-sm text-muted-foreground font-semibold mt-1">Joined</div>
+    </div>
+  </div>
+
+  <%-- Error Banner --%>
+  <c:if test="${not empty errorMessage}">
+    <div class="flex items-center gap-3 p-4 rounded-xl bg-red-50 border border-red-200 text-destructive text-sm mb-6">
+      <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span>${errorMessage}</span>
+    </div>
+  </c:if>
+
+  <form method="post" action="${pageContext.request.contextPath}/store/edit" enctype="multipart/form-data">
+
+    <%-- Store Logo --%>
+    <div class="bg-card rounded-[28px] p-6 border border-border mb-6">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
+          <svg class="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        </div>
+        <h2 class="text-xl font-serif font-semibold">Store Logo</h2>
+      </div>
+      <label class="border-2 border-dashed border-primary/30 rounded-xl bg-primary/5 p-6 text-center cursor-pointer hover:bg-primary/10 hover:border-primary transition-all flex items-center gap-4 justify-center">
+        <svg class="w-7 h-7 text-primary/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <div class="text-left">
+          <div class="font-semibold text-sm dz-title">Click to upload a new logo</div>
+          <div class="text-xs text-muted-foreground dz-sub">PNG or JPG, up to 25MB — optional</div>
+        </div>
+        <input type="file" id="logo-input" name="logoFile" accept="image/*" class="hidden">
+      </label>
+    </div>
+
+    <%-- Personal Information --%>
+    <div class="bg-card rounded-[28px] p-6 border border-border mb-6">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
+          <svg class="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <h2 class="text-xl font-serif font-semibold">Personal Information</h2>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div>
+          <label class="block text-sm font-semibold mb-2">First Name</label>
+          <input type="text" name="firstName" value="${storeForm.firstName}" required class="w-full px-4 py-3 rounded-xl border border-border bg-secondary focus:bg-card focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"/>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold mb-2">Last Name</label>
+          <input type="text" name="lastName" value="${storeForm.lastName}" required class="w-full px-4 py-3 rounded-xl border border-border bg-secondary focus:bg-card focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"/>
+        </div>
+        <div class="sm:col-span-2">
+          <label class="block text-sm font-semibold mb-2">Email</label>
+          <input type="text" value="${store.email}" disabled class="w-full px-4 py-3 rounded-xl border border-border bg-muted/50 text-muted-foreground"/>
+        </div>
+        <div class="sm:col-span-2">
+          <label class="block text-sm font-semibold mb-2">Phone (10 digits)</label>
+          <input type="text" name="phone" value="${storeForm.phone}" class="w-full px-4 py-3 rounded-xl border border-border bg-secondary focus:bg-card focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"/>
+        </div>
+      </div>
+
+      <p class="text-xs text-muted-foreground mt-6 mb-4">Leave the password fields blank to keep your current password.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div>
+          <label class="block text-sm font-semibold mb-2">Current Password</label>
+          <input type="password" name="currentPassword" class="w-full px-4 py-3 rounded-xl border border-border bg-secondary focus:bg-card focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"/>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold mb-2">New Password</label>
+          <input type="password" name="newPassword" class="w-full px-4 py-3 rounded-xl border border-border bg-secondary focus:bg-card focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"/>
+        </div>
+      </div>
+    </div>
+
+    <%-- Store Information --%>
+    <div class="bg-card rounded-[28px] p-6 border border-border mb-6">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
+          <svg class="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h18v18H3zM3 9h18M9 21V9"/></svg>
+        </div>
+        <h2 class="text-xl font-serif font-semibold">Store Information</h2>
+      </div>
+      <div class="space-y-6">
+        <div>
+          <label class="block text-sm font-semibold mb-2">Store Name</label>
+          <input type="text" name="storeName" value="${storeForm.storeName}" required class="w-full px-4 py-3 rounded-xl border border-border bg-secondary focus:bg-card focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"/>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold mb-2">Description</label>
+          <textarea name="description" rows="3" class="w-full px-4 py-3 rounded-xl border border-border bg-secondary focus:bg-card focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all resize-none">${storeForm.description}</textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold mb-2">Address</label>
+          <input type="text" name="address" value="${storeForm.address}" class="w-full px-4 py-3 rounded-xl border border-border bg-secondary focus:bg-card focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"/>
+        </div>
+      </div>
+    </div>
+
+    <%-- Actions --%>
+    <div class="flex justify-end gap-3 mb-8">
+      <a href="${pageContext.request.contextPath}/store/dashboard" class="px-6 py-3 rounded-full border-2 border-border font-semibold hover:bg-secondary transition-all">Cancel</a>
+      <button type="submit" class="px-6 py-3 rounded-full bg-primary text-primary-foreground font-semibold hover:shadow-lg hover:-translate-y-0.5 active:scale-95 transition-all flex items-center gap-2">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        Save Changes
+      </button>
+    </div>
+  </form>
+
+  <%-- Comments --%>
+  <div class="bg-card rounded-[28px] p-6 border border-border">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
+        <svg class="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      </div>
+      <h2 class="text-xl font-serif font-semibold">Comments</h2>
+    </div>
+    <c:forEach var="cm" items="${comments}">
+      <div class="py-4 border-b border-border last:border-0">
+        <div class="flex items-center justify-between text-sm mb-2 flex-wrap gap-2">
+          <span><strong><c:out value="${cm.customerName}"/></strong> &middot; <span class="text-muted-foreground italic"><c:out value="${cm.productName}"/></span></span>
+          <span class="text-sm">${cm.rating}/5
+            <svg class="w-3 h-3 inline text-amber-500 fill-amber-500" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </span>
+        </div>
+        <p class="text-sm text-muted-foreground"><c:out value="${cm.comment}"/></p>
+      </div>
+    </c:forEach>
+    <c:if test="${empty comments}">
+      <div class="text-center py-8 text-muted-foreground text-sm">No comments yet across any of your products.</div>
+    </c:if>
+  </div>
+</div>
+</div>
+
 <script>
-  try { if (window.lucide) { lucide.createIcons(); } } catch (e) { console.warn("Icon rendering failed:", e); }
   var logoInput = document.getElementById('logo-input');
-  var dropzone = logoInput.closest('.dropzone');
-  logoInput.addEventListener('change', function () {
+  var dropzone = logoInput.closest('label');
+  logoInput.addEventListener('change', function() {
     if (logoInput.files && logoInput.files[0]) {
       dropzone.querySelector('.dz-title').textContent = logoInput.files[0].name;
     }
   });
+  try { if (window.lucide) { lucide.createIcons(); } } catch (e) { console.warn("Icon rendering failed:", e); }
 </script>
+
 </body>
 </html>
