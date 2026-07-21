@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.axsos.project.dto.CartItem;
@@ -117,7 +116,6 @@ public class CustomerController {
 	@PostMapping("/customer/cart/add/{productId}")
 	public String addToCart(@PathVariable("productId") Long productId,
 	                        @RequestParam(value = "quantity", defaultValue = "1") int quantity,
-	                        @RequestHeader(value = "Referer", required = false) String referer,
 	                        HttpSession session) {
 
 		Customer customer = (Customer) session.getAttribute("loggedInCustomer");
@@ -157,11 +155,8 @@ public class CustomerController {
 
 		session.setAttribute("cart", cart);
 
-		// stay on whatever page the customer added from (product detail, etc.) -
-		// only trust same-app customer URLs so a forged Referer can't redirect elsewhere
-		if (referer != null && referer.contains("/customer/")) {
-			return "redirect:" + referer;
-		}
+		// always land back on the products list after adding, regardless of which
+		// product page they added from
 		return "redirect:/customer/products";
 	}
 

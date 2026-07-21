@@ -168,10 +168,14 @@
             .stage{ padding:24px 20px 50px; }
         }
     
-  .menu-btn{ display:none; width:40px; height:40px; border-radius:12px; border:1px solid var(--neutral-2); background:var(--white); color:var(--text-1); align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
+  .menu-btn{ display:flex; width:40px; height:40px; border-radius:12px; border:1px solid var(--neutral-2); background:var(--white); color:var(--text-1); align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
   .sidebar-overlay{ display:none; position:fixed; inset:0; z-index:25; background:rgba(17,17,17,0.35); }
 
+.topbar-right{ display:flex; align-items:center; gap:12px; }
   .cart-btn{ position:relative; margin-left:auto; width:40px; height:40px; border-radius:50%; background:var(--white); border:1px solid var(--neutral-2); display:flex; align-items:center; justify-content:center; color:var(--text-1); transition:all .2s ease; flex-shrink:0; }
+  .user-chip{ display:flex; align-items:center; gap:10px; padding:6px 14px 6px 6px; border-radius:999px; background:var(--white); border:1px solid var(--neutral-2); }
+  .user-avatar{ width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, var(--red), var(--green)); color:#fff; font-weight:700; font-size:13px; flex-shrink:0; }
+  .u-name{ font-size:13px; font-weight:600; }
   .cart-btn:hover{ border-color:var(--green); color:var(--green); }
   .cart-count{ position:absolute; top:-4px; right:-4px; min-width:17px; height:17px; padding:0 4px; border-radius:999px; background:var(--red); color:#fff; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; }
   .store-line{ display:inline-flex; align-items:center; gap:6px; font-size:13.5px; font-weight:600; color:var(--text-2); margin:2px 0 12px; transition:color .2s ease; }
@@ -182,6 +186,18 @@
   .star-input label:hover{ transform:scale(1.12); }
   .star-input label:hover, .star-input label:hover ~ label,
   .star-input input:checked ~ label{ color:#C9A227; }
+
+  /* ===== Sidebar toggle - works at any screen size, higher specificity beats the responsive defaults above ===== */
+  .sidebar, .main-area{ transition:transform .28s ease, margin-left .28s ease; }
+  body.sidebar-hidden .sidebar{ transform:translateX(-100%); }
+  body.sidebar-hidden .main-area{ margin-left:0; }
+  body:not(.sidebar-hidden) .sidebar{ transform:translateX(0); }
+  @media (min-width:901px){
+    body:not(.sidebar-hidden) .main-area{ margin-left:var(--sidebar-w); }
+  }
+  @media (max-width:900px){
+    body:not(.sidebar-hidden) .sidebar-overlay{ display:block; }
+  }
 </style>
 </head>
 <body class="bg-background text-foreground font-sans">
@@ -233,7 +249,7 @@
 
     <%-- ===================== TOPBAR with breadcrumb ===================== --%>
     <div class="topbar">
-        <button class="menu-btn" id="menuBtn" type="button" aria-label="Open menu"><i data-lucide="menu" width="20" height="20"></i></button>
+        <button class="menu-btn" id="menuBtn" type="button" aria-label="Toggle sidebar"><i data-lucide="menu" width="20" height="20"></i></button>
         <div class="crumb">
             <a href="${pageContext.request.contextPath}/customer/dashboard">Home</a>
             <i data-lucide="chevron-right" width="14" height="14"></i>
@@ -450,10 +466,11 @@
 
 <script>
   (function(){
-    var b=document.getElementById('menuBtn'), s=document.querySelector('.sidebar'), o=document.getElementById('sidebarOverlay');
-    if(!b||!s||!o) return;
-    b.addEventListener('click', function(){ s.classList.add('open'); o.classList.add('show'); });
-    o.addEventListener('click', function(){ s.classList.remove('open'); o.classList.remove('show'); });
+    var btn = document.getElementById('menuBtn'), overlay = document.getElementById('sidebarOverlay');
+    function isMobile(){ return window.matchMedia('(max-width:900px)').matches; }
+    if (isMobile()) { document.body.classList.add('sidebar-hidden'); } // start closed on small screens only
+    if (btn) btn.addEventListener('click', function(){ document.body.classList.toggle('sidebar-hidden'); });
+    if (overlay) overlay.addEventListener('click', function(){ document.body.classList.add('sidebar-hidden'); });
   })();
 </script>
 </body>

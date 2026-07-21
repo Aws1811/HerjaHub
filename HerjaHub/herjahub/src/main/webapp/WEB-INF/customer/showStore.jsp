@@ -55,7 +55,7 @@
   .cart-btn{ position:relative; margin-left:auto; width:40px; height:40px; border-radius:50%; background:var(--white); border:1px solid var(--neutral-2); display:flex; align-items:center; justify-content:center; color:var(--text-1); transition:all .2s ease; flex-shrink:0; }
   .cart-btn:hover{ border-color:var(--green); color:var(--green); }
   .cart-count{ position:absolute; top:-4px; right:-4px; min-width:17px; height:17px; padding:0 4px; border-radius:999px; background:var(--red); color:#fff; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; }
-  .menu-btn{ display:none; width:40px; height:40px; border-radius:12px; border:1px solid var(--neutral-2); background:var(--white); color:var(--text-1); align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
+  .menu-btn{ display:flex; width:40px; height:40px; border-radius:12px; border:1px solid var(--neutral-2); background:var(--white); color:var(--text-1); align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
   .sidebar-overlay{ display:none; position:fixed; inset:0; z-index:25; background:rgba(17,17,17,0.35); }
 
   .keffiyeh-corner-bg{ position:fixed; inset:0; z-index:0; pointer-events:none;
@@ -116,6 +116,18 @@
     .sidebar-overlay.show{ display:block; }
     .main-area{ margin-left:0; }
   }
+
+  /* ===== Sidebar toggle - works at any screen size, higher specificity beats the responsive defaults above ===== */
+  .sidebar, .main-area{ transition:transform .28s ease, margin-left .28s ease; }
+  body.sidebar-hidden .sidebar{ transform:translateX(-100%); }
+  body.sidebar-hidden .main-area{ margin-left:0; }
+  body:not(.sidebar-hidden) .sidebar{ transform:translateX(0); }
+  @media (min-width:901px){
+    body:not(.sidebar-hidden) .main-area{ margin-left:var(--sidebar-w); }
+  }
+  @media (max-width:900px){
+    body:not(.sidebar-hidden) .sidebar-overlay{ display:block; }
+  }
 </style>
 </head>
 <body>
@@ -164,7 +176,7 @@
 
 <div class="main-area">
     <div class="topbar">
-        <button class="menu-btn" id="menuBtn" type="button" aria-label="Open menu"><i data-lucide="menu" width="20" height="20"></i></button>
+        <button class="menu-btn" id="menuBtn" type="button" aria-label="Toggle sidebar"><i data-lucide="menu" width="20" height="20"></i></button>
         <div class="topbar-title"><c:out value="${store.storeName}" /></div>
         <a class="cart-btn" href="${pageContext.request.contextPath}/customer/cart" title="View cart"><i data-lucide="shopping-cart" width="18" height="18"></i><c:if test="${not empty sessionScope.cart}"><span class="cart-count">${fn:length(sessionScope.cart)}</span></c:if></a>
         <div class="user-chip">
@@ -275,10 +287,11 @@
 
 <script>
   (function(){
-    var b=document.getElementById('menuBtn'), s=document.querySelector('.sidebar'), o=document.getElementById('sidebarOverlay');
-    if(!b||!s||!o) return;
-    b.addEventListener('click', function(){ s.classList.add('open'); o.classList.add('show'); });
-    o.addEventListener('click', function(){ s.classList.remove('open'); o.classList.remove('show'); });
+    var btn = document.getElementById('menuBtn'), overlay = document.getElementById('sidebarOverlay');
+    function isMobile(){ return window.matchMedia('(max-width:900px)').matches; }
+    if (isMobile()) { document.body.classList.add('sidebar-hidden'); } // start closed on small screens only
+    if (btn) btn.addEventListener('click', function(){ document.body.classList.toggle('sidebar-hidden'); });
+    if (overlay) overlay.addEventListener('click', function(){ document.body.classList.add('sidebar-hidden'); });
   })();
 </script>
 
